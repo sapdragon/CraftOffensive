@@ -5,9 +5,7 @@
 
 int __stdcall undo() {
 	events::undo();
-
 	hooks::undo();
-
 	input::undo();
 
 	return 1;
@@ -21,9 +19,6 @@ unsigned long __stdcall init(LPVOID module) {
 	} while (memory::m_modules.find(FNV1A("serverbrowser.dll")) == memory::m_modules.end());
 
 	try {
-		Beep(400, 400);
-		Beep(600, 400);
-
 		globals::m_local = *SIG("client.dll", "8B 0D ? ? ? ? 83 FF FF 74 07").self_offset(0x2).cast<c_local_player*>();
 
 		long long amongus = 0x69690004C201B0;
@@ -42,17 +37,11 @@ unsigned long __stdcall init(LPVOID module) {
 		}
 
 		interfaces::init();
-
 		input::init();
-
 		render::init();
-
 		netvars::init();
-
 		cfg::init();
-
 		hooks::init();
-
 		events::init();
 	}
 

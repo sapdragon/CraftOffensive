@@ -23,7 +23,7 @@ public:
 		if (!key)
 			return;
 
-		static const auto set_string_fn = SIG("client.dll", "55 8B EC A1 ? ? ? ? 53 56 57 8B F9 8B 08 8B 01").cast<void(__thiscall*)(void*, const char*)>();
+		static const auto set_string_fn = SIG("client.dll", "E8 ? ? ? ? 89 77 38").cast<void(__thiscall*)(void*, const char*)>();
 
 		set_string_fn(key, a2);
 	}
