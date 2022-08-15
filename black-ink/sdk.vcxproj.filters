@@ -251,5 +251,9 @@
     <ClInclude Include="utils\minhook\trampoline.h" />
     <ClInclude Include="features\visuals\player_esp.h" />
     <ClInclude Include="utils\render\assets\background.h" />
+    <ClInclude Include="menu\elements.h" />
+    <ClInclude Include="utils\imgui\imgui_tweaker.hpp" />
+    <ClInclude Include="utils\render\assets\minecraftFont.h" />
+    <ClInclude Include="utils\render\assets\items.h" />
   </ItemGroup>
 </Project>

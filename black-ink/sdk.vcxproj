@@ -149,6 +149,7 @@
     <ClInclude Include="features\visuals\player_esp.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="hooks\hooks.h" />
+    <ClInclude Include="menu\elements.h" />
     <ClInclude Include="menu\menu.h" />
     <ClInclude Include="sdk\datatypes\bf_read.h" />
     <ClInclude Include="sdk\datatypes\bf_write.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="utils\imgui\imgui_impl_dx9.h" />
     <ClInclude Include="utils\imgui\imgui_impl_win32.h" />
     <ClInclude Include="utils\imgui\imgui_internal.h" />
+    <ClInclude Include="utils\imgui\imgui_tweaker.hpp" />
     <ClInclude Include="utils\imgui\imstb_rectpack.h" />
     <ClInclude Include="utils\imgui\imstb_textedit.h" />
     <ClInclude Include="utils\imgui\imstb_truetype.h" />
@@ -260,6 +262,8 @@
     <ClInclude Include="utils\obfuscation\fnv1a.h" />
     <ClInclude Include="utils\obfuscation\xor.h" />
     <ClInclude Include="utils\render\assets\background.h" />
+    <ClInclude Include="utils\render\assets\items.h" />
+    <ClInclude Include="utils\render\assets\minecraftFont.h" />
     <ClInclude Include="utils\render\render.h" />
     <ClInclude Include="utils\utils.h" />
   </ItemGroup>
