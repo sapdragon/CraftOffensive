@@ -12,6 +12,8 @@ namespace hooks {
 		const auto eye_angles_index = reinterpret_cast<void*>(get_virtual(c_cs_player::get_vtable(), 170u));
 		const auto lock_cursor_index = reinterpret_cast<void*>(get_virtual(interfaces::m_surface, 67u));
 
+		const auto send_datagram = reinterpret_cast< void* >(utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "55 8B EC 83 E4 F0 B8 38 01 10 00 E8" ) ) ) ;
+
 		if (MH_Initialize() != MH_OK)
 			throw std::runtime_error("failed to initialize MH_Initialize.");
 
@@ -41,6 +43,9 @@ namespace hooks {
 
 		if (MH_CreateHook(lock_cursor_index, &surface::lock_cursor::hook, reinterpret_cast<void**>(&lock_cursor_original)) != MH_OK)
 			throw std::runtime_error("Failed to initialize lock_cursor.");
+
+		if ( MH_CreateHook( send_datagram, &networking::send_datagram::hook, reinterpret_cast< void** >( &send_datagram_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize send_datagram" );
 
 		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 			throw std::runtime_error("failed to enable all hooks.");

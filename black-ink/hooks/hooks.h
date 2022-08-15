@@ -69,6 +69,16 @@ namespace hooks {
 		}
 	}
 
+	namespace networking
+	{
+		namespace send_datagram
+		{
+			int __fastcall hook( void* ecx, uint32_t edx, void* data );
+			using fn = int ( __fastcall* )( void*, uint32_t, void* );
+
+		}
+	}
+
 	inline hooks::d3d_device::present::fn present_original = nullptr;
 	inline hooks::d3d_device::reset::fn reset_original = nullptr;
 	inline hooks::client_dll::frame_stage_notify::fn frame_stage_notify_original = nullptr;
@@ -78,4 +88,5 @@ namespace hooks {
 	inline hooks::panel::paint_traverse::fn paint_traverse_original = nullptr;
 	inline hooks::player::eye_angles::fn eye_angles_original = nullptr;
 	inline hooks::surface::lock_cursor::fn lock_cursor_original = nullptr;
+	inline hooks::networking::send_datagram::fn send_datagram_original = nullptr;
 }

@@ -1,12 +1,18 @@
 #pragma once
 #include "../../globals.h"
+enum e_material_type {
+	MATERIAL_TYPE_REGULAR,
+	MATERIAL_TYPE_FLAT
+};
+struct chams_settings_t
+{
+	int m_material = MATERIAL_TYPE_REGULAR;
+	col_t m_color = col_t( 255, 0, 0 );
+	bool force_render = false;
+};
 
 class c_chams : public c_singleton<c_chams> {
 private:
-	enum e_material_type {
-		MATERIAL_TYPE_REGULAR,
-		MATERIAL_TYPE_FLAT
-	};
 
 	void override_material(int type, const col_t& clr, bool ignorez);
 	i_material* create_material(std::string_view material_name, std::string_view shader_type, std::string_view material_data);
