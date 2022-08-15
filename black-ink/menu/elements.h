@@ -150,22 +150,7 @@ namespace elements {
         window->DrawList->AddText( bb.Min + ImVec2( 27, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
     }
 
-    static const ImGuiDataTypeInfo GDataTypeInfo[] =
-    {
-        { sizeof( char ),             "%d",   "%d"    },  // ImGuiDataType_S8
-        { sizeof( unsigned char ),    "%u",   "%u"    },
-        { sizeof( short ),            "%d",   "%d"    },  // ImGuiDataType_S16
-        { sizeof( unsigned short ),   "%u",   "%u"    },
-        { sizeof( int ),              "%d",   "%d"    },  // ImGuiDataType_S32
-        { sizeof( unsigned int ),     "%u",   "%u"    },
-        { sizeof( ImS64 ),            "%I64d","%I64d" },  // ImGuiDataType_S64
-        { sizeof( ImU64 ),            "%I64u","%I64u" },
-        { sizeof( float ),            "%f",   "%f"    },  // ImGuiDataType_Float (float are promoted to double in va_arg)
-        { sizeof( double ),           "%f",   "%lf"   },  // ImGuiDataType_Double
-    };
-    IM_STATIC_ASSERT( IM_ARRAYSIZE( GDataTypeInfo ) == ImGuiDataType_COUNT );
-
-    static const char* PatchFormatStringFloatToInt( const char* fmt )
+    static const char* __PatchFormatStringFloatToInt( const char* fmt )
     {
         if ( fmt[ 0 ] == '%' && fmt[ 1 ] == '.' && fmt[ 2 ] == '0' && fmt[ 3 ] == 'f' && fmt[ 4 ] == 0 ) // Fast legacy path for "%.0f" which is expected to be the most common case.
             return "%d";
@@ -182,13 +167,7 @@ namespace elements {
         return fmt;
     }
 
-    inline const ImGuiDataTypeInfo* DataTypeGetInfo( ImGuiDataType data_type )
-    {
-        IM_ASSERT( data_type >= 0 && data_type < ImGuiDataType_COUNT );
-        return &GDataTypeInfo[ data_type ];
-    }
-
-    inline int DataTypeFormatString( char* buf, int buf_size, ImGuiDataType data_type, const void* p_data, const char* format )
+    inline int __DataTypeFormatString( char* buf, int buf_size, ImGuiDataType data_type, const void* p_data, const char* format )
     {
         // Signedness doesn't matter when pushing integer arguments
         if ( data_type == ImGuiDataType_S32 || data_type == ImGuiDataType_U32 )
@@ -235,7 +214,7 @@ namespace elements {
         if ( format == NULL )
             format = DataTypeGetInfo( data_type )->PrintFmt;
         else if ( data_type == ImGuiDataType_S32 && strcmp( format, "%d" ) != 0 )
-            format = PatchFormatStringFloatToInt( format );
+            format = __PatchFormatStringFloatToInt( format );
 
         const bool hovered = ItemHoverable( frame_bb, id );
 
@@ -259,6 +238,10 @@ namespace elements {
         window->DrawList->PopClipRect( );
 
         window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 47, 47, 47, 90 ), 0, 0 );
+
+        auto hoveredAnimate = animationsHovered.ValueInSine( label, hovered, 0.f, 1.f, 0.05f );
+        window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ) );
+
 
         ImRect grab_bb;
         const bool value_changed = SliderBehavior( frame_bb, id, data_type, p_data, p_min, p_max, format, power, ImGuiSliderFlags_None, &grab_bb );
@@ -296,6 +279,44 @@ namespace elements {
 
         if ( __sliderscalar( label.c_str( ), ImGuiDataType_S32, &value, &v_min, &v_max, format, 1 ) )
             cfg::set<int>( v, value );
+    }
+
+    inline bool button( std::string label, ImVec2 size_arg ) {
+        using namespace ImGui;
+
+        ImGuiWindow* window = GetCurrentWindow( );
+        if ( window->SkipItems )
+            return false;
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiID id = window->GetID( label.c_str( ) );
+        const ImVec2 label_size = CalcTextSize( label.c_str( ), NULL, true );
+
+        ImVec2 pos = window->DC.CursorPos;
+        ImVec2 size = CalcItemSize( size_arg, 100, 50 );
+
+        const ImRect bb( pos, pos + size );
+        ItemSize( size, style.FramePadding.y );
+        if ( !ItemAdd( bb, id ) )
+            return false;
+
+        bool hovered, held;
+        bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
+
+        window->DrawList->PushClipRect( bb.Min, bb.Max, false );
+        window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->PopClipRect( );
+
+        auto hoveredAnimate = animationsHovered.ValueInSine( label, hovered, 0.f, 1.f, 0.05f );
+        window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int(50 * hoveredAnimate) ) );
+
+
+        RenderTextClipped( bb.Min, bb.Max, label.c_str(), "", NULL, ImVec2( 0.5f, 0.5f ) );
+
+        window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ) );
+
+        return pressed;
     }
 
 }

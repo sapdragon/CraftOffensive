@@ -54,9 +54,10 @@ void c_menu::on_paint() {
 		ImGui::BeginGroup( );
 		{
 			if ( m_selected_tab == 0 ) {
-				elements::child( _("General"), { 220, 120 }, [ ] ( ) {
+				elements::child( _("General"), { 220, 220 }, [ ] ( ) {
 					elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
 					elements::slider_int( _( "slider" ), FNV1A( "slider" ), 30, 120, "Slider Value: %i" );
+					elements::button( _( "Button" ), ImVec2( 200, 30 ) );
 				} );
 			}
 		}
