@@ -137,17 +137,17 @@ namespace elements {
 
         ImColor selectedCheck = ImAnimations::LerpColor( ImColor( 151, 151, 151, 0 ), ImColor( 151, 151, 151 ), selectedAnimate );
 
-        window->DrawList->AddRectFilled( bb.Min + ImVec2(0, 4), bb.Min + ImVec2(17, 21), ImColor( 28, 28, 27 ) );
+        window->DrawList->AddRectFilled( bb.Min + ImVec2(0, 2), bb.Min + ImVec2( 20, 22 ), ImColor( 28, 28, 27 ) );
 
-        window->DrawList->PushClipRect( bb.Min + ImVec2( 0, 4 ), bb.Min + ImVec2( 17, 21 ), false );
-        window->DrawList->AddImage( assets::dirt, bb.Min + ImVec2( 0, 4 ), bb.Min + ImVec2( 17, 21 ), {}, {1, 1}, ImColor(255, 255, 255, int(150 )) );
+        window->DrawList->PushClipRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), false );
+        window->DrawList->AddImage( assets::dirt, bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), {}, {1, 1}, ImColor(255, 255, 255, int(150 )) );
         window->DrawList->PopClipRect( );
 
-        window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 1, 5 ), bb.Min + ImVec2{ 16, 19 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
+        window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 2, 3 ), bb.Min + ImVec2{ 18, 19 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
 
-        window->DrawList->AddRect( bb.Min + ImVec2( 0, 4 ), bb.Min + ImVec2( 17, 21 ), ImColor( 0, 0, 0 ) );
+        window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ) );
 
-        window->DrawList->AddText( bb.Min + ImVec2( 25, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
+        window->DrawList->AddText( bb.Min + ImVec2( 27, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
     }
 
     static const ImGuiDataTypeInfo GDataTypeInfo[] =
@@ -277,9 +277,7 @@ namespace elements {
         char value_buf[ 64 ];
         const char* value_buf_end = value_buf + DataTypeFormatString( value_buf, IM_ARRAYSIZE( value_buf ), data_type, p_data, format );
 
-        ImGui::PushFont( fonts::m_minecraft16 );
         RenderTextClipped( frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2( 0.5f, 0.5f ) );
-        ImGui::PopFont( );
 
         return value_changed;
     }
