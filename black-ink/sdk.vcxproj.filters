@@ -130,6 +130,12 @@
     <ClCompile Include="utils\steam_sockets\steam_sockets.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="features\shared\shared.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="features\shared\proto\shared.pb.cc">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common_includes.h" />
@@ -266,10 +272,11 @@
     <ClInclude Include="utils\steam\steamnetworkingtypes.h" />
     <ClInclude Include="utils\steam\steamtypes.h" />
     <ClInclude Include="utils\steam\steamuniverse.h" />
-
     <ClInclude Include="menu\elements.h" />
     <ClInclude Include="utils\imgui\imgui_tweaker.hpp" />
     <ClInclude Include="utils\render\assets\minecraftFont.h" />
     <ClInclude Include="utils\render\assets\items.h" />
+    <ClInclude Include="features\shared\shared.hpp" />
+    <ClInclude Include="features\shared\proto\shared.pb.h" />
   </ItemGroup>
 </Project>

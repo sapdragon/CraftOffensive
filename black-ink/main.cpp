@@ -43,6 +43,7 @@ unsigned long __stdcall init(LPVOID module) {
 		cfg::init();
 		hooks::init();
 		events::init();
+		shared->init( );
 	}
 
 	catch (const std::runtime_error& error) {

@@ -1,11 +1,11 @@
 #include "steam_sockets.hpp"
 #include "../../sdk/interfaces.h"
 
-void steamsockets::sockethandler::process_message( int size, int16_t message_type, const char* message )
+void steamsockets::c_sockethandler::process_message( int size, uint16_t message_type, const char* message )
 {
 }
 
-void steamsockets::socket_netchannel::new_frame( )
+void steamsockets::c_socket_netchannel::new_frame( )
 {
 	SteamNetworkingMessage_t* message{ nullptr };
 	SteamNetworkingMessage_t* message_array{ nullptr };
@@ -71,7 +71,7 @@ void steamsockets::socket_netchannel::new_frame( )
 	}
 }
 
-void steamsockets::socket_netchannel::send_message_to_user( int16_t message_type, google::protobuf::Message* message, uint32_t steam_id, int port )
+void steamsockets::c_socket_netchannel::send_message_to_user( uint16_t message_type, google::protobuf::Message* message, uint32_t steam_id, int port )
 {
 	size_t data_size = message->ByteSize( );
 	size_t message_size = sizeof( message_header_t ) + data_size;
@@ -95,7 +95,7 @@ void steamsockets::socket_netchannel::send_message_to_user( int16_t message_type
 	interfaces::m_steam_networking_messages->SendMessageToUser( iden, message_buffer, message_size, k_nSteamNetworkingSend_ReliableNoNagle | k_nSteamNetworkingSend_AutoRestartBrokenSession, port );
 }
 
-void steamsockets::socket_netchannel::SendMessageToAll( int16_t message_type, google::protobuf::Message* message, int port )
+void steamsockets::c_socket_netchannel::SendMessageToAll( uint16_t message_type, google::protobuf::Message* message, int port )
 {
 	for ( auto i = 1; i < interfaces::m_global_vars->m_max_clients; i++ ) {
 		const auto player = static_cast< c_cs_player* >( interfaces::m_entity_list->get_client_entity( i ) );

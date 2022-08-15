@@ -59,6 +59,7 @@ namespace interfaces {
 
 		m_steam_networking_sockets = ( ( ISteamNetworkingSockets* ( * )( ) )GetProcAddress( GetModuleHandleA(_("steamnetworkingsockets.dll" ) ), _( "SteamNetworkingSockets_LibV12" ) ) )( );
 		m_steam_networking_messages = ( ( ISteamNetworkingMessages* ( * )( ) )GetProcAddress( GetModuleHandleA( _( "steamnetworkingsockets.dll" ) ), _( "SteamNetworkingMessages_LibV2" ) ) )( );
+		m_steam_networking_utils = ( ( ISteamNetworkingUtils* ( * )( ) )GetProcAddress( GetModuleHandleA( _( "steamnetworkingsockets.dll" ) ), _( "SteamNetworkingUtils_LibV4" ) ) )( );
 
 
 

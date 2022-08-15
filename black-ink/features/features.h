@@ -6,3 +6,5 @@
 #include "misc/movement.h"
 
 #include "visuals/player_esp.h"
+
+#include "shared/shared.hpp"

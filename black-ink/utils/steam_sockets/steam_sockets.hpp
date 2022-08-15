@@ -16,7 +16,7 @@ namespace steamsockets
 		char m_header[ 6 ];
 		uint32_t m_message_size;
 		uint32_t m_steam_id;
-		int16_t  m_message_type;
+		uint16_t  m_message_type;
 	};
 
 	struct client_connection {
@@ -29,10 +29,10 @@ namespace steamsockets
 
 	typedef bool( __stdcall* handler_fn )( size_t size, const char* message );
 
-	class sockethandler
+	class c_sockethandler
 	{
 	public: 
-		void process_message( int size, int16_t message_type, const char* message );
+		void process_message( int size, uint16_t message_type, const char* message );
 		void add_handler( int handler_type, handler_fn function )
 		{
 			m_handlers.at( handler_type ) = function;
@@ -41,23 +41,27 @@ namespace steamsockets
 		std::unordered_map < int, handler_fn > m_handlers;
 	};
 
-	class socket_netchannel
+	class c_socket_netchannel
 	{
+	public:
 		void new_frame( );
 		void add_connection( client_connection  connection )
 		{
 			m_connections.push_back( connection );
 		}
-		void set_handler( sockethandler* handler ) { 
+		void set_handler( c_sockethandler* handler ) {
 			m_handler = handler;
 		}
 
-		void send_message_to_user( int16_t message_type, google::protobuf::Message* message, uint32_t steam_id, int port = 58);
+		void add_opened_port( int port ) { m_open_ports.push_back( port ); }
 
-		void SendMessageToAll( int16_t message_type, google::protobuf::Message* message, int port = 58 );
+
+		void send_message_to_user( uint16_t message_type, google::protobuf::Message* message, uint32_t steam_id, int port = 58);
+
+		void SendMessageToAll( uint16_t message_type, google::protobuf::Message* message, int port = 58 );
 
 	private:
-		sockethandler* m_handler;
+		c_sockethandler* m_handler;
 		std::vector < int > m_open_ports;
 		std::vector< client_connection > m_connections;
 	};

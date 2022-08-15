@@ -15,6 +15,7 @@
 #include "steamnetworkingtypes.h"
 #include "isteamnetworkingsockets.h"
 #include "isteamnetworkingutils.h"
+class ISteamNetworkingConnectionSignaling;
 
 typedef uint64 uint64_steamid; // Used when passing or returning CSteamID
 
@@ -36,10 +37,11 @@ STEAMNETWORKINGSOCKETS_INTERFACE void SteamAPI_ISteamNetworkingSockets_SendMessa
 STEAMNETWORKINGSOCKETS_INTERFACE EResult SteamAPI_ISteamNetworkingSockets_FlushMessagesOnConnection( ISteamNetworkingSockets* self, HSteamNetConnection hConn );
 STEAMNETWORKINGSOCKETS_INTERFACE int SteamAPI_ISteamNetworkingSockets_ReceiveMessagesOnConnection( ISteamNetworkingSockets* self, HSteamNetConnection hConn, SteamNetworkingMessage_t ** ppOutMessages, int nMaxMessages );
 STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingSockets_GetConnectionInfo( ISteamNetworkingSockets* self, HSteamNetConnection hConn, SteamNetConnectionInfo_t * pInfo );
-STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingSockets_GetQuickConnectionStatus( ISteamNetworkingSockets* self, HSteamNetConnection hConn, SteamNetworkingQuickConnectionStatus * pStats );
+STEAMNETWORKINGSOCKETS_INTERFACE EResult SteamAPI_ISteamNetworkingSockets_GetConnectionRealTimeStatus( ISteamNetworkingSockets *self, HSteamNetConnection hConn, SteamNetConnectionRealTimeStatus_t *pStats, int nLanes, SteamNetConnectionRealTimeLaneStatus_t *pLanes );
 STEAMNETWORKINGSOCKETS_INTERFACE int SteamAPI_ISteamNetworkingSockets_GetDetailedConnectionStatus( ISteamNetworkingSockets* self, HSteamNetConnection hConn, char * pszBuf, int cbBuf );
 STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingSockets_GetListenSocketAddress( ISteamNetworkingSockets* self, HSteamListenSocket hSocket, SteamNetworkingIPAddr * address );
 STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingSockets_CreateSocketPair( ISteamNetworkingSockets* self, HSteamNetConnection * pOutConnection1, HSteamNetConnection * pOutConnection2, bool bUseNetworkLoopback, const SteamNetworkingIdentity * pIdentity1, const SteamNetworkingIdentity * pIdentity2 );
+STEAMNETWORKINGSOCKETS_INTERFACE EResult SteamAPI_ISteamNetworkingSockets_ConfigureConnectionLanes(ISteamNetworkingSockets *self, HSteamNetConnection hConn, int nNumLanes, const int *pLanePriorities, const uint16 *pLaneWeights );
 STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingSockets_GetIdentity( ISteamNetworkingSockets* self, SteamNetworkingIdentity * pIdentity );
 STEAMNETWORKINGSOCKETS_INTERFACE ESteamNetworkingAvailability SteamAPI_ISteamNetworkingSockets_InitAuthentication( ISteamNetworkingSockets* self );
 STEAMNETWORKINGSOCKETS_INTERFACE ESteamNetworkingAvailability SteamAPI_ISteamNetworkingSockets_GetAuthenticationStatus( ISteamNetworkingSockets* self, SteamNetAuthenticationStatus_t * pDetails );
@@ -91,8 +93,8 @@ STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingUtils_SetGlobalCa
 STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingUtils_SetConfigValue( ISteamNetworkingUtils* self, ESteamNetworkingConfigValue eValue, ESteamNetworkingConfigScope eScopeType, intptr_t scopeObj, ESteamNetworkingConfigDataType eDataType, const void * pArg );
 STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingUtils_SetConfigValueStruct( ISteamNetworkingUtils* self, const SteamNetworkingConfigValue_t & opt, ESteamNetworkingConfigScope eScopeType, intptr_t scopeObj );
 STEAMNETWORKINGSOCKETS_INTERFACE ESteamNetworkingGetConfigValueResult SteamAPI_ISteamNetworkingUtils_GetConfigValue( ISteamNetworkingUtils* self, ESteamNetworkingConfigValue eValue, ESteamNetworkingConfigScope eScopeType, intptr_t scopeObj, ESteamNetworkingConfigDataType * pOutDataType, void * pResult, size_t * cbResult );
-STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingUtils_GetConfigValueInfo( ISteamNetworkingUtils* self, ESteamNetworkingConfigValue eValue, const char ** pOutName, ESteamNetworkingConfigDataType * pOutDataType, ESteamNetworkingConfigScope * pOutScope, ESteamNetworkingConfigValue * pOutNextValue );
-STEAMNETWORKINGSOCKETS_INTERFACE ESteamNetworkingConfigValue SteamAPI_ISteamNetworkingUtils_GetFirstConfigValue( ISteamNetworkingUtils* self );
+STEAMNETWORKINGSOCKETS_INTERFACE const char * SteamAPI_ISteamNetworkingUtils_GetConfigValueInfo( ISteamNetworkingUtils* self, ESteamNetworkingConfigValue eValue, ESteamNetworkingConfigDataType * pOutDataType, ESteamNetworkingConfigScope * pOutScope );
+STEAMNETWORKINGSOCKETS_INTERFACE ESteamNetworkingConfigValue SteamAPI_ISteamNetworkingUtils_IterateGenericEditableConfigValues( ISteamNetworkingUtils* self, ESteamNetworkingConfigValue eCurrent, bool bEnumerateDevVars );
 
 // SteamNetworkingIPAddr
 STEAMNETWORKINGSOCKETS_INTERFACE void SteamAPI_SteamNetworkingIPAddr_Clear( SteamNetworkingIPAddr* self );
@@ -135,5 +137,30 @@ STEAMNETWORKINGSOCKETS_INTERFACE void SteamAPI_SteamDatagramHostedAddress_Clear(
 STEAMNETWORKINGSOCKETS_INTERFACE SteamNetworkingPOPID SteamAPI_SteamDatagramHostedAddress_GetPopID( SteamDatagramHostedAddress* self );
 STEAMNETWORKINGSOCKETS_INTERFACE void SteamAPI_SteamDatagramHostedAddress_SetDevAddress( SteamDatagramHostedAddress* self, uint32 nIP, uint16 nPort, SteamNetworkingPOPID popid );
 #endif
+
+//
+// Special flat functions to make it easier to work with custom signaling
+//
+
+typedef bool (*FSteamNetworkingSocketsCustomSignaling_SendSignal)( void *ctx, HSteamNetConnection hConn, const SteamNetConnectionInfo_t &info, const void *pMsg, int cbMsg );
+typedef void (*FSteamNetworkingSocketsCustomSignaling_Release)( void *ctx );
+
+/// Create an ISteamNetworkingConnectionSignaling object from plain C primitives.
+STEAMNETWORKINGSOCKETS_INTERFACE ISteamNetworkingConnectionSignaling *SteamAPI_ISteamNetworkingSockets_CreateCustomSignaling(
+	void *ctx, //< pointer to something useful you understand.  Will be passed to your callbacks.
+	FSteamNetworkingSocketsCustomSignaling_SendSignal fnSendSignal, //< Callback to send a signal.  See ISteamNetworkingConnectionSignaling::SendSignal
+	FSteamNetworkingSocketsCustomSignaling_Release fnRelease //< callback to do any cleanup.  See ISteamNetworkingConnectionSignaling::Release.  You can pass NULL if you don't need to do any cleanup.
+);
+
+typedef ISteamNetworkingConnectionSignaling * (*FSteamNetworkingCustomSignalingRecvContext_OnConnectRequest)( void *ctx, HSteamNetConnection hConn, const SteamNetworkingIdentity &identityPeer, int nLocalVirtualPort );
+typedef void (*FSteamNetworkingCustomSignalingRecvContext_SendRejectionSignal)( void *ctx, const SteamNetworkingIdentity &identityPeer, const void *pMsg, int cbMsg );
+
+/// Same as SteamAPI_ISteamNetworkingSockets_ReceivedP2PCustomSignal, but using plain C primitives.
+STEAMNETWORKINGSOCKETS_INTERFACE bool SteamAPI_ISteamNetworkingSockets_ReceivedP2PCustomSignal2(
+	ISteamNetworkingSockets* self, const void * pMsg, int cbMsg, //< Same as SteamAPI_ISteamNetworkingSockets_ReceivedP2PCustomSignal
+	void *ctx, //< pointer to something useful you understand.  Will be passed to your callbacks.
+	FSteamNetworkingCustomSignalingRecvContext_OnConnectRequest fnOnConnectRequest, //< callback for sending a signal.  Required.  See ISteamNetworkingSignalingRecvContext::OnConnectRequest
+	FSteamNetworkingCustomSignalingRecvContext_SendRejectionSignal fnSendRejectionSignal //< callback when we wish to actively reject the connection.  Optional, pass NULL if you don't need this.  See ISteamNetworkingSignalingRecvContext::SendRejectionSignal
+);
 
 #endif // STEAMNETWORKINGSOCKETS_FLAT
