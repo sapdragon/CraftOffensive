@@ -1,6 +1,7 @@
 #include "../utils.h"
 #include "../../sdk/interfaces.h"
 #include "../../features/features.h"
+#include "assets/background.h"
 
 namespace render {
 	void init() {
@@ -16,13 +17,17 @@ namespace render {
 		auto& io = ImGui::GetIO();
 		auto& style = ImGui::GetStyle();
 
-		style.WindowMinSize = ImVec2(500, 500);
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &LogotypeRaw, sizeof( LogotypeRaw ), &assets::logotype );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &BackgroundRaw, sizeof( BackgroundRaw ), &assets::background );
+
 
 		ImFontConfig tahoma14;
-
 		tahoma14.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
 
-		fonts::m_tahoma14 = io.Fonts->AddFontFromFileTTF(_("C:\\Windows\\Fonts\\Tahoma.ttf"), 14.f, &tahoma14, io.Fonts->GetGlyphRangesCyrillic());
+		fonts::m_minecraft14 = io.Fonts->AddFontFromFileTTF(_("C:\\Windows\\Fonts\\Tahoma.ttf"), 14.f, &tahoma14, io.Fonts->GetGlyphRangesCyrillic());
+
+		style.WindowPadding = {};
+		style.WindowBorderSize = {};
 
 		ImGuiFreeType::BuildFontAtlas(io.Fonts);
 	}
@@ -227,8 +232,4 @@ namespace render {
 	std::shared_ptr<ImDrawList> m_draw_list;
 	std::shared_ptr<ImDrawList> m_data_draw_list;
 	std::shared_ptr<ImDrawList> m_replace_draw_list;
-}
-
-namespace fonts {
-	ImFont* m_tahoma14 = nullptr;
 }

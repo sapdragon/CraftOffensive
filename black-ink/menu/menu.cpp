@@ -1,59 +1,32 @@
 #include "menu.h"
+#include "../utils/render/render.h"
 
 void c_menu::on_paint() {
 	if (!(input::m_blocked = input::get_key<TOGGLE>(VK_INSERT)))
 		return;
 
-	ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Once);
+	ImGui::Begin( _( "Back" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus );
+	{
+		ImGui::SetWindowSize( ImGui::GetIO( ).DisplaySize );
+		ImGui::SetWindowPos( {} );
 
-	if (ImGui::Begin(_("black-ink sdk"), 0, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-		if (ImGui::BeginTabBar("cheat")) {
-			if (ImGui::BeginTabItem("ragebot")) {
+		ImGui::GetWindowDrawList( )->AddRectFilled( { 0, 0 }, ImGui::GetIO( ).DisplaySize, ImColor( 24, 24, 24, 100 ) );
+		ImGui::GetWindowDrawList( )->AddImage( assets::logotype,
+			ImGui::GetIO( ).DisplaySize / 2 - ImVec2( 367, 51 ),
+			ImGui::GetIO( ).DisplaySize / 2 + ImVec2( 367, 51 )
+		);
+	}
+	ImGui::End( );
 
-				ImGui::EndTabItem();
-			}
+	ImGui::Begin( _( "CraftOffensive" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration );
+	{
+		ImGui::SetWindowSize( ImVec2( 600, 445 ), ImGuiCond_Once );
 
-			if (ImGui::BeginTabItem("player")) {
-				ImGui::Checkbox(_("visuals enable"), &cfg::get<bool>(FNV1A("visuals_enable")));
-				ImGui::Checkbox(_("box esp"), &cfg::get<bool>(FNV1A("box_esp")));
-				ImGui::Checkbox(_("name esp"), &cfg::get<bool>(FNV1A("name_esp")));
-				ImGui::Checkbox(_("health esp"), &cfg::get<bool>(FNV1A("health_esp")));
+		auto draw = ImGui::GetWindowDrawList( );
+		auto pos = ImGui::GetWindowPos( );
 
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("visuals")) {
-
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("misc")) {
-				ImGui::Checkbox(_("auto jump"), &cfg::get<bool>(FNV1A("auto_jump")));
-				ImGui::Checkbox(_("auto strafe"), &cfg::get<bool>(FNV1A("auto_strafe")));
-
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("cfg")) {
-				if (ImGui::Button(_("save"))) {
-					cfg::save();
-				}
-
-				if (ImGui::Button(_("load"))) {
-					cfg::load();
-				}
-
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("lua")) {
-				ImGui::Text(_("soon.."));
-
-				ImGui::EndTabItem();
-			}
-
-			ImGui::EndTabBar();
-		}
+		draw->AddRectFilled( pos, pos + ImVec2( 600, 50 ), ImColor( 26, 26, 26 ));
+		draw->AddImage( assets::background, pos + ImVec2( 0, 50 ), pos + ImVec2( 600, 475 ));
 	}
 	ImGui::End();
 }

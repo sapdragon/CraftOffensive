@@ -2,29 +2,17 @@
 #include "json/json.hpp"
 
 namespace cfg {
-	struct item_t {
-		template<typename T>
-		T& get() { return *reinterpret_cast<T*>(std::any_cast<T>(&m_var)); }
+	void init( );
 
-		template<typename T>
-		void set(T val) { m_var.emplace<T>(val); }
+	inline std::unordered_map<uint32_t, std::any> m_items;
 
-		uint32_t m_type;
+	template<class T = bool>
+	T get( uint32_t hash ) {
+		return std::any_cast<T>(m_items[hash]);
+	}
 
-		std::any m_var;
-	};
-
-	void init();
-
-	void save();
-
-	void load();
-
-	template<typename T>
-	__declspec(noinline) static T& get(uint32_t hash) { return m_items.at(hash).get<T>(); }
-
-	extern std::string m_name;
-	extern std::string m_folder;
-
-	extern std::unordered_map<uint32_t, item_t> m_items;
+	template<class T = bool>
+	void set( uint32_t hash, T value ) {
+		m_items[ hash ] = value;
+	}
 }

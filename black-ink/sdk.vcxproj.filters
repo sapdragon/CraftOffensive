@@ -250,5 +250,6 @@
     <ClInclude Include="utils\minhook\minhook.h" />
     <ClInclude Include="utils\minhook\trampoline.h" />
     <ClInclude Include="features\visuals\player_esp.h" />
+    <ClInclude Include="utils\render\assets\background.h" />
   </ItemGroup>
 </Project>

@@ -259,6 +259,7 @@
     <ClInclude Include="utils\netvars\netvars.h" />
     <ClInclude Include="utils\obfuscation\fnv1a.h" />
     <ClInclude Include="utils\obfuscation\xor.h" />
+    <ClInclude Include="utils\render\assets\background.h" />
     <ClInclude Include="utils\render\render.h" />
     <ClInclude Include="utils\utils.h" />
   </ItemGroup>

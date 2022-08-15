@@ -57,11 +57,11 @@ void c_player_esp::draw_name(c_cs_player* player, int index, vec3_t pos, vec3_t 
 
 	interfaces::m_engine->get_player_info(index, &player_info);
 
-	auto size = fonts::m_tahoma14->CalcTextSizeA(12.f, FLT_MAX, 0.0f, player_info.m_name);
+	auto size = fonts::m_minecraft14->CalcTextSizeA(12.f, FLT_MAX, 0.0f, player_info.m_name);
 	int height = (pos.y - top.y);
 	int weight = height / 2;
 
-	render::text_string(pos.x - size.x / 2, top.y - 15, color, e_font_flags::FONT_DROP_SHADOW, fonts::m_tahoma14, player_info.m_name);
+	render::text_string(pos.x - size.x / 2, top.y - 15, color, e_font_flags::FONT_DROP_SHADOW, fonts::m_minecraft14, player_info.m_name);
 }
 
 void c_player_esp::draw_health(c_cs_player* player, vec3_t pos, vec3_t top) {
@@ -80,11 +80,11 @@ void c_player_esp::draw_health(c_cs_player* player, vec3_t pos, vec3_t top) {
 	if (hp < old_hp)
 		old_hp++;
 
-	auto size = fonts::m_tahoma14->CalcTextSizeA(12.f, FLT_MAX, 0.0f, std::to_string(player_hp).c_str());
+	auto size = fonts::m_minecraft14->CalcTextSizeA(12.f, FLT_MAX, 0.0f, std::to_string(player_hp).c_str());
 
 	render::rect_filled_int((pos.x - width / 2) - 6, top.y, (pos.x - width / 2) - 1, top.y + height, col_t(20, 20, 20, 100));
 	render::rect_filled_int((pos.x - width / 2) - 6 + 1, top.y + hp + 1, (pos.x - width / 2) - 2, top.y + height - 1, col_t(30, 255, 30, 255));
 
 	if (player_hp < 90)
-		render::text_string((pos.x - width / 2) - size.x + 5, top.y + hp - 4, col_t(255, 255, 255, 255), e_font_flags::FONT_OUTLINE, fonts::m_tahoma14, std::to_string(player_hp).c_str());
+		render::text_string((pos.x - width / 2) - size.x + 5, top.y + hp - 4, col_t(255, 255, 255, 255), e_font_flags::FONT_OUTLINE, fonts::m_minecraft14, std::to_string(player_hp).c_str());
 }
