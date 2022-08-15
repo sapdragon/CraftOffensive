@@ -35,6 +35,8 @@ void c_menu::on_paint() {
 			ImGui::SetCursorPos( { float(a * 100), 0} );
 			elements::tab( tabLabels[a], assets::icons[a], m_selected_tab, a );
 		}
+
+		draw->AddRectFilled( pos + ImVec2(0, 50), pos + ImVec2( 150, 445 ), ImColor( 35, 35, 35 ) );
 	}
 	ImGui::End();
 }
