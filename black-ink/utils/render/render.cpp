@@ -25,7 +25,6 @@ namespace render {
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DirtRaw, sizeof( DirtRaw ), &assets::dirt );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DiamondRaw, sizeof( DiamondRaw ), &assets::diamond );
 
-
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Aimbot, sizeof( Aimbot ), &assets::icons[ 0 ] );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 1 ] );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Misc, sizeof( Misc ), &assets::icons[ 2 ] );
@@ -36,7 +35,12 @@ namespace render {
 		ImFontConfig minecraft14;
 		minecraft14.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
 
+		ImFontConfig minecraft16;
+		minecraft16.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
+
 		fonts::m_minecraft14 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 14, &minecraft14 );
+		fonts::m_minecraft16 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 16, &minecraft16 );
+
 
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};

@@ -56,6 +56,7 @@ void c_menu::on_paint() {
 			if ( m_selected_tab == 0 ) {
 				elements::child( _("General"), { 220, 120 }, [ ] ( ) {
 					elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
+					elements::slider_int( _( "slider" ), FNV1A( "slider" ), 30, 120, "Slider Value: %i" );
 				} );
 			}
 		}

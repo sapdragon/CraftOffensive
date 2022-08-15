@@ -7,6 +7,8 @@ namespace cfg {
 		set( FNV1A( "name_esp" ), false);
 		set( FNV1A( "health_esp" ), false);
 
+		set<int>( FNV1A( "slider" ), 0 );
+
 		set( FNV1A( "auto_jump"), false );
 		set( FNV1A( "auto_strafe" ), false);
 	}

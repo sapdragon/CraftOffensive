@@ -87,7 +87,7 @@ namespace elements {
         {
             auto pos = ImGui::GetWindowPos( );
 
-            ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 44, 44, 44, 220 ) );
+            ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ) );
 
             ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), false );
             ImGui::GetWindowDrawList( )->AddImage( assets::dirt, pos, pos + ImVec2{600, 51} );
@@ -145,8 +145,159 @@ namespace elements {
 
         window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 1, 5 ), bb.Min + ImVec2{ 16, 19 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
 
-        window->DrawList->AddRect( bb.Min + ImVec2( 0, 4 ), bb.Min + ImVec2( 17, 21 ), ImColor( 194, 194, 194 ) );
+        window->DrawList->AddRect( bb.Min + ImVec2( 0, 4 ), bb.Min + ImVec2( 17, 21 ), ImColor( 0, 0, 0 ) );
 
         window->DrawList->AddText( bb.Min + ImVec2( 25, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
     }
+
+    static const ImGuiDataTypeInfo GDataTypeInfo[] =
+    {
+        { sizeof( char ),             "%d",   "%d"    },  // ImGuiDataType_S8
+        { sizeof( unsigned char ),    "%u",   "%u"    },
+        { sizeof( short ),            "%d",   "%d"    },  // ImGuiDataType_S16
+        { sizeof( unsigned short ),   "%u",   "%u"    },
+        { sizeof( int ),              "%d",   "%d"    },  // ImGuiDataType_S32
+        { sizeof( unsigned int ),     "%u",   "%u"    },
+        { sizeof( ImS64 ),            "%I64d","%I64d" },  // ImGuiDataType_S64
+        { sizeof( ImU64 ),            "%I64u","%I64u" },
+        { sizeof( float ),            "%f",   "%f"    },  // ImGuiDataType_Float (float are promoted to double in va_arg)
+        { sizeof( double ),           "%f",   "%lf"   },  // ImGuiDataType_Double
+    };
+    IM_STATIC_ASSERT( IM_ARRAYSIZE( GDataTypeInfo ) == ImGuiDataType_COUNT );
+
+    static const char* PatchFormatStringFloatToInt( const char* fmt )
+    {
+        if ( fmt[ 0 ] == '%' && fmt[ 1 ] == '.' && fmt[ 2 ] == '0' && fmt[ 3 ] == 'f' && fmt[ 4 ] == 0 ) // Fast legacy path for "%.0f" which is expected to be the most common case.
+            return "%d";
+        const char* fmt_start = ImParseFormatFindStart( fmt );    // Find % (if any, and ignore %%)
+        const char* fmt_end = ImParseFormatFindEnd( fmt_start );  // Find end of format specifier, which itself is an exercise of confidence/recklessness (because snprintf is dependent on libc or user).
+        if ( fmt_end > fmt_start && fmt_end[ -1 ] == 'f' )
+        {
+            if ( fmt_start == fmt && fmt_end[ 0 ] == 0 )
+                return "%d";
+            ImGuiContext& g = *GImGui;
+            ImFormatString( g.TempBuffer, IM_ARRAYSIZE( g.TempBuffer ), "%.*s%%d%s", ( int ) ( fmt_start - fmt ), fmt, fmt_end ); // Honor leading and trailing decorations, but lose alignment/precision.
+            return g.TempBuffer;
+        }
+        return fmt;
+    }
+
+    inline const ImGuiDataTypeInfo* DataTypeGetInfo( ImGuiDataType data_type )
+    {
+        IM_ASSERT( data_type >= 0 && data_type < ImGuiDataType_COUNT );
+        return &GDataTypeInfo[ data_type ];
+    }
+
+    inline int DataTypeFormatString( char* buf, int buf_size, ImGuiDataType data_type, const void* p_data, const char* format )
+    {
+        // Signedness doesn't matter when pushing integer arguments
+        if ( data_type == ImGuiDataType_S32 || data_type == ImGuiDataType_U32 )
+            return ImFormatString( buf, buf_size, format, *( const ImU32* ) p_data );
+        if ( data_type == ImGuiDataType_S64 || data_type == ImGuiDataType_U64 )
+            return ImFormatString( buf, buf_size, format, *( const ImU64* ) p_data );
+        if ( data_type == ImGuiDataType_Float )
+            return ImFormatString( buf, buf_size, format, *( const float* ) p_data );
+        if ( data_type == ImGuiDataType_Double )
+            return ImFormatString( buf, buf_size, format, *( const double* ) p_data );
+        if ( data_type == ImGuiDataType_S8 )
+            return ImFormatString( buf, buf_size, format, *( const ImS8* ) p_data );
+        if ( data_type == ImGuiDataType_U8 )
+            return ImFormatString( buf, buf_size, format, *( const ImU8* ) p_data );
+        if ( data_type == ImGuiDataType_S16 )
+            return ImFormatString( buf, buf_size, format, *( const ImS16* ) p_data );
+        if ( data_type == ImGuiDataType_U16 )
+            return ImFormatString( buf, buf_size, format, *( const ImU16* ) p_data );
+        IM_ASSERT( 0 );
+        return 0;
+    }
+
+    inline bool __sliderscalar( const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, float power )
+    {
+        using namespace ImGui;
+
+        ImGuiWindow* window = GetCurrentWindow( );
+        if ( window->SkipItems )
+            return false;
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiID id = window->GetID( label );
+        const float w = CalcItemWidth( );
+
+        const ImVec2 label_size = CalcTextSize( label, NULL, true );
+        const ImRect frame_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( ImGui::GetWindowSize( ).x, 25 ) );
+        const ImRect total_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( ImGui::GetWindowSize( ).x, 30 ) );
+
+        ItemSize( total_bb, style.FramePadding.y );
+        if ( !ItemAdd( total_bb, id, &frame_bb ) )
+            return false;
+
+        if ( format == NULL )
+            format = DataTypeGetInfo( data_type )->PrintFmt;
+        else if ( data_type == ImGuiDataType_S32 && strcmp( format, "%d" ) != 0 )
+            format = PatchFormatStringFloatToInt( format );
+
+        const bool hovered = ItemHoverable( frame_bb, id );
+
+        const bool focus_requested = FocusableItemRegister( window, id );
+        const bool clicked = ( hovered && g.IO.MouseClicked[ 0 ] );
+        if ( focus_requested || clicked || g.NavActivateId == id || g.NavInputId == id )
+        {
+            SetActiveID( id, window );
+            SetFocusID( id, window );
+            FocusWindow( window );
+            g.ActiveIdUsingNavDirMask |= ( 1 << ImGuiDir_Left ) | ( 1 << ImGuiDir_Right );
+
+            if ( focus_requested || ( clicked && g.IO.KeyCtrl ) || g.NavInputId == id )
+            {
+                FocusableItemUnregister( window );
+            }
+        }
+
+        window->DrawList->PushClipRect( frame_bb.Min, frame_bb.Max, false );
+        window->DrawList->AddImage( assets::background, frame_bb.Min, frame_bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->PopClipRect( );
+
+        window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 47, 47, 47, 90 ), 0, 0 );
+
+        ImRect grab_bb;
+        const bool value_changed = SliderBehavior( frame_bb, id, data_type, p_data, p_min, p_max, format, power, ImGuiSliderFlags_None, &grab_bb );
+
+        if ( grab_bb.Max.x > grab_bb.Min.x )
+        {
+            window->DrawList->AddRectFilled( grab_bb.Min - ImVec2(1, 1), grab_bb.Max + ImVec2( 1, 1 ), ImColor( 170, 169, 167 ) );
+            window->DrawList->AddRectFilled( grab_bb.Min + ImVec2(0, 0), grab_bb.Max + ImVec2( 1, 1 ), ImColor( 85, 85, 85 ) );
+            window->DrawList->AddRectFilled( grab_bb.Min, grab_bb.Max - ImVec2( 1, 1 ), ImColor( 110, 109, 107 ) );
+
+            window->DrawList->AddRect( grab_bb.Min - ImVec2( 2, 2 ), grab_bb.Max + ImVec2( 2, 2 ), ImColor( 0, 0, 0 ) );
+        }
+
+        window->DrawList->AddRect( frame_bb.Min, frame_bb.Max, ImColor( 0, 0, 0 ), 0, 0 );
+
+        char value_buf[ 64 ];
+        const char* value_buf_end = value_buf + DataTypeFormatString( value_buf, IM_ARRAYSIZE( value_buf ), data_type, p_data, format );
+
+        ImGui::PushFont( fonts::m_minecraft16 );
+        RenderTextClipped( frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2( 0.5f, 0.5f ) );
+        ImGui::PopFont( );
+
+        return value_changed;
+    }
+
+    inline void slider_float( std::string label, uint32_t v, float v_min, float v_max, const char* format = "%0.1f", float power = 1.f )
+    {
+        float value = cfg::get<float>( v );
+
+        if ( __sliderscalar( label.c_str( ), ImGuiDataType_Float, &value, &v_min, &v_max, format, 1 ) )
+            cfg::set<float>( v, value );
+    }
+
+    inline void slider_int( std::string label, uint32_t v, int v_min, int v_max, const char* format = "%i" )
+    {
+        int value = cfg::get<int>( v );
+
+        if ( __sliderscalar( label.c_str( ), ImGuiDataType_S32, &value, &v_min, &v_max, format, 1 ) )
+            cfg::set<int>( v, value );
+    }
+
 }
