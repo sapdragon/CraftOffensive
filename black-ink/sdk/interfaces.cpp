@@ -57,8 +57,8 @@ namespace interfaces {
 		m_steam_game_coordinator = ( ISteamGameCoordinator* ) m_steam_client->GetISteamGenericInterface( hSteamUser, hSteamPipe, _( "SteamGameCoordinator001" ) );
 		m_steam_matchmaking = m_steam_client->GetISteamMatchmaking( hSteamUser, hSteamPipe, STEAMMATCHMAKING_INTERFACE_VERSION );
 
-		m_steam_networking_messages = get<ISteamNetworkingMessages*>( FNV1A( "steamnetworkingsockets.dll" ), FNV1A( "SteamNetworkingMessages_LibV2" ) );
-		m_steam_networking_sockets = get<ISteamNetworkingSockets*>( FNV1A( "steamnetworkingsockets.dll" ), FNV1A( "SteamNetworkingSockets_LibV9" ) );
+		m_steam_networking_sockets = ( ( ISteamNetworkingSockets* ( * )( ) )GetProcAddress( GetModuleHandleA(_("steamnetworkingsockets.dll" ) ), _( "SteamNetworkingSockets_LibV12" ) ) )( );
+		m_steam_networking_messages = ( ( ISteamNetworkingMessages* ( * )( ) )GetProcAddress( GetModuleHandleA( _( "steamnetworkingsockets.dll" ) ), _( "SteamNetworkingMessages_LibV2" ) ) )( );
 
 
 
