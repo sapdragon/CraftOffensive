@@ -79,6 +79,23 @@ namespace hooks {
 		}
 	}
 
+	namespace other
+	{
+		namespace process_spotted_entity_update
+		{
+			bool __fastcall hook( void* ecx, void* edx, c_process_spotted_entity_update* message);
+			using fn = bool( __fastcall* )( void*, void*, c_process_spotted_entity_update* );
+
+		}
+
+		namespace allocate_memory
+		{
+			void* __fastcall hook( void* ecx, void* edx, int size );
+			using fn = void* ( __fastcall* )( void*, void*, int );
+
+		}
+	}
+
 	inline hooks::d3d_device::present::fn present_original = nullptr;
 	inline hooks::d3d_device::reset::fn reset_original = nullptr;
 	inline hooks::client_dll::frame_stage_notify::fn frame_stage_notify_original = nullptr;
@@ -89,4 +106,7 @@ namespace hooks {
 	inline hooks::player::eye_angles::fn eye_angles_original = nullptr;
 	inline hooks::surface::lock_cursor::fn lock_cursor_original = nullptr;
 	inline hooks::networking::send_datagram::fn send_datagram_original = nullptr;
+	inline hooks::other::process_spotted_entity_update::fn process_spotted_entity_update_original = nullptr;
+	inline hooks::other::allocate_memory::fn allocate_memory_original = nullptr;
+
 }

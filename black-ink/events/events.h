@@ -17,6 +17,10 @@ namespace events {
 	void undo();
 
 	void player_hurt(i_game_event* event);
+	void round_start( i_game_event* event );
+	void item_equip( i_game_event* event );
+
+
 
 	extern c_listener m_listener;
 

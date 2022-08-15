@@ -136,6 +136,18 @@
     <ClCompile Include="features\shared\proto\shared.pb.cc">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="features\dormant\dormant.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\vtables\other.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="events\callbacks\item_equip.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="events\callbacks\round_start.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common_includes.h" />
@@ -278,5 +290,6 @@
     <ClInclude Include="utils\render\assets\items.h" />
     <ClInclude Include="features\shared\shared.hpp" />
     <ClInclude Include="features\shared\proto\shared.pb.h" />
+    <ClInclude Include="features\dormant\dormant.hpp" />
   </ItemGroup>
 </Project>

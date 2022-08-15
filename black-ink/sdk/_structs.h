@@ -268,6 +268,13 @@ public:
 	float	m_recoil_magnitude_variance_alt;
 };
 
+class c_process_spotted_entity_update
+{
+public:
+	char PAD[ 0xC ];
+	int m_size;
+};
+
 enum e_cs_weapon_type {
 	WEAPON_TYPE_KNIFE,
 	WEAPON_TYPE_PISTOL,

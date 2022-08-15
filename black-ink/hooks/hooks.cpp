@@ -13,6 +13,9 @@ namespace hooks {
 		const auto lock_cursor_index = reinterpret_cast<void*>(get_virtual(interfaces::m_surface, 67u));
 
 		const auto send_datagram = reinterpret_cast< void* >(utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "55 8B EC 83 E4 F0 B8 38 01 10 00 E8" ) ) ) ;
+		const auto process_spotted_entity_update = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "client.dll" ) ), _( "55 8B EC 83 EC 18 8B 45 08 53 56 57 80 78 18 00" ) ) );
+		const auto allocate_memory = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "vstdlib.dll" ) ), _( "55 8B EC A1 ? ? ? ? 8B 08 8B 01 5D FF 60 04" ) ) );
+
 
 		if (MH_Initialize() != MH_OK)
 			throw std::runtime_error("failed to initialize MH_Initialize.");
@@ -46,6 +49,12 @@ namespace hooks {
 
 		if ( MH_CreateHook( send_datagram, &networking::send_datagram::hook, reinterpret_cast< void** >( &send_datagram_original ) ) != MH_OK )
 			throw std::runtime_error( "Failed to initialize send_datagram" );
+
+		if ( MH_CreateHook( process_spotted_entity_update, &other::process_spotted_entity_update::hook, reinterpret_cast< void** >( &process_spotted_entity_update_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize process_spotted_entity_update." );
+
+		if ( MH_CreateHook( allocate_memory, &other::allocate_memory::hook, reinterpret_cast< void** >( &allocate_memory_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize allocate_memory." );
 
 		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 			throw std::runtime_error("failed to enable all hooks.");

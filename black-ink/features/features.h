@@ -3,6 +3,8 @@
 
 #include "ragebot/prediction.h"
 
+#include "dormant/dormant.hpp"
+
 #include "misc/movement.h"
 
 #include "visuals/player_esp.h"

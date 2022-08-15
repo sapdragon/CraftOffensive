@@ -100,8 +100,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="events\callbacks\item_equip.cpp" />
     <ClCompile Include="events\callbacks\player_hurt.cpp" />
+    <ClCompile Include="events\callbacks\round_start.cpp" />
     <ClCompile Include="events\events.cpp" />
+    <ClCompile Include="features\dormant\dormant.cpp" />
     <ClCompile Include="features\misc\movement.cpp" />
     <ClCompile Include="features\ragebot\prediction.cpp" />
     <ClCompile Include="features\shared\proto\shared.pb.cc" />
@@ -114,6 +117,7 @@
     <ClCompile Include="hooks\vtables\d3d_device.cpp" />
     <ClCompile Include="hooks\vtables\model_render.cpp" />
     <ClCompile Include="hooks\vtables\networking.cpp" />
+    <ClCompile Include="hooks\vtables\other.cpp" />
     <ClCompile Include="hooks\vtables\player.cpp" />
     <ClCompile Include="hooks\vtables\surface.cpp" />
     <ClCompile Include="hooks\vtables\panel.cpp" />
@@ -147,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="common_includes.h" />
     <ClInclude Include="events\events.h" />
+    <ClInclude Include="features\dormant\dormant.hpp" />
     <ClInclude Include="features\features.h" />
     <ClInclude Include="features\misc\movement.h" />
     <ClInclude Include="features\ragebot\prediction.h" />

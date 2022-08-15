@@ -7,6 +7,8 @@ namespace events {
 
 	void init() {
 		ADD_CALLBACK("player_hurt", player_hurt);
+		ADD_CALLBACK( "item_equip", item_equip );
+		ADD_CALLBACK( "round_start", round_start );
 	}
 
 	void undo() { interfaces::m_event_manager->remove_listener(&m_listener); }
