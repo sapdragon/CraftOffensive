@@ -22,6 +22,9 @@ namespace render {
 
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &LogotypeRaw, sizeof( LogotypeRaw ), &assets::logotype );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &BackgroundRaw, sizeof( BackgroundRaw ), &assets::background );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DirtRaw, sizeof( DirtRaw ), &assets::dirt );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DiamondRaw, sizeof( DiamondRaw ), &assets::diamond );
+
 
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Aimbot, sizeof( Aimbot ), &assets::icons[ 0 ] );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 1 ] );
@@ -33,10 +36,11 @@ namespace render {
 		ImFontConfig minecraft14;
 		minecraft14.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
 
-		fonts::m_minecraft14 = io.Fonts->AddFontFromMemoryCompressedTTF(minecraft_compressed_data, minecraft_compressed_size, 14, &minecraft14 );
+		fonts::m_minecraft14 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 14, &minecraft14 );
 
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};
+		style.ItemSpacing = {};
 
 		ImGuiFreeType::BuildFontAtlas(io.Fonts);
 	}
