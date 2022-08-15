@@ -43,6 +43,25 @@ namespace interfaces {
 		m_panel = get<i_panel*>(FNV1A("vgui2.dll"), FNV1A("VGUI_Panel009"));
 		m_render_view = get<i_render_view*>(FNV1A("engine.dll"), FNV1A("VEngineRenderView014"));
 
+
+		void* m_pSteamUser = ( void* ) ( GetProcAddress( GetModuleHandleA(_("steam_api.dll") ), _( "SteamAPI_GetHSteamUser" ) ) );
+		void* m_pSteamPipe = ( void* ) ( GetProcAddress( GetModuleHandleA(_("steam_api.dll") ) , _( "SteamAPI_GetHSteamPipe" ) ) );
+		auto hSteamUser = ( ( ( HSteamUser( __cdecl* )( void ) ) m_pSteamUser ) )( );
+		auto hSteamPipe = ( ( ( HSteamPipe( __cdecl* )( void ) ) m_pSteamPipe ) )( );
+
+		m_steam_client = ( ( ISteamClient * ( __cdecl* )( void ) ) GetProcAddress( GetModuleHandleA( _( "steam_api.dll" ) ) , _( "SteamClient" ) ) )( );
+		m_steam_http = m_steam_client->GetISteamHTTP( hSteamUser, hSteamPipe, _( "STEAMHTTP_INTERFACE_VERSION002" ) );
+		m_steam_user = m_steam_client->GetISteamUser( hSteamUser, hSteamPipe, _( "SteamUser019" ) );
+		m_steam_friends = m_steam_client->GetISteamFriends( hSteamUser, hSteamPipe, _( "SteamFriends015" ) );
+		m_steam_inventory = m_steam_client->GetISteamInventory( hSteamUser, hSteamPipe, _( "STEAMINVENTORY_INTERFACE_V002" ) );
+		m_steam_game_coordinator = ( ISteamGameCoordinator* ) m_steam_client->GetISteamGenericInterface( hSteamUser, hSteamPipe, _( "SteamGameCoordinator001" ) );
+		m_steam_matchmaking = m_steam_client->GetISteamMatchmaking( hSteamUser, hSteamPipe, STEAMMATCHMAKING_INTERFACE_VERSION );
+
+		m_steam_networking_messages = get<ISteamNetworkingMessages*>( FNV1A( "steamnetworkingsockets.dll" ), FNV1A( "SteamNetworkingMessages_LibV2" ) );
+		m_steam_networking_sockets = get<ISteamNetworkingSockets*>( FNV1A( "steamnetworkingsockets.dll" ), FNV1A( "SteamNetworkingSockets_LibV9" ) );
+
+
+
 		if (const auto shader_device = get<uintptr_t**>(FNV1A("shaderapidx9.dll"), FNV1A("ShaderDevice001"))) {
 			if (const auto device_table = shader_device[0]) {
 				if (const auto shutdown_device = device_table[37]) {
@@ -85,4 +104,16 @@ namespace interfaces {
 	i_render_view*			m_render_view = nullptr;
 
 	IDirect3DDevice9*		m_d3d_device = nullptr;
+
+	extern ISteamClient* m_steam_client = nullptr;
+	extern ISteamHTTP* m_steam_http = nullptr;
+	extern ISteamUser* m_steam_user = nullptr;
+	extern ISteamFriends* m_steam_friends = nullptr;
+	extern ISteamInventory* m_steam_inventory = nullptr;
+	extern ISteamGameCoordinator* m_steam_game_coordinator = nullptr;
+	extern ISteamMatchmaking* m_steam_matchmaking = nullptr;
+
+	extern ISteamNetworkingMessages* m_steam_networking_messages = nullptr;
+	extern ISteamNetworkingSockets* m_steam_networking_sockets = nullptr;
+	extern ISteamNetworkingUtils* m_steam_networking_utils = nullptr;
 }

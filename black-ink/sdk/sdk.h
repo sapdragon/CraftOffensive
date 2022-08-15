@@ -54,4 +54,13 @@
 #include "interfaces/i_localize.h"
 #include "interfaces/i_panel.h"
 
+#include "../utils/steam/steamnetworkingsockets.h"
+#include "../utils/steam/isteamnetworkingmessages.h"
+#include "../utils/steam/isteamnetworkingutils.h"
+#include "../utils/steam/isteamclient.h"
+#include "../utils/steam/isteamuser.h"
+#include "../utils/steam/isteamutils.h"
+#include "../utils/steam/isteamgamecoordinator.h"
+#include "../utils/steam/isteammatchmaking.h"
+
 #include "_classes.h"

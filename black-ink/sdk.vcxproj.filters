@@ -127,6 +127,9 @@
     <ClCompile Include="hooks\vtables\networking.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="utils\steam_sockets\steam_sockets.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common_includes.h" />
@@ -251,5 +254,18 @@
     <ClInclude Include="utils\minhook\trampoline.h" />
     <ClInclude Include="features\visuals\player_esp.h" />
     <ClInclude Include="utils\render\assets\background.h" />
+    <ClInclude Include="utils\steam_sockets\steam_sockets.hpp" />
+    <ClInclude Include="utils\steam\isteamnetworkingmessages.h" />
+    <ClInclude Include="utils\steam\isteamnetworkingsockets.h" />
+    <ClInclude Include="utils\steam\isteamnetworkingutils.h" />
+    <ClInclude Include="utils\steam\steam_api_common.h" />
+    <ClInclude Include="utils\steam\steamclientpublic.h" />
+    <ClInclude Include="utils\steam\steamnetworkingcustomsignaling.h" />
+    <ClInclude Include="utils\steam\steamnetworkingsockets.h" />
+    <ClInclude Include="utils\steam\steamnetworkingsockets_flat.h" />
+    <ClInclude Include="utils\steam\steamnetworkingtypes.h" />
+    <ClInclude Include="utils\steam\steamtypes.h" />
+    <ClInclude Include="utils\steam\steamuniverse.h" />
+
   </ItemGroup>
 </Project>

@@ -66,4 +66,19 @@ namespace interfaces {
 	extern i_render_view*			m_render_view;
 
 	extern IDirect3DDevice9*		m_d3d_device;
+
+	extern ISteamClient* m_steam_client;
+	extern ISteamHTTP* m_steam_http ;
+	extern ISteamUser* m_steam_user ;
+	extern ISteamFriends* m_steam_friends ;
+	extern ISteamInventory* m_steam_inventory ;
+	extern ISteamGameCoordinator* m_steam_game_coordinator ;
+	extern ISteamMatchmaking* m_steam_matchmaking ;
+
+	extern ISteamNetworkingMessages* m_steam_networking_messages;
+	extern ISteamNetworkingSockets* m_steam_networking_sockets;
+	extern ISteamNetworkingUtils* m_steam_networking_utils;
+
+
+
 }
