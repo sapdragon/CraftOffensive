@@ -1,5 +1,8 @@
 #include "menu.h"
-#include "../utils/render/render.h"
+
+#include "elements.h"
+
+std::string tabLabels[ 6 ] = {"Aimbot", "Visuals", "Misc", "Skins", "Files", "Dashboard"};
 
 void c_menu::on_paint() {
 	if (!(input::m_blocked = input::get_key<TOGGLE>(VK_INSERT)))
@@ -27,6 +30,11 @@ void c_menu::on_paint() {
 
 		draw->AddRectFilled( pos, pos + ImVec2( 600, 50 ), ImColor( 26, 26, 26 ));
 		draw->AddImage( assets::background, pos + ImVec2( 0, 50 ), pos + ImVec2( 600, 475 ));
+
+		for ( auto a = 0; a < 6; a++ ) {
+			ImGui::SetCursorPos( { float(a * 100), 0} );
+			elements::tab( tabLabels[a], assets::icons[a], m_selected_tab, a );
+		}
 	}
 	ImGui::End();
 }

@@ -1,7 +1,10 @@
 #include "../utils.h"
 #include "../../sdk/interfaces.h"
 #include "../../features/features.h"
+
 #include "assets/background.h"
+#include "assets/minecraftFont.h"
+#include "assets/items.h"
 
 namespace render {
 	void init() {
@@ -20,11 +23,17 @@ namespace render {
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &LogotypeRaw, sizeof( LogotypeRaw ), &assets::logotype );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &BackgroundRaw, sizeof( BackgroundRaw ), &assets::background );
 
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Aimbot, sizeof( Aimbot ), &assets::icons[ 0 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 1 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Misc, sizeof( Misc ), &assets::icons[ 2 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Skins, sizeof( Skins ), &assets::icons[ 3 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Files, sizeof( Files ), &assets::icons[ 4 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Dashboard, sizeof( Dashboard ), &assets::icons[ 5 ] );
 
-		ImFontConfig tahoma14;
-		tahoma14.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
+		ImFontConfig minecraft14;
+		minecraft14.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
 
-		fonts::m_minecraft14 = io.Fonts->AddFontFromFileTTF(_("C:\\Windows\\Fonts\\Tahoma.ttf"), 14.f, &tahoma14, io.Fonts->GetGlyphRangesCyrillic());
+		fonts::m_minecraft14 = io.Fonts->AddFontFromMemoryCompressedTTF(minecraft_compressed_data, minecraft_compressed_size, 14, &minecraft14 );
 
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};

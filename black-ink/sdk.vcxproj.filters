@@ -267,5 +267,9 @@
     <ClInclude Include="utils\steam\steamtypes.h" />
     <ClInclude Include="utils\steam\steamuniverse.h" />
 
+    <ClInclude Include="menu\elements.h" />
+    <ClInclude Include="utils\imgui\imgui_tweaker.hpp" />
+    <ClInclude Include="utils\render\assets\minecraftFont.h" />
+    <ClInclude Include="utils\render\assets\items.h" />
   </ItemGroup>
 </Project>

@@ -39,6 +39,9 @@ namespace render {
 namespace assets {
 	inline IDirect3DTexture9* logotype;
 	inline IDirect3DTexture9* background;
+
+	
+	inline IDirect3DTexture9* icons[6];
 }
 
 namespace fonts {
