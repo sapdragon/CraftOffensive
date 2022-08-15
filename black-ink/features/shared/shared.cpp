@@ -1,5 +1,6 @@
 #include "shared.hpp"
 #include "proto/shared.pb.h"
+#include "esp/shared_esp.hpp"
 void on_new_request_handler( SteamNetworkingMessagesSessionRequest_t* request )
 {
 	/* setup new connection*/
@@ -29,7 +30,7 @@ void c_shared::init( )
 
 	/* add all handlers*/
 	steamsockets::c_sockethandler* handler = new steamsockets::c_sockethandler;
-	//handler->add_handler( steamsockets::message_type_t::SHARED_ESP, nullptr ); // replace nullptr to you handler
+	handler->add_handler( steamsockets::message_type_t::SHARED_ESP, &shared_esp::handler );
 	
 	/* set handler to socket channel*/
 	m_socket->set_handler( handler );
@@ -37,4 +38,16 @@ void c_shared::init( )
 	/* set on new connection callback */
 	interfaces::m_steam_networking_utils->SetGlobalCallback_MessagesSessionRequest( on_new_request_handler );
 
+}
+
+void c_shared::send_data( )
+{
+	/* send data to all */
+	shared_esp::SendData( );
+
+}
+
+void c_shared::on_create_move( )
+{
+	m_socket->new_frame( );
 }

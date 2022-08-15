@@ -1,5 +1,5 @@
 #pragma once
-#include <unordered_map>
+#include <map>
 #include <google/protobuf/message.h>
 namespace steamsockets
 {
@@ -35,10 +35,11 @@ namespace steamsockets
 		void process_message( int size, uint16_t message_type, const char* message );
 		void add_handler( int handler_type, handler_fn function )
 		{
-			m_handlers.at( handler_type ) = function;
+			m_handlers.emplace( handler_type, function );
+			//m_handlers.at( handler_type ) = function;
 		}
 	private:
-		std::unordered_map < int, handler_fn > m_handlers;
+		std::map < int, handler_fn > m_handlers;
 	};
 
 	class c_socket_netchannel

@@ -3,6 +3,10 @@
 
 void steamsockets::c_sockethandler::process_message( int size, uint16_t message_type, const char* message )
 {
+	handler_fn pFunc = m_handlers[ message_type ];
+	if ( pFunc ) {
+		pFunc( size, message );
+	}
 }
 
 void steamsockets::c_socket_netchannel::new_frame( )
@@ -100,7 +104,7 @@ void steamsockets::c_socket_netchannel::SendMessageToAll( uint16_t message_type,
 	for ( auto i = 1; i < interfaces::m_global_vars->m_max_clients; i++ ) {
 		const auto player = static_cast< c_cs_player* >( interfaces::m_entity_list->get_client_entity( i ) );
 
-		if ( !player->is_player( ) )
+		if ( !player || !player->is_player( ) )
 			continue;
 
 		player_info_t info;

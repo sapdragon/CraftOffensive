@@ -31,128 +31,11 @@ void  protobuf_AddDesc_shared_2eproto();
 void protobuf_AssignDesc_shared_2eproto();
 void protobuf_ShutdownFile_shared_2eproto();
 
-class SharedHeader;
 class SharedHandshake;
+class SharedESPPlayer;
+class SharedESP;
 
 // ===================================================================
-
-class SharedHeader : public ::google::protobuf::Message {
- public:
-  SharedHeader();
-  virtual ~SharedHeader();
-
-  SharedHeader(const SharedHeader& from);
-
-  inline SharedHeader& operator=(const SharedHeader& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const SharedHeader& default_instance();
-
-  void Swap(SharedHeader* other);
-
-  // implements Message ----------------------------------------------
-
-  SharedHeader* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const SharedHeader& from);
-  void MergeFrom(const SharedHeader& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional string header = 1 [default = "BIDEN"];
-  inline bool has_header() const;
-  inline void clear_header();
-  static const int kHeaderFieldNumber = 1;
-  inline const ::std::string& header() const;
-  inline void set_header(const ::std::string& value);
-  inline void set_header(const char* value);
-  inline void set_header(const char* value, size_t size);
-  inline ::std::string* mutable_header();
-  inline ::std::string* release_header();
-  inline void set_allocated_header(::std::string* header);
-
-  // optional uint32 size = 2;
-  inline bool has_size() const;
-  inline void clear_size();
-  static const int kSizeFieldNumber = 2;
-  inline ::google::protobuf::uint32 size() const;
-  inline void set_size(::google::protobuf::uint32 value);
-
-  // optional uint32 steam_id = 3;
-  inline bool has_steam_id() const;
-  inline void clear_steam_id();
-  static const int kSteamIdFieldNumber = 3;
-  inline ::google::protobuf::uint32 steam_id() const;
-  inline void set_steam_id(::google::protobuf::uint32 value);
-
-  // optional uint32 type = 4;
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 4;
-  inline ::google::protobuf::uint32 type() const;
-  inline void set_type(::google::protobuf::uint32 value);
-
-  // @@protoc_insertion_point(class_scope:SharedHeader)
- private:
-  inline void set_has_header();
-  inline void clear_has_header();
-  inline void set_has_size();
-  inline void clear_has_size();
-  inline void set_has_steam_id();
-  inline void clear_has_steam_id();
-  inline void set_has_type();
-  inline void clear_has_type();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::std::string* header_;
-  static ::std::string* _default_header_;
-  ::google::protobuf::uint32 size_;
-  ::google::protobuf::uint32 steam_id_;
-  ::google::protobuf::uint32 type_;
-
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
-
-  friend void  protobuf_AddDesc_shared_2eproto();
-  friend void protobuf_AssignDesc_shared_2eproto();
-  friend void protobuf_ShutdownFile_shared_2eproto();
-
-  void InitAsDefaultInstance();
-  static SharedHeader* default_instance_;
-};
-// -------------------------------------------------------------------
 
 class SharedHandshake : public ::google::protobuf::Message {
  public:
@@ -208,23 +91,218 @@ class SharedHandshake : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional .SharedHeader header = 1;
-  inline bool has_header() const;
-  inline void clear_header();
-  static const int kHeaderFieldNumber = 1;
-  inline const ::SharedHeader& header() const;
-  inline ::SharedHeader* mutable_header();
-  inline ::SharedHeader* release_header();
-  inline void set_allocated_header(::SharedHeader* header);
-
   // @@protoc_insertion_point(class_scope:SharedHandshake)
  private:
-  inline void set_has_header();
-  inline void clear_has_header();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::SharedHeader* header_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+
+  friend void  protobuf_AddDesc_shared_2eproto();
+  friend void protobuf_AssignDesc_shared_2eproto();
+  friend void protobuf_ShutdownFile_shared_2eproto();
+
+  void InitAsDefaultInstance();
+  static SharedHandshake* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class SharedESPPlayer : public ::google::protobuf::Message {
+ public:
+  SharedESPPlayer();
+  virtual ~SharedESPPlayer();
+
+  SharedESPPlayer(const SharedESPPlayer& from);
+
+  inline SharedESPPlayer& operator=(const SharedESPPlayer& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SharedESPPlayer& default_instance();
+
+  void Swap(SharedESPPlayer* other);
+
+  // implements Message ----------------------------------------------
+
+  SharedESPPlayer* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SharedESPPlayer& from);
+  void MergeFrom(const SharedESPPlayer& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 player_index = 1;
+  inline bool has_player_index() const;
+  inline void clear_player_index();
+  static const int kPlayerIndexFieldNumber = 1;
+  inline ::google::protobuf::uint32 player_index() const;
+  inline void set_player_index(::google::protobuf::uint32 value);
+
+  // optional int32 origin_x = 2;
+  inline bool has_origin_x() const;
+  inline void clear_origin_x();
+  static const int kOriginXFieldNumber = 2;
+  inline ::google::protobuf::int32 origin_x() const;
+  inline void set_origin_x(::google::protobuf::int32 value);
+
+  // optional int32 origin_y = 3;
+  inline bool has_origin_y() const;
+  inline void clear_origin_y();
+  static const int kOriginYFieldNumber = 3;
+  inline ::google::protobuf::int32 origin_y() const;
+  inline void set_origin_y(::google::protobuf::int32 value);
+
+  // optional int32 origin_z = 4;
+  inline bool has_origin_z() const;
+  inline void clear_origin_z();
+  static const int kOriginZFieldNumber = 4;
+  inline ::google::protobuf::int32 origin_z() const;
+  inline void set_origin_z(::google::protobuf::int32 value);
+
+  // optional int32 health = 5;
+  inline bool has_health() const;
+  inline void clear_health();
+  static const int kHealthFieldNumber = 5;
+  inline ::google::protobuf::int32 health() const;
+  inline void set_health(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:SharedESPPlayer)
+ private:
+  inline void set_has_player_index();
+  inline void clear_has_player_index();
+  inline void set_has_origin_x();
+  inline void clear_has_origin_x();
+  inline void set_has_origin_y();
+  inline void clear_has_origin_y();
+  inline void set_has_origin_z();
+  inline void clear_has_origin_z();
+  inline void set_has_health();
+  inline void clear_has_health();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 player_index_;
+  ::google::protobuf::int32 origin_x_;
+  ::google::protobuf::int32 origin_y_;
+  ::google::protobuf::int32 origin_z_;
+  ::google::protobuf::int32 health_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_shared_2eproto();
+  friend void protobuf_AssignDesc_shared_2eproto();
+  friend void protobuf_ShutdownFile_shared_2eproto();
+
+  void InitAsDefaultInstance();
+  static SharedESPPlayer* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class SharedESP : public ::google::protobuf::Message {
+ public:
+  SharedESP();
+  virtual ~SharedESP();
+
+  SharedESP(const SharedESP& from);
+
+  inline SharedESP& operator=(const SharedESP& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SharedESP& default_instance();
+
+  void Swap(SharedESP* other);
+
+  // implements Message ----------------------------------------------
+
+  SharedESP* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SharedESP& from);
+  void MergeFrom(const SharedESP& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .SharedESPPlayer players = 1;
+  inline int players_size() const;
+  inline void clear_players();
+  static const int kPlayersFieldNumber = 1;
+  inline const ::SharedESPPlayer& players(int index) const;
+  inline ::SharedESPPlayer* mutable_players(int index);
+  inline ::SharedESPPlayer* add_players();
+  inline const ::google::protobuf::RepeatedPtrField< ::SharedESPPlayer >&
+      players() const;
+  inline ::google::protobuf::RepeatedPtrField< ::SharedESPPlayer >*
+      mutable_players();
+
+  // @@protoc_insertion_point(class_scope:SharedESP)
+ private:
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedPtrField< ::SharedESPPlayer > players_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -234,191 +312,156 @@ class SharedHandshake : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_shared_2eproto();
 
   void InitAsDefaultInstance();
-  static SharedHandshake* default_instance_;
+  static SharedESP* default_instance_;
 };
 // ===================================================================
 
 
 // ===================================================================
 
-// SharedHeader
+// SharedHandshake
 
-// optional string header = 1 [default = "BIDEN"];
-inline bool SharedHeader::has_header() const {
+// -------------------------------------------------------------------
+
+// SharedESPPlayer
+
+// optional uint32 player_index = 1;
+inline bool SharedESPPlayer::has_player_index() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void SharedHeader::set_has_header() {
+inline void SharedESPPlayer::set_has_player_index() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void SharedHeader::clear_has_header() {
+inline void SharedESPPlayer::clear_has_player_index() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void SharedHeader::clear_header() {
-  if (header_ != _default_header_) {
-    header_->assign(*_default_header_);
-  }
-  clear_has_header();
+inline void SharedESPPlayer::clear_player_index() {
+  player_index_ = 0u;
+  clear_has_player_index();
 }
-inline const ::std::string& SharedHeader::header() const {
-  return *header_;
+inline ::google::protobuf::uint32 SharedESPPlayer::player_index() const {
+  return player_index_;
 }
-inline void SharedHeader::set_header(const ::std::string& value) {
-  set_has_header();
-  if (header_ == _default_header_) {
-    header_ = new ::std::string;
-  }
-  header_->assign(value);
-}
-inline void SharedHeader::set_header(const char* value) {
-  set_has_header();
-  if (header_ == _default_header_) {
-    header_ = new ::std::string;
-  }
-  header_->assign(value);
-}
-inline void SharedHeader::set_header(const char* value, size_t size) {
-  set_has_header();
-  if (header_ == _default_header_) {
-    header_ = new ::std::string;
-  }
-  header_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* SharedHeader::mutable_header() {
-  set_has_header();
-  if (header_ == _default_header_) {
-    header_ = new ::std::string(*_default_header_);
-  }
-  return header_;
-}
-inline ::std::string* SharedHeader::release_header() {
-  clear_has_header();
-  if (header_ == _default_header_) {
-    return NULL;
-  } else {
-    ::std::string* temp = header_;
-    header_ = const_cast< ::std::string*>(_default_header_);
-    return temp;
-  }
-}
-inline void SharedHeader::set_allocated_header(::std::string* header) {
-  if (header_ != _default_header_) {
-    delete header_;
-  }
-  if (header) {
-    set_has_header();
-    header_ = header;
-  } else {
-    clear_has_header();
-    header_ = const_cast< ::std::string*>(_default_header_);
-  }
+inline void SharedESPPlayer::set_player_index(::google::protobuf::uint32 value) {
+  set_has_player_index();
+  player_index_ = value;
 }
 
-// optional uint32 size = 2;
-inline bool SharedHeader::has_size() const {
+// optional int32 origin_x = 2;
+inline bool SharedESPPlayer::has_origin_x() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void SharedHeader::set_has_size() {
+inline void SharedESPPlayer::set_has_origin_x() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void SharedHeader::clear_has_size() {
+inline void SharedESPPlayer::clear_has_origin_x() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void SharedHeader::clear_size() {
-  size_ = 0u;
-  clear_has_size();
+inline void SharedESPPlayer::clear_origin_x() {
+  origin_x_ = 0;
+  clear_has_origin_x();
 }
-inline ::google::protobuf::uint32 SharedHeader::size() const {
-  return size_;
+inline ::google::protobuf::int32 SharedESPPlayer::origin_x() const {
+  return origin_x_;
 }
-inline void SharedHeader::set_size(::google::protobuf::uint32 value) {
-  set_has_size();
-  size_ = value;
+inline void SharedESPPlayer::set_origin_x(::google::protobuf::int32 value) {
+  set_has_origin_x();
+  origin_x_ = value;
 }
 
-// optional uint32 steam_id = 3;
-inline bool SharedHeader::has_steam_id() const {
+// optional int32 origin_y = 3;
+inline bool SharedESPPlayer::has_origin_y() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void SharedHeader::set_has_steam_id() {
+inline void SharedESPPlayer::set_has_origin_y() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void SharedHeader::clear_has_steam_id() {
+inline void SharedESPPlayer::clear_has_origin_y() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void SharedHeader::clear_steam_id() {
-  steam_id_ = 0u;
-  clear_has_steam_id();
+inline void SharedESPPlayer::clear_origin_y() {
+  origin_y_ = 0;
+  clear_has_origin_y();
 }
-inline ::google::protobuf::uint32 SharedHeader::steam_id() const {
-  return steam_id_;
+inline ::google::protobuf::int32 SharedESPPlayer::origin_y() const {
+  return origin_y_;
 }
-inline void SharedHeader::set_steam_id(::google::protobuf::uint32 value) {
-  set_has_steam_id();
-  steam_id_ = value;
+inline void SharedESPPlayer::set_origin_y(::google::protobuf::int32 value) {
+  set_has_origin_y();
+  origin_y_ = value;
 }
 
-// optional uint32 type = 4;
-inline bool SharedHeader::has_type() const {
+// optional int32 origin_z = 4;
+inline bool SharedESPPlayer::has_origin_z() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void SharedHeader::set_has_type() {
+inline void SharedESPPlayer::set_has_origin_z() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void SharedHeader::clear_has_type() {
+inline void SharedESPPlayer::clear_has_origin_z() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void SharedHeader::clear_type() {
-  type_ = 0u;
-  clear_has_type();
+inline void SharedESPPlayer::clear_origin_z() {
+  origin_z_ = 0;
+  clear_has_origin_z();
 }
-inline ::google::protobuf::uint32 SharedHeader::type() const {
-  return type_;
+inline ::google::protobuf::int32 SharedESPPlayer::origin_z() const {
+  return origin_z_;
 }
-inline void SharedHeader::set_type(::google::protobuf::uint32 value) {
-  set_has_type();
-  type_ = value;
+inline void SharedESPPlayer::set_origin_z(::google::protobuf::int32 value) {
+  set_has_origin_z();
+  origin_z_ = value;
+}
+
+// optional int32 health = 5;
+inline bool SharedESPPlayer::has_health() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void SharedESPPlayer::set_has_health() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void SharedESPPlayer::clear_has_health() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void SharedESPPlayer::clear_health() {
+  health_ = 0;
+  clear_has_health();
+}
+inline ::google::protobuf::int32 SharedESPPlayer::health() const {
+  return health_;
+}
+inline void SharedESPPlayer::set_health(::google::protobuf::int32 value) {
+  set_has_health();
+  health_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// SharedHandshake
+// SharedESP
 
-// optional .SharedHeader header = 1;
-inline bool SharedHandshake::has_header() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+// repeated .SharedESPPlayer players = 1;
+inline int SharedESP::players_size() const {
+  return players_.size();
 }
-inline void SharedHandshake::set_has_header() {
-  _has_bits_[0] |= 0x00000001u;
+inline void SharedESP::clear_players() {
+  players_.Clear();
 }
-inline void SharedHandshake::clear_has_header() {
-  _has_bits_[0] &= ~0x00000001u;
+inline const ::SharedESPPlayer& SharedESP::players(int index) const {
+  return players_.Get(index);
 }
-inline void SharedHandshake::clear_header() {
-  if (header_ != NULL) header_->::SharedHeader::Clear();
-  clear_has_header();
+inline ::SharedESPPlayer* SharedESP::mutable_players(int index) {
+  return players_.Mutable(index);
 }
-inline const ::SharedHeader& SharedHandshake::header() const {
-  return header_ != NULL ? *header_ : *default_instance_->header_;
+inline ::SharedESPPlayer* SharedESP::add_players() {
+  return players_.Add();
 }
-inline ::SharedHeader* SharedHandshake::mutable_header() {
-  set_has_header();
-  if (header_ == NULL) header_ = new ::SharedHeader;
-  return header_;
+inline const ::google::protobuf::RepeatedPtrField< ::SharedESPPlayer >&
+SharedESP::players() const {
+  return players_;
 }
-inline ::SharedHeader* SharedHandshake::release_header() {
-  clear_has_header();
-  ::SharedHeader* temp = header_;
-  header_ = NULL;
-  return temp;
-}
-inline void SharedHandshake::set_allocated_header(::SharedHeader* header) {
-  delete header_;
-  header_ = header;
-  if (header) {
-    set_has_header();
-  } else {
-    clear_has_header();
-  }
+inline ::google::protobuf::RepeatedPtrField< ::SharedESPPlayer >*
+SharedESP::mutable_players() {
+  return &players_;
 }
 
 
