@@ -14,11 +14,11 @@ void c_dormant_system::on_radar_data_received( c_process_spotted_entity_update* 
 {
 	if ( !globals::m_local )
 		return;
-
-	if ( message->m_size <= 0 )
+	int entity_updates_size = *( int* ) ( ( DWORD ) ( message ) +0xC );
+	if ( entity_updates_size <= 0 )
 		return;
 
-	for ( int i = 0; i < message->m_size; i++ )
+	for ( int i = 0; i < entity_updates_size; i++ )
 	{
 		DWORD entity = *( DWORD* ) ( *( DWORD* ) ( ( DWORD ) message + 0x8 ) + 4 * i );
 		if ( !entity )
@@ -29,7 +29,7 @@ void c_dormant_system::on_radar_data_received( c_process_spotted_entity_update* 
 			continue;
 
 		int class_id = *( int* ) ( entity + 0xC );
-		if ( class_id != C_BASE_PLAYER )
+		if ( class_id != C_CS_PLAYER )
 			continue;
 
 		vec3_t origin = *( vec3_t* ) ( entity + 0x10 ) * 4;
