@@ -91,14 +91,24 @@ class SharedHandshake : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
+  // optional int32 steam_id = 1;
+  inline bool has_steam_id() const;
+  inline void clear_steam_id();
+  static const int kSteamIdFieldNumber = 1;
+  inline ::google::protobuf::int32 steam_id() const;
+  inline void set_steam_id(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:SharedHandshake)
  private:
+  inline void set_has_steam_id();
+  inline void clear_has_steam_id();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
+  ::google::protobuf::int32 steam_id_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[1];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
 
   friend void  protobuf_AddDesc_shared_2eproto();
   friend void protobuf_AssignDesc_shared_2eproto();
@@ -320,6 +330,28 @@ class SharedESP : public ::google::protobuf::Message {
 // ===================================================================
 
 // SharedHandshake
+
+// optional int32 steam_id = 1;
+inline bool SharedHandshake::has_steam_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void SharedHandshake::set_has_steam_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void SharedHandshake::clear_has_steam_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void SharedHandshake::clear_steam_id() {
+  steam_id_ = 0;
+  clear_has_steam_id();
+}
+inline ::google::protobuf::int32 SharedHandshake::steam_id() const {
+  return steam_id_;
+}
+inline void SharedHandshake::set_steam_id(::google::protobuf::int32 value) {
+  set_has_steam_id();
+  steam_id_ = value;
+}
 
 // -------------------------------------------------------------------
 

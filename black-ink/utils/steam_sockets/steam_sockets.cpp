@@ -1,5 +1,6 @@
 #include "steam_sockets.hpp"
 #include "../../sdk/interfaces.h"
+#include "../../globals.h"
 
 void steamsockets::c_sockethandler::process_message( int size, uint16_t message_type, const char* message )
 {
@@ -23,12 +24,21 @@ void steamsockets::c_socket_netchannel::new_frame( )
 			message = &( message_array[ i ] );
 
 			if ( !message )
+			{
+#ifdef _DEBUG
+				interfaces::m_cvar_system->console_print( col_t( 255, 0, 0 ), " [ Sockets] Message nullptr!\n" );
+#endif
 				continue;
+			}
 
 			size_t message_size = message->GetSize( );
 
 			if ( message_size < sizeof( message_header_t ) )
 			{
+#ifdef _DEBUG
+				interfaces::m_cvar_system->console_print( col_t( 255, 0, 0 ), " [ Sockets] Message size < header\n" );
+#endif
+
 				message->Release( );
 				continue;
 			}
@@ -38,12 +48,20 @@ void steamsockets::c_socket_netchannel::new_frame( )
 
 			if ( header->m_message_size > ( message_size - sizeof( message_header_t ) ) )
 			{
+#ifdef _DEBUG
+				interfaces::m_cvar_system->console_print( col_t( 255, 0, 0 ), " [ Sockets] size in header > really data size\n" );
+#endif
+
 				message->Release( );
 				continue;
 			}
 
-			if ( !strstr( header->m_header, _( "BIDEN" ) ) )
+			if ( strcmp( header->m_header, _( "BIDE" ) ) )
 			{
+#ifdef _DEBUG
+				interfaces::m_cvar_system->console_print( col_t( 255, 0, 0 ), " [ Sockets] Invalid header\n" );
+#endif
+
 				message->Release( );
 				continue;
 			}
@@ -60,8 +78,18 @@ void steamsockets::c_socket_netchannel::new_frame( )
 			case SHARED_CHAMS:
 			case SHARED_ESP:
 				m_handler->process_message( header->m_message_size, header->m_message_type, ( const char* ) ( message_buffer + sizeof( message_header_t ) ) );
+				break;
+
+#ifdef _DEBUG
+				interfaces::m_cvar_system->console_print( col_t( 0, 255, 0 ), " [ Sockets] new shared data\n" );
+#endif
 
 			case SHARED_INIT:
+
+#ifdef _DEBUG
+				interfaces::m_cvar_system->console_print( col_t( 0, 255, 0 ), " [ Sockets] new shared init\n" );
+#endif
+
 				client_connection new_connection{};
 				new_connection.m_steam_id = message->m_identityPeer.GetSteamID( ).GetAccountID( );
 				new_connection.m_port = 58;
@@ -75,17 +103,17 @@ void steamsockets::c_socket_netchannel::new_frame( )
 	}
 }
 
-void steamsockets::c_socket_netchannel::send_message_to_user( uint16_t message_type, google::protobuf::Message* message, uint32_t steam_id, int port )
+void steamsockets::c_socket_netchannel::send_message_to_user( uint16_t message_type, google::protobuf::Message* message, int port, uint32_t steam_id )
 {
 	size_t data_size = message->ByteSize( );
 	size_t message_size = sizeof( message_header_t ) + data_size;
 	char* message_buffer = ( char* ) malloc( message_size );
 
-	message->SerializePartialToArray( ( void* ) ( message_buffer + sizeof( message_size ) ), data_size );
+	message->SerializePartialToArray( ( void* ) ( message_buffer + sizeof( message_header_t ) ), data_size );
 
 	message_header_t* header = reinterpret_cast< message_header_t* >( message_buffer );
 
-	strcpy( header->m_header, _( "BIDEN" ) );
+	strcpy( header->m_header, _( "BIDE" ) );
 	header->m_message_size = data_size;
 	header->m_message_type = message_type;
 	header->m_steam_id = interfaces::m_steam_user->GetSteamID( ).GetAccountID( );
@@ -101,10 +129,13 @@ void steamsockets::c_socket_netchannel::send_message_to_user( uint16_t message_t
 
 void steamsockets::c_socket_netchannel::SendMessageToAll( uint16_t message_type, google::protobuf::Message* message, int port )
 {
+	if ( !globals::m_local || interfaces::m_engine->get_net_channel_info()->is_loopback( )  )
+		return;
+
 	for ( auto i = 1; i < interfaces::m_global_vars->m_max_clients; i++ ) {
 		const auto player = static_cast< c_cs_player* >( interfaces::m_entity_list->get_client_entity( i ) );
 
-		if ( !player || !player->is_player( ) )
+		if ( !player || !player->is_player( ) || player == ( c_cs_player* )  globals::m_local )
 			continue;
 
 		player_info_t info;
@@ -115,4 +146,5 @@ void steamsockets::c_socket_netchannel::SendMessageToAll( uint16_t message_type,
 
 		send_message_to_user( message_type, message, port, steam_id);
 	}
+
 }

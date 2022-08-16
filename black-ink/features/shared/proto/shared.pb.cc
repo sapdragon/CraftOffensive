@@ -39,6 +39,7 @@ void protobuf_AssignDesc_shared_2eproto() {
   GOOGLE_CHECK(file != NULL);
   SharedHandshake_descriptor_ = file->message_type(0);
   static const int SharedHandshake_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedHandshake, steam_id_),
   };
   SharedHandshake_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -123,11 +124,12 @@ void protobuf_AddDesc_shared_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014shared.proto\"\021\n\017SharedHandshake\"m\n\017Sha"
-    "redESPPlayer\022\024\n\014player_index\030\001 \001(\r\022\020\n\010or"
-    "igin_x\030\002 \001(\005\022\020\n\010origin_y\030\003 \001(\005\022\020\n\010origin"
-    "_z\030\004 \001(\005\022\016\n\006health\030\005 \001(\005\".\n\tSharedESP\022!\n"
-    "\007players\030\001 \003(\0132\020.SharedESPPlayer", 192);
+    "\n\014shared.proto\"#\n\017SharedHandshake\022\020\n\010ste"
+    "am_id\030\001 \001(\005\"m\n\017SharedESPPlayer\022\024\n\014player"
+    "_index\030\001 \001(\r\022\020\n\010origin_x\030\002 \001(\005\022\020\n\010origin"
+    "_y\030\003 \001(\005\022\020\n\010origin_z\030\004 \001(\005\022\016\n\006health\030\005 \001"
+    "(\005\".\n\tSharedESP\022!\n\007players\030\001 \003(\0132\020.Share"
+    "dESPPlayer", 210);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "shared.proto", &protobuf_RegisterTypes);
   SharedHandshake::default_instance_ = new SharedHandshake();
@@ -149,6 +151,7 @@ struct StaticDescriptorInitializer_shared_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
+const int SharedHandshake::kSteamIdFieldNumber;
 #endif  // !_MSC_VER
 
 SharedHandshake::SharedHandshake()
@@ -167,6 +170,7 @@ SharedHandshake::SharedHandshake(const SharedHandshake& from)
 
 void SharedHandshake::SharedCtor() {
   _cached_size_ = 0;
+  steam_id_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -201,6 +205,9 @@ SharedHandshake* SharedHandshake::New() const {
 }
 
 void SharedHandshake::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    steam_id_ = 0;
+  }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -210,12 +217,33 @@ bool SharedHandshake::MergePartialFromCodedStream(
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
-    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-      return true;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 steam_id = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &steam_id_)));
+          set_has_steam_id();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
     }
-    DO_(::google::protobuf::internal::WireFormat::SkipField(
-          input, tag, mutable_unknown_fields()));
   }
   return true;
 #undef DO_
@@ -223,6 +251,11 @@ bool SharedHandshake::MergePartialFromCodedStream(
 
 void SharedHandshake::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional int32 steam_id = 1;
+  if (has_steam_id()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->steam_id(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -231,6 +264,11 @@ void SharedHandshake::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* SharedHandshake::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // optional int32 steam_id = 1;
+  if (has_steam_id()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->steam_id(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -241,6 +279,15 @@ void SharedHandshake::SerializeWithCachedSizes(
 int SharedHandshake::ByteSize() const {
   int total_size = 0;
 
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional int32 steam_id = 1;
+    if (has_steam_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->steam_id());
+    }
+
+  }
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -266,6 +313,11 @@ void SharedHandshake::MergeFrom(const ::google::protobuf::Message& from) {
 
 void SharedHandshake::MergeFrom(const SharedHandshake& from) {
   GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_steam_id()) {
+      set_steam_id(from.steam_id());
+    }
+  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -288,6 +340,8 @@ bool SharedHandshake::IsInitialized() const {
 
 void SharedHandshake::Swap(SharedHandshake* other) {
   if (other != this) {
+    std::swap(steam_id_, other->steam_id_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }

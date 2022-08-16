@@ -24,6 +24,9 @@ namespace shared_esp
 			if ( origin.empty( )  || !origin.is_valid( ) )
 				continue;
 
+			interfaces::m_cvar_system->console_print( col_t( 0, 0, 255 ), "!\n" );
+
+
 			dormant->on_shared_esp_received( esp_message.players( ).Get( i ).player_index( ), origin, esp_message.players( ).Get( i ).health( ) );
 
 			
@@ -42,7 +45,7 @@ namespace shared_esp
 		{
 			auto player = reinterpret_cast< c_cs_player* > ( interfaces::m_entity_list->get_client_entity( i ) );
 
-			if ( !player || !player->is_player( ) || player->is_dormant( ) || !player->is_alive( ) )
+			if ( !player || !player->is_player( ) || player->is_dormant( ) || !player->is_alive( ) || player == (c_cs_player* ) globals::m_local )
 				continue;
 
 			auto shared_player = message.add_players( );

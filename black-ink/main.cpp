@@ -21,21 +21,6 @@ unsigned long __stdcall init(LPVOID module) {
 	try {
 		globals::m_local = *SIG("client.dll", "8B 0D ? ? ? ? 83 FF FF 74 07").self_offset(0x2).cast<c_local_player*>();
 
-		long long amongus = 0x69690004C201B0;
-		static std::string sig = ("55 8B EC 56 8B F1 33 C0 57 8B 7D 08");
-
-		LPCWSTR modules[] {
-			L"client.dll",
-			L"engine.dll",
-			L"server.dll",
-			L"studiorender.dll",
-			L"materialsystem.dll"
-		};
-
-		for (auto base : modules) {
-			WriteProcessMemory(GetCurrentProcess(), utils::find_pattern_from_module(GetModuleHandleW(base), sig), &amongus, 5, 0);
-		}
-
 		interfaces::init();
 		input::init();
 		render::init();

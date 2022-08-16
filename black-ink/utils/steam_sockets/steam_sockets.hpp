@@ -35,8 +35,8 @@ namespace steamsockets
 		void process_message( int size, uint16_t message_type, const char* message );
 		void add_handler( int handler_type, handler_fn function )
 		{
-			m_handlers.emplace( handler_type, function );
-			//m_handlers.at( handler_type ) = function;
+			//m_handlers.emplace( handler_type, function );
+			m_handlers[handler_type] = function;
 		}
 	private:
 		std::map < int, handler_fn > m_handlers;
@@ -57,7 +57,15 @@ namespace steamsockets
 		void add_opened_port( int port ) { m_open_ports.push_back( port ); }
 
 
-		void send_message_to_user( uint16_t message_type, google::protobuf::Message* message, uint32_t steam_id, int port = 58);
+		void send_message_to_user( uint16_t message_type, google::protobuf::Message* message, int port, uint32_t steam_id );
+		void send_message_to_connected_user( uint16_t message_type, ::google::protobuf::Message* message, uint32_t steam_id ) {
+			for ( client_connection& connection : m_connections ) {
+				if ( connection.m_steam_id == steam_id ) {
+						send_message_to_user( message_type, message, connection.m_port, steam_id );
+					break;
+				}
+			}
+		}
 
 		void SendMessageToAll( uint16_t message_type, google::protobuf::Message* message, int port = 58 );
 

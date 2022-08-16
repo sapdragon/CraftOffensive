@@ -96,6 +96,15 @@ namespace hooks {
 		}
 	}
 
+	namespace engine_dll
+	{
+		namespace host_run_frame_input
+		{
+			void __cdecl hook( void*, void*, float accumulated_extra_samples, bool final_tick );
+			using fn = void( __cdecl* )( float, bool );
+		}
+	}
+
 	inline hooks::d3d_device::present::fn present_original = nullptr;
 	inline hooks::d3d_device::reset::fn reset_original = nullptr;
 	inline hooks::client_dll::frame_stage_notify::fn frame_stage_notify_original = nullptr;
@@ -108,5 +117,7 @@ namespace hooks {
 	inline hooks::networking::send_datagram::fn send_datagram_original = nullptr;
 	inline hooks::other::process_spotted_entity_update::fn process_spotted_entity_update_original = nullptr;
 	inline hooks::other::allocate_memory::fn allocate_memory_original = nullptr;
+	inline hooks::engine_dll::host_run_frame_input::fn host_run_frame_input_original = nullptr;
+
 
 }

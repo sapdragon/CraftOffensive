@@ -9,7 +9,7 @@ public:
 
 	void send_data( );
 
-	void on_create_move( );
+	void on_run_frame_input( );
 
 	steamsockets::c_socket_netchannel* m_socket;
 };

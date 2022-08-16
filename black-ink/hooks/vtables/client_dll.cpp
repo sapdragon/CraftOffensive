@@ -43,9 +43,6 @@ void __stdcall hooks::client_dll::create_move::hook(int sequence_number, float i
 		|| !cmd->m_command_number)
 		return;
 
-	/* receiving packets */
-	shared->on_create_move( );
-
 	globals::m_cur_cmd = cmd;
 	globals::m_pressing_move = (cmd->m_buttons.has(IN_LEFT) || cmd->m_buttons.has(IN_FORWARD) || cmd->m_buttons.has(IN_BACK) ||
 		cmd->m_buttons.has(IN_RIGHT) || cmd->m_buttons.has(IN_MOVELEFT) || cmd->m_buttons.has(IN_MOVERIGHT) ||
