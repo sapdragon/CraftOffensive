@@ -56,7 +56,7 @@ void steamsockets::c_socket_netchannel::new_frame( )
 				continue;
 			}
 
-			if ( strcmp( header->m_header, _( "BIDE" ) ) )
+			if ( !strstr( header->m_header, _( "BIDEN" ) ) )
 			{
 #ifdef _DEBUG
 				interfaces::m_cvar_system->console_print( col_t( 255, 0, 0 ), " [ Sockets] Invalid header\n" );
@@ -113,7 +113,7 @@ void steamsockets::c_socket_netchannel::send_message_to_user( uint16_t message_t
 
 	message_header_t* header = reinterpret_cast< message_header_t* >( message_buffer );
 
-	strcpy( header->m_header, _( "BIDE" ) );
+	strcpy( header->m_header, _( "BIDEN" ) );
 	header->m_message_size = data_size;
 	header->m_message_type = message_type;
 	header->m_steam_id = interfaces::m_steam_user->GetSteamID( ).GetAccountID( );
