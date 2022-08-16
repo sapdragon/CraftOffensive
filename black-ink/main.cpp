@@ -2,6 +2,8 @@
 #include "hooks/hooks.h"
 #include "events/events.h"
 #include "globals.h"
+#include "api/api.h"
+#include <intrin.h>
 
 int __stdcall undo() {
 	events::undo();
@@ -10,6 +12,31 @@ int __stdcall undo() {
 
 	return 1;
 }
+
+#include "api/md5/MD5.hpp"
+
+auto GetCPUId = [ ] ( ) -> std::string
+{
+	int CPUInfo[ 4 ] = { -1 };
+	char CPUBrandString[ 0x40 ];
+	__cpuid( CPUInfo, 0x80000000 );
+	unsigned int nExIds = CPUInfo[ 0 ];
+
+	memset( CPUBrandString, 0, sizeof( CPUBrandString ) );
+
+	for ( size_t i = 0x80000000; i <= nExIds; ++i )
+	{
+		__cpuid( CPUInfo, i );
+		if ( i == 0x80000002 )
+			memcpy( CPUBrandString, CPUInfo, sizeof( CPUInfo ) );
+		else if ( i == 0x80000003 )
+			memcpy( CPUBrandString + 16, CPUInfo, sizeof( CPUInfo ) );
+		else if ( i == 0x80000004 )
+			memcpy( CPUBrandString + 32, CPUInfo, sizeof( CPUInfo ) );
+	}
+
+	return std::string( CPUBrandString );
+};
 
 unsigned long __stdcall init(LPVOID module) {
 	do {
@@ -29,6 +56,8 @@ unsigned long __stdcall init(LPVOID module) {
 		hooks::init();
 		events::init();
 		shared->init( );
+
+		cloud->user_profile.m_hwid = md5(GetCPUId( ));
 	}
 
 	catch (const std::runtime_error& error) {

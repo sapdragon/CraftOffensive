@@ -46,14 +46,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)Include;$(SolutionDir)black-ink\utils\imgui\include;$(ProjectDir)utils\protobuff\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(SolutionDir)black-ink\utils\imgui\win32;$(ProjectDir)utils\protobuff\libs\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)api\curl;$(DXSDK_DIR)Include;$(SolutionDir)black-ink\utils\imgui\include;$(ProjectDir)utils\protobuff\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)api;$(DXSDK_DIR)Lib\x86;$(SolutionDir)black-ink\utils\imgui\win32;$(ProjectDir)utils\protobuff\libs\debug;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)Include;$(SolutionDir)black-ink\utils\imgui\include;$(ProjectDir)utils\protobuff\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(SolutionDir)black-ink\utils\imgui\win32;$(ProjectDir)utils\protobuff\libs\release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(DXSDK_DIR)Include;$(SolutionDir)black-ink\utils\imgui\include;$(ProjectDir)api\curl;$(ProjectDir)utils\protobuff\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)api;$(DXSDK_DIR)Lib\x86;$(SolutionDir)black-ink\utils\imgui\win32;$(ProjectDir)utils\protobuff\libs\release;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
@@ -61,7 +61,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;WOKCSGO_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;CURL_STATICLIB;WIN32;_DEBUG;WOKCSGO_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile />
@@ -82,11 +82,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;WOKCSGO_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CURL_STATICLIB;WIN32;NDEBUG;WOKCSGO_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile />
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -96,10 +96,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libprotobuf.lib;LibCurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="api\api.cpp" />
+    <ClCompile Include="api\MD5\MD5.cpp" />
     <ClCompile Include="events\callbacks\item_equip.cpp" />
     <ClCompile Include="events\callbacks\player_hurt.cpp" />
     <ClCompile Include="events\callbacks\round_start.cpp" />
@@ -150,6 +152,16 @@
     <ClCompile Include="utils\steam_sockets\steam_sockets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="api\api.h" />
+    <ClInclude Include="api\curl\curl.h" />
+    <ClInclude Include="api\curl\curlver.h" />
+    <ClInclude Include="api\curl\easy.h" />
+    <ClInclude Include="api\curl\mprintf.h" />
+    <ClInclude Include="api\curl\multi.h" />
+    <ClInclude Include="api\curl\stdcheaders.h" />
+    <ClInclude Include="api\curl\system.h" />
+    <ClInclude Include="api\curl\typecheck-gcc.h" />
+    <ClInclude Include="api\MD5\MD5.hpp" />
     <ClInclude Include="common_includes.h" />
     <ClInclude Include="events\events.h" />
     <ClInclude Include="features\dormant\dormant.hpp" />
@@ -166,6 +178,7 @@
     <ClInclude Include="hooks\hooks.h" />
     <ClInclude Include="menu\elements.h" />
     <ClInclude Include="menu\menu.h" />
+    <ClInclude Include="menu\notifies.h" />
     <ClInclude Include="sdk\datatypes\bf_read.h" />
     <ClInclude Include="sdk\datatypes\bf_write.h" />
     <ClInclude Include="sdk\datatypes\client_class.h" />
@@ -261,6 +274,7 @@
     <ClInclude Include="utils\imgui\imstb_textedit.h" />
     <ClInclude Include="utils\imgui\imstb_truetype.h" />
     <ClInclude Include="utils\input\input.h" />
+    <ClInclude Include="utils\json.hpp" />
     <ClInclude Include="utils\math\datatypes.h" />
     <ClInclude Include="utils\math\math.h" />
     <ClInclude Include="utils\memory\memory.h" />
@@ -293,6 +307,9 @@
     <ClInclude Include="utils\steam\steam_api_common.h" />
     <ClInclude Include="utils\steam_sockets\steam_sockets.hpp" />
     <ClInclude Include="utils\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="api\LibCurl.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
