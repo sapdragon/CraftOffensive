@@ -296,5 +296,6 @@
     <ClInclude Include="features\dormant\dormant.hpp" />
     <ClInclude Include="features\shared\esp\shared_esp.hpp" />
     <ClInclude Include="features\shared\chams\shared_chams.hpp" />
+    <ClInclude Include="sdk\interfaces\i_engine_sound.h" />
   </ItemGroup>
 </Project>

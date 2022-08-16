@@ -77,6 +77,12 @@ namespace hooks {
 			using fn = int ( __fastcall* )( void*, uint32_t, void* );
 
 		}
+
+		namespace packet_end
+		{
+			void __fastcall hook( void* ecx, void* edx );
+			using fn = void( __fastcall* )( void*, void* );
+		}
 	}
 
 	namespace other
@@ -115,6 +121,7 @@ namespace hooks {
 	inline hooks::player::eye_angles::fn eye_angles_original = nullptr;
 	inline hooks::surface::lock_cursor::fn lock_cursor_original = nullptr;
 	inline hooks::networking::send_datagram::fn send_datagram_original = nullptr;
+	inline hooks::networking::packet_end::fn packet_end_original = nullptr;
 	inline hooks::other::process_spotted_entity_update::fn process_spotted_entity_update_original = nullptr;
 	inline hooks::other::allocate_memory::fn allocate_memory_original = nullptr;
 	inline hooks::engine_dll::host_run_frame_input::fn host_run_frame_input_original = nullptr;

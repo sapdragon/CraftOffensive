@@ -16,8 +16,10 @@ namespace hooks {
 		const auto process_spotted_entity_update = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "client.dll" ) ), _( "55 8B EC 83 EC 18 8B 45 08 53 56 57 80 78 18 00" ) ) );
 		const auto allocate_memory = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "vstdlib.dll" ) ), _( "55 8B EC A1 ? ? ? ? 8B 08 8B 01 5D FF 60 04" ) ) );
 		auto host_run_frame_input = utils::find_pattern_from_module( GetModuleHandleA( _(  "engine.dll" ) ) , _( "E8 ? ? ? ? F3 0F 10 45 ? F2 0F 10 4D ?" ) );
-
 		host_run_frame_input = memory::address_t( host_run_frame_input ).rel32( );
+		const auto packet_end = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "56 8B F1 E8 ? ? ? ? 8B 8E ? ? ? ? 3B 8E ? ? ? ?" ) ) );
+
+
 
 		if (MH_Initialize() != MH_OK)
 			throw std::runtime_error("failed to initialize MH_Initialize.");
@@ -59,7 +61,10 @@ namespace hooks {
 			throw std::runtime_error( "Failed to initialize allocate_memory." );
 
 		if ( MH_CreateHook( host_run_frame_input, &engine_dll::host_run_frame_input::hook, reinterpret_cast< void** >( &host_run_frame_input_original ) ) != MH_OK )
-			throw std::runtime_error( "Failed to initialize host run frame input." );
+			throw std::runtime_error( "Failed to initialize host_run_frame_input." );
+
+		if ( MH_CreateHook( packet_end, &networking::packet_end::hook, reinterpret_cast< void** >( &packet_end_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize packet_end." );
 
 		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 			throw std::runtime_error("failed to enable all hooks.");

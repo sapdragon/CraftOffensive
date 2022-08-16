@@ -66,11 +66,8 @@ bool c_chams::on_draw_model( i_model_render* ecx, void* context, const draw_mode
 		const auto player = reinterpret_cast< c_cs_player* >( entity );
 		if ( !player ||!player->is_alive( ) || !entity->is_player( ) )
 				return true;
-
-			//std::array < chams_settings_t, 10 > chams_settings = cfg::get< std::array < chams_settings_t, 10 > >( FNV1A( "chams.player.layers" ) );
-
 		
-
+/*
 		if ( player == (c_cs_player*) globals::m_local )
 			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.local_player" ) ), ecx, context, state, info, bones );
 		else if( m_shared_players.contains( player->get_index( ) ) )
@@ -78,7 +75,7 @@ bool c_chams::on_draw_model( i_model_render* ecx, void* context, const draw_mode
 		else if ( player->is_enemy(globals::m_local) )
 			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.enemy" ) ), ecx, context, state, info, bones );
 		else
-			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.teammate" ) ), ecx, context, state, info, bones );
+			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.teammate" ) ), ecx, context, state, info, bones );*/
 	}
 	return true;
 }

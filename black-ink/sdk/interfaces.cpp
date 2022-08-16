@@ -34,6 +34,8 @@ namespace interfaces {
 		m_model_render = get<i_model_render*>(FNV1A("engine.dll"), FNV1A("VEngineModel016"));
 		m_material_system = get<i_material_system*>(FNV1A("materialsystem.dll"), FNV1A("VMaterialSystem080"));
 
+		m_sound_engine = get<i_engine_sound*>( FNV1A( "engine.dll" ), FNV1A( "IEngineSoundClient003" ) );
+
 		m_glow_manager = *SIG("client.dll", "0F 11 05 ? ? ? ? 83 C8 01").self_offset(0x3).cast<i_glow_object_manager**>();
 		m_beams = *SIG("client.dll", "B9 ? ? ? ? A1 ? ? ? ? FF 10 A1 ? ? ? ? B9").self_offset(0x1).cast<i_view_render_beams**>();
 		m_weapon_system = *SIG("client.dll", "8B 35 ? ? ? ? FF 10 0F B7 C0").self_offset(0x2).cast<i_weapon_system**>();
@@ -103,6 +105,7 @@ namespace interfaces {
 	i_localize*				m_localize = nullptr;
 	i_panel*				m_panel = nullptr;
 	i_render_view*			m_render_view = nullptr;
+	i_engine_sound*			m_sound_engine = nullptr;
 
 	IDirect3DDevice9*		m_d3d_device = nullptr;
 

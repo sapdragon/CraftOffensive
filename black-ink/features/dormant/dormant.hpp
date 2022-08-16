@@ -20,6 +20,8 @@ public:
 	void on_item_equip( i_game_event* event_info );
 	void on_radar_data_received( c_process_spotted_entity_update* message );
 
+	void on_post_network_data_received( );
+
 	void on_shared_esp_received(uint32_t entity_index, vec3_t origin, float health );
 
 	void reset_player( c_cs_player* player );
@@ -27,6 +29,15 @@ public:
 
 
 private:
+
+	bool is_valid_sound_data( sound_info_t sound );
+
+	struct
+	{
+		c_utl_vector < sound_info_t > m_current_sound_data;
+		c_utl_vector < sound_info_t > m_cached_sound_data;
+	} m_sound_data;
+
 	std::array < dormant_player_t, 64 > m_dormant_players;
 
 };

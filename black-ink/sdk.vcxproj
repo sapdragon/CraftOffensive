@@ -180,6 +180,7 @@
     <ClInclude Include="sdk\definitions.h" />
     <ClInclude Include="sdk\interfaces\c_cs_player_resource.h" />
     <ClInclude Include="sdk\interfaces\c_game_rules.h" />
+    <ClInclude Include="sdk\interfaces\i_engine_sound.h" />
     <ClInclude Include="sdk\interfaces\i_game_types.h" />
     <ClInclude Include="sdk\interfaces\i_glow_object_manager.h" />
     <ClInclude Include="sdk\interfaces\i_input.h" />

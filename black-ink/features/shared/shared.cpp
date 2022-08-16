@@ -65,9 +65,12 @@ void c_shared::init( )
 
 void c_shared::send_data( )
 {
+	if ( !globals::m_local || !interfaces::m_engine->is_in_game( ) )
+		return;
+
 	/* send data to all */
 	shared_esp::send_data( );
-	shared_chams::send_data( );
+	//shared_chams::send_data( );
 }
 
 void c_shared::on_run_frame_input( )
