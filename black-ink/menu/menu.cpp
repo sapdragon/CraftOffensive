@@ -7,6 +7,10 @@
 
 std::string tabLabels[ 6 ] = { _( "Legit" ), _( "Visuals" ), _( "Misc" ), _( "Skins" ), _( "Files" ), _( "Dashboard" ) };
 
+static char login[ 32 ];
+static char password[ 32 ];
+static char email[ 32 ];
+
 void user( ) {
 	ImGui::Begin( _( "123" ), 0 );
 	{
@@ -20,28 +24,21 @@ void user( ) {
 		if ( ImGui::Button( "register" ) ) stage = 1;
 
 		if ( stage == 0 ) {
-			static char login[ 32 ];
-			static char password[ 32 ];
-
 			ImGui::InputText( "login", login, 32 );
 			ImGui::InputText( "password", password, 32 );
 
 			if ( ImGui::Button( "Sign In" ) ) {
-				cloud->sigin( std::stringstream( login ).str(), std::stringstream( password ).str( ) );
+				cloud->sigin( login, password );
 			}
 		}
 
 		if ( stage == 1 ) {
-			static char login[ 32 ];
-			static char password[ 32 ];
-			static char email[ 32 ];
-
 			ImGui::InputText( "login", login, 32 );
 			ImGui::InputText( "password", password, 32 );
 			ImGui::InputText( "email", email, 32 );
 
 			if ( ImGui::Button( "Sign Up" ) ) {
-				cloud->signup( std::stringstream(login).str( ), std::stringstream( password).str( ), std::stringstream( email ).str( ) );
+				cloud->signup( login, password, email );
 			}
 		}
 	}
@@ -71,7 +68,6 @@ void c_menu::on_paint() {
 		user( );
 	}
 	else {
-
 		ImGui::Begin( _( "CraftOffensive" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration );
 		{
 			ImGui::SetWindowSize( ImVec2( 660, 445 ), ImGuiCond_Once );
@@ -110,6 +106,7 @@ void c_menu::on_paint() {
 						elements::slider_int( _( "slider" ), FNV1A( "slider" ), 30, 120, "Slider Value: %i" );
 						if ( elements::button( _( "Button" ), ImVec2( 200, 30 ) ) )
 						{
+							cloud->get_configs( );
 							notifies::push( "CraftOffensive.pw", "Coming soon..." );
 						}
 					} );

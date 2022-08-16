@@ -40,4 +40,4 @@ public:
 	user_t user_profile;
 };
 
-#define cloud c_cloud_api::instance()
+inline c_cloud_api* cloud = new c_cloud_api( );
