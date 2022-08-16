@@ -67,7 +67,7 @@ namespace steamsockets
 			}
 		}
 
-		void SendMessageToAll( uint16_t message_type, google::protobuf::Message* message, int port = 58 );
+		void send_message_to_all( uint16_t message_type, google::protobuf::Message* message, int port = 58 );
 
 	private:
 		c_sockethandler* m_handler;

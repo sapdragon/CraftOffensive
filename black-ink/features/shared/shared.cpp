@@ -1,5 +1,6 @@
 #include "shared.hpp"
 #include "proto/shared.pb.h"
+#include "chams/shared_chams.hpp"
 #include "esp/shared_esp.hpp"
 void on_new_request_handler( SteamNetworkingMessagesSessionRequest_t* request )
 {
@@ -47,7 +48,8 @@ void c_shared::init( )
 	/* add all handlers*/
 	steamsockets::c_sockethandler* handler = new steamsockets::c_sockethandler;
 	handler->add_handler( steamsockets::message_type_t::SHARED_ESP, &shared_esp::handler );
-	
+	handler->add_handler( steamsockets::message_type_t::SHARED_CHAMS, &shared_chams::handler );
+
 	/* set handler to socket channel*/
 	m_socket->set_handler( handler );
 
@@ -64,8 +66,8 @@ void c_shared::init( )
 void c_shared::send_data( )
 {
 	/* send data to all */
-	shared_esp::SendData( );
-
+	shared_esp::send_data( );
+	shared_chams::send_data( );
 }
 
 void c_shared::on_run_frame_input( )

@@ -49,7 +49,6 @@ void c_dormant_system::on_shared_esp_received( uint32_t entity_index, vec3_t ori
 	m_dormant_players[ entity_index ].m_last_dormant_time = interfaces::m_global_vars->m_real_time;
 	m_dormant_players[ entity_index ].m_origin = origin;
 	m_dormant_players[ entity_index ].m_last_dormant_health = health;
-
 }
 
 void c_dormant_system::reset_player( c_cs_player* player )

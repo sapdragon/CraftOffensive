@@ -30,6 +30,32 @@ void c_chams::override_material(int type, const col_t& clr, bool ignorez ) {
 	interfaces::m_model_render->forced_material_override(material);
 }
 
+void c_chams::draw_material_on_entity( chams_entity_settings_t options, i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones )
+{
+
+	if ( options.m_invisible.m_enable )
+	{
+		for ( auto& material_options : options.m_invisible.m_materials )
+		{
+			if ( !material_options.m_enable )
+				continue;
+
+			override_material( material_options.m_material, material_options.m_color, true );
+			hooks::draw_model_execute_original( ecx, context, state, info, bones );
+		}
+	}
+	if ( options.m_visible.m_enable )
+	{
+		for ( auto& material_options : options.m_visible.m_materials )
+		{
+			if ( !material_options.m_enable )
+				continue;
+
+			override_material( material_options.m_material, material_options.m_color, false );
+		}
+	}
+}
+
 bool c_chams::on_draw_model( i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones ) {
 	const auto entity = reinterpret_cast< c_base_entity* >( interfaces::m_entity_list->get_client_entity( info.m_index ) );
 	if ( !entity )
@@ -38,38 +64,21 @@ bool c_chams::on_draw_model( i_model_render* ecx, void* context, const draw_mode
 	if ( strstr( info.m_model->m_name, _( "player" ) ) )
 	{
 		const auto player = reinterpret_cast< c_cs_player* >( entity );
-		if ( !player->is_alive( ) || !entity->is_player( ) )
+		if ( !player ||!player->is_alive( ) || !entity->is_player( ) )
 				return true;
 
 			//std::array < chams_settings_t, 10 > chams_settings = cfg::get< std::array < chams_settings_t, 10 > >( FNV1A( "chams.player.layers" ) );
 
-		if ( player == (c_cs_player*) globals::m_local )
-		{
-
-			override_material( MATERIAL_TYPE_REGULAR, col_t::palette_t::green( ), false );
-
-			hooks::draw_model_execute_original( ecx, context, state, info, bones );
-
-		}
-		else if ( player->is_enemy(globals::m_local) )
-		{
-			override_material( MATERIAL_TYPE_REGULAR, col_t::palette_t::red( ), true );
-
-			hooks::draw_model_execute_original( ecx, context, state, info, bones );
-
-			override_material( MATERIAL_TYPE_REGULAR, col_t::palette_t::red( ), false );
-			
 		
-			return true;
-		}
+
+		if ( player == (c_cs_player*) globals::m_local )
+			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.local_player" ) ), ecx, context, state, info, bones );
+		else if( m_shared_players.contains( player->get_index( ) ) )
+			draw_material_on_entity( get_shared_player( player->get_index( ) ), ecx, context, state, info, bones );
+		else if ( player->is_enemy(globals::m_local) )
+			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.enemy" ) ), ecx, context, state, info, bones );
 		else
-		{
-			override_material( MATERIAL_TYPE_REGULAR, col_t::palette_t::blue( ), true );
-
-			hooks::draw_model_execute_original( ecx, context, state, info, bones );
-
-			override_material( MATERIAL_TYPE_REGULAR, col_t::palette_t::blue( ), false );
-		}
+			draw_material_on_entity( cfg::get < chams_entity_settings_t >( FNV1A( "chams.teammate" ) ), ecx, context, state, info, bones );
 	}
 	return true;
 }

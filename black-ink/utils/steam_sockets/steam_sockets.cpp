@@ -127,7 +127,7 @@ void steamsockets::c_socket_netchannel::send_message_to_user( uint16_t message_t
 	interfaces::m_steam_networking_messages->SendMessageToUser( iden, message_buffer, message_size, k_nSteamNetworkingSend_ReliableNoNagle | k_nSteamNetworkingSend_AutoRestartBrokenSession, port );
 }
 
-void steamsockets::c_socket_netchannel::SendMessageToAll( uint16_t message_type, google::protobuf::Message* message, int port )
+void steamsockets::c_socket_netchannel::send_message_to_all( uint16_t message_type, google::protobuf::Message* message, int port )
 {
 	if ( !globals::m_local || interfaces::m_engine->get_net_channel_info()->is_loopback( )  )
 		return;

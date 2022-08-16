@@ -34,6 +34,9 @@ void protobuf_ShutdownFile_shared_2eproto();
 class SharedHandshake;
 class SharedESPPlayer;
 class SharedESP;
+class ChamsMaterial;
+class ChamsSettings;
+class SharedChams;
 
 // ===================================================================
 
@@ -91,24 +94,14 @@ class SharedHandshake : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional int32 steam_id = 1;
-  inline bool has_steam_id() const;
-  inline void clear_steam_id();
-  static const int kSteamIdFieldNumber = 1;
-  inline ::google::protobuf::int32 steam_id() const;
-  inline void set_steam_id(::google::protobuf::int32 value);
-
   // @@protoc_insertion_point(class_scope:SharedHandshake)
  private:
-  inline void set_has_steam_id();
-  inline void clear_has_steam_id();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::google::protobuf::int32 steam_id_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[1];
 
   friend void  protobuf_AddDesc_shared_2eproto();
   friend void protobuf_AssignDesc_shared_2eproto();
@@ -324,34 +317,335 @@ class SharedESP : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static SharedESP* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class ChamsMaterial : public ::google::protobuf::Message {
+ public:
+  ChamsMaterial();
+  virtual ~ChamsMaterial();
+
+  ChamsMaterial(const ChamsMaterial& from);
+
+  inline ChamsMaterial& operator=(const ChamsMaterial& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChamsMaterial& default_instance();
+
+  void Swap(ChamsMaterial* other);
+
+  // implements Message ----------------------------------------------
+
+  ChamsMaterial* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChamsMaterial& from);
+  void MergeFrom(const ChamsMaterial& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bool enable = 1;
+  inline bool has_enable() const;
+  inline void clear_enable();
+  static const int kEnableFieldNumber = 1;
+  inline bool enable() const;
+  inline void set_enable(bool value);
+
+  // optional int32 material = 2;
+  inline bool has_material() const;
+  inline void clear_material();
+  static const int kMaterialFieldNumber = 2;
+  inline ::google::protobuf::int32 material() const;
+  inline void set_material(::google::protobuf::int32 value);
+
+  // optional int32 color_r = 3;
+  inline bool has_color_r() const;
+  inline void clear_color_r();
+  static const int kColorRFieldNumber = 3;
+  inline ::google::protobuf::int32 color_r() const;
+  inline void set_color_r(::google::protobuf::int32 value);
+
+  // optional int32 color_g = 4;
+  inline bool has_color_g() const;
+  inline void clear_color_g();
+  static const int kColorGFieldNumber = 4;
+  inline ::google::protobuf::int32 color_g() const;
+  inline void set_color_g(::google::protobuf::int32 value);
+
+  // optional int32 color_b = 5;
+  inline bool has_color_b() const;
+  inline void clear_color_b();
+  static const int kColorBFieldNumber = 5;
+  inline ::google::protobuf::int32 color_b() const;
+  inline void set_color_b(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:ChamsMaterial)
+ private:
+  inline void set_has_enable();
+  inline void clear_has_enable();
+  inline void set_has_material();
+  inline void clear_has_material();
+  inline void set_has_color_r();
+  inline void clear_has_color_r();
+  inline void set_has_color_g();
+  inline void clear_has_color_g();
+  inline void set_has_color_b();
+  inline void clear_has_color_b();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  bool enable_;
+  ::google::protobuf::int32 material_;
+  ::google::protobuf::int32 color_r_;
+  ::google::protobuf::int32 color_g_;
+  ::google::protobuf::int32 color_b_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_shared_2eproto();
+  friend void protobuf_AssignDesc_shared_2eproto();
+  friend void protobuf_ShutdownFile_shared_2eproto();
+
+  void InitAsDefaultInstance();
+  static ChamsMaterial* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ChamsSettings : public ::google::protobuf::Message {
+ public:
+  ChamsSettings();
+  virtual ~ChamsSettings();
+
+  ChamsSettings(const ChamsSettings& from);
+
+  inline ChamsSettings& operator=(const ChamsSettings& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChamsSettings& default_instance();
+
+  void Swap(ChamsSettings* other);
+
+  // implements Message ----------------------------------------------
+
+  ChamsSettings* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChamsSettings& from);
+  void MergeFrom(const ChamsSettings& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bool enable = 1;
+  inline bool has_enable() const;
+  inline void clear_enable();
+  static const int kEnableFieldNumber = 1;
+  inline bool enable() const;
+  inline void set_enable(bool value);
+
+  // repeated .ChamsMaterial materials = 2;
+  inline int materials_size() const;
+  inline void clear_materials();
+  static const int kMaterialsFieldNumber = 2;
+  inline const ::ChamsMaterial& materials(int index) const;
+  inline ::ChamsMaterial* mutable_materials(int index);
+  inline ::ChamsMaterial* add_materials();
+  inline const ::google::protobuf::RepeatedPtrField< ::ChamsMaterial >&
+      materials() const;
+  inline ::google::protobuf::RepeatedPtrField< ::ChamsMaterial >*
+      mutable_materials();
+
+  // @@protoc_insertion_point(class_scope:ChamsSettings)
+ private:
+  inline void set_has_enable();
+  inline void clear_has_enable();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedPtrField< ::ChamsMaterial > materials_;
+  bool enable_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_shared_2eproto();
+  friend void protobuf_AssignDesc_shared_2eproto();
+  friend void protobuf_ShutdownFile_shared_2eproto();
+
+  void InitAsDefaultInstance();
+  static ChamsSettings* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class SharedChams : public ::google::protobuf::Message {
+ public:
+  SharedChams();
+  virtual ~SharedChams();
+
+  SharedChams(const SharedChams& from);
+
+  inline SharedChams& operator=(const SharedChams& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SharedChams& default_instance();
+
+  void Swap(SharedChams* other);
+
+  // implements Message ----------------------------------------------
+
+  SharedChams* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SharedChams& from);
+  void MergeFrom(const SharedChams& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 player_index = 1;
+  inline bool has_player_index() const;
+  inline void clear_player_index();
+  static const int kPlayerIndexFieldNumber = 1;
+  inline ::google::protobuf::int32 player_index() const;
+  inline void set_player_index(::google::protobuf::int32 value);
+
+  // optional .ChamsSettings invisible = 2;
+  inline bool has_invisible() const;
+  inline void clear_invisible();
+  static const int kInvisibleFieldNumber = 2;
+  inline const ::ChamsSettings& invisible() const;
+  inline ::ChamsSettings* mutable_invisible();
+  inline ::ChamsSettings* release_invisible();
+  inline void set_allocated_invisible(::ChamsSettings* invisible);
+
+  // optional .ChamsSettings visible = 3;
+  inline bool has_visible() const;
+  inline void clear_visible();
+  static const int kVisibleFieldNumber = 3;
+  inline const ::ChamsSettings& visible() const;
+  inline ::ChamsSettings* mutable_visible();
+  inline ::ChamsSettings* release_visible();
+  inline void set_allocated_visible(::ChamsSettings* visible);
+
+  // @@protoc_insertion_point(class_scope:SharedChams)
+ private:
+  inline void set_has_player_index();
+  inline void clear_has_player_index();
+  inline void set_has_invisible();
+  inline void clear_has_invisible();
+  inline void set_has_visible();
+  inline void clear_has_visible();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::ChamsSettings* invisible_;
+  ::ChamsSettings* visible_;
+  ::google::protobuf::int32 player_index_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_shared_2eproto();
+  friend void protobuf_AssignDesc_shared_2eproto();
+  friend void protobuf_ShutdownFile_shared_2eproto();
+
+  void InitAsDefaultInstance();
+  static SharedChams* default_instance_;
+};
 // ===================================================================
 
 
 // ===================================================================
 
 // SharedHandshake
-
-// optional int32 steam_id = 1;
-inline bool SharedHandshake::has_steam_id() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void SharedHandshake::set_has_steam_id() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void SharedHandshake::clear_has_steam_id() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void SharedHandshake::clear_steam_id() {
-  steam_id_ = 0;
-  clear_has_steam_id();
-}
-inline ::google::protobuf::int32 SharedHandshake::steam_id() const {
-  return steam_id_;
-}
-inline void SharedHandshake::set_steam_id(::google::protobuf::int32 value) {
-  set_has_steam_id();
-  steam_id_ = value;
-}
 
 // -------------------------------------------------------------------
 
@@ -494,6 +788,273 @@ SharedESP::players() const {
 inline ::google::protobuf::RepeatedPtrField< ::SharedESPPlayer >*
 SharedESP::mutable_players() {
   return &players_;
+}
+
+// -------------------------------------------------------------------
+
+// ChamsMaterial
+
+// optional bool enable = 1;
+inline bool ChamsMaterial::has_enable() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ChamsMaterial::set_has_enable() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ChamsMaterial::clear_has_enable() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ChamsMaterial::clear_enable() {
+  enable_ = false;
+  clear_has_enable();
+}
+inline bool ChamsMaterial::enable() const {
+  return enable_;
+}
+inline void ChamsMaterial::set_enable(bool value) {
+  set_has_enable();
+  enable_ = value;
+}
+
+// optional int32 material = 2;
+inline bool ChamsMaterial::has_material() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ChamsMaterial::set_has_material() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ChamsMaterial::clear_has_material() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ChamsMaterial::clear_material() {
+  material_ = 0;
+  clear_has_material();
+}
+inline ::google::protobuf::int32 ChamsMaterial::material() const {
+  return material_;
+}
+inline void ChamsMaterial::set_material(::google::protobuf::int32 value) {
+  set_has_material();
+  material_ = value;
+}
+
+// optional int32 color_r = 3;
+inline bool ChamsMaterial::has_color_r() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void ChamsMaterial::set_has_color_r() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void ChamsMaterial::clear_has_color_r() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void ChamsMaterial::clear_color_r() {
+  color_r_ = 0;
+  clear_has_color_r();
+}
+inline ::google::protobuf::int32 ChamsMaterial::color_r() const {
+  return color_r_;
+}
+inline void ChamsMaterial::set_color_r(::google::protobuf::int32 value) {
+  set_has_color_r();
+  color_r_ = value;
+}
+
+// optional int32 color_g = 4;
+inline bool ChamsMaterial::has_color_g() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void ChamsMaterial::set_has_color_g() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void ChamsMaterial::clear_has_color_g() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void ChamsMaterial::clear_color_g() {
+  color_g_ = 0;
+  clear_has_color_g();
+}
+inline ::google::protobuf::int32 ChamsMaterial::color_g() const {
+  return color_g_;
+}
+inline void ChamsMaterial::set_color_g(::google::protobuf::int32 value) {
+  set_has_color_g();
+  color_g_ = value;
+}
+
+// optional int32 color_b = 5;
+inline bool ChamsMaterial::has_color_b() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void ChamsMaterial::set_has_color_b() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void ChamsMaterial::clear_has_color_b() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void ChamsMaterial::clear_color_b() {
+  color_b_ = 0;
+  clear_has_color_b();
+}
+inline ::google::protobuf::int32 ChamsMaterial::color_b() const {
+  return color_b_;
+}
+inline void ChamsMaterial::set_color_b(::google::protobuf::int32 value) {
+  set_has_color_b();
+  color_b_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ChamsSettings
+
+// optional bool enable = 1;
+inline bool ChamsSettings::has_enable() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ChamsSettings::set_has_enable() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ChamsSettings::clear_has_enable() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ChamsSettings::clear_enable() {
+  enable_ = false;
+  clear_has_enable();
+}
+inline bool ChamsSettings::enable() const {
+  return enable_;
+}
+inline void ChamsSettings::set_enable(bool value) {
+  set_has_enable();
+  enable_ = value;
+}
+
+// repeated .ChamsMaterial materials = 2;
+inline int ChamsSettings::materials_size() const {
+  return materials_.size();
+}
+inline void ChamsSettings::clear_materials() {
+  materials_.Clear();
+}
+inline const ::ChamsMaterial& ChamsSettings::materials(int index) const {
+  return materials_.Get(index);
+}
+inline ::ChamsMaterial* ChamsSettings::mutable_materials(int index) {
+  return materials_.Mutable(index);
+}
+inline ::ChamsMaterial* ChamsSettings::add_materials() {
+  return materials_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ChamsMaterial >&
+ChamsSettings::materials() const {
+  return materials_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ChamsMaterial >*
+ChamsSettings::mutable_materials() {
+  return &materials_;
+}
+
+// -------------------------------------------------------------------
+
+// SharedChams
+
+// optional int32 player_index = 1;
+inline bool SharedChams::has_player_index() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void SharedChams::set_has_player_index() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void SharedChams::clear_has_player_index() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void SharedChams::clear_player_index() {
+  player_index_ = 0;
+  clear_has_player_index();
+}
+inline ::google::protobuf::int32 SharedChams::player_index() const {
+  return player_index_;
+}
+inline void SharedChams::set_player_index(::google::protobuf::int32 value) {
+  set_has_player_index();
+  player_index_ = value;
+}
+
+// optional .ChamsSettings invisible = 2;
+inline bool SharedChams::has_invisible() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void SharedChams::set_has_invisible() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void SharedChams::clear_has_invisible() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void SharedChams::clear_invisible() {
+  if (invisible_ != NULL) invisible_->::ChamsSettings::Clear();
+  clear_has_invisible();
+}
+inline const ::ChamsSettings& SharedChams::invisible() const {
+  return invisible_ != NULL ? *invisible_ : *default_instance_->invisible_;
+}
+inline ::ChamsSettings* SharedChams::mutable_invisible() {
+  set_has_invisible();
+  if (invisible_ == NULL) invisible_ = new ::ChamsSettings;
+  return invisible_;
+}
+inline ::ChamsSettings* SharedChams::release_invisible() {
+  clear_has_invisible();
+  ::ChamsSettings* temp = invisible_;
+  invisible_ = NULL;
+  return temp;
+}
+inline void SharedChams::set_allocated_invisible(::ChamsSettings* invisible) {
+  delete invisible_;
+  invisible_ = invisible;
+  if (invisible) {
+    set_has_invisible();
+  } else {
+    clear_has_invisible();
+  }
+}
+
+// optional .ChamsSettings visible = 3;
+inline bool SharedChams::has_visible() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void SharedChams::set_has_visible() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void SharedChams::clear_has_visible() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void SharedChams::clear_visible() {
+  if (visible_ != NULL) visible_->::ChamsSettings::Clear();
+  clear_has_visible();
+}
+inline const ::ChamsSettings& SharedChams::visible() const {
+  return visible_ != NULL ? *visible_ : *default_instance_->visible_;
+}
+inline ::ChamsSettings* SharedChams::mutable_visible() {
+  set_has_visible();
+  if (visible_ == NULL) visible_ = new ::ChamsSettings;
+  return visible_;
+}
+inline ::ChamsSettings* SharedChams::release_visible() {
+  clear_has_visible();
+  ::ChamsSettings* temp = visible_;
+  visible_ = NULL;
+  return temp;
+}
+inline void SharedChams::set_allocated_visible(::ChamsSettings* visible) {
+  delete visible_;
+  visible_ = visible;
+  if (visible) {
+    set_has_visible();
+  } else {
+    clear_has_visible();
+  }
 }
 
 

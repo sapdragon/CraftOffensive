@@ -156,6 +156,7 @@
     <ClInclude Include="features\features.h" />
     <ClInclude Include="features\misc\movement.h" />
     <ClInclude Include="features\ragebot\prediction.h" />
+    <ClInclude Include="features\shared\chams\shared_chams.hpp" />
     <ClInclude Include="features\shared\esp\shared_esp.hpp" />
     <ClInclude Include="features\shared\proto\shared.pb.h" />
     <ClInclude Include="features\shared\shared.hpp" />

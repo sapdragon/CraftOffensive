@@ -295,5 +295,6 @@
     <ClInclude Include="features\shared\proto\shared.pb.h" />
     <ClInclude Include="features\dormant\dormant.hpp" />
     <ClInclude Include="features\shared\esp\shared_esp.hpp" />
+    <ClInclude Include="features\shared\chams\shared_chams.hpp" />
   </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ namespace shared_esp
 			if ( origin.empty( )  || !origin.is_valid( ) )
 				continue;
 
-			interfaces::m_cvar_system->console_print( col_t( 0, 0, 255 ), "!\n" );
+			interfaces::m_cvar_system->console_print( col_t( 0, 0, 255 ), "Shared player received!\n" );
 
 
 			dormant->on_shared_esp_received( esp_message.players( ).Get( i ).player_index( ), origin, esp_message.players( ).Get( i ).health( ) );
@@ -34,9 +34,9 @@ namespace shared_esp
 		return true;
 	}
 
-	void SendData( )
+	void send_data( )
 	{
-		if ( !globals::m_local )
+		if ( !globals::m_local || !interfaces::m_engine->is_in_game( ) )
 			return;
 
 		SharedESP message;
@@ -57,6 +57,6 @@ namespace shared_esp
 			shared_player->set_origin_z( player->get_origin( ).z );
 
 		}
-		shared->m_socket->SendMessageToAll( steamsockets::message_type_t::SHARED_ESP, &message );
+		shared->m_socket->send_message_to_all( steamsockets::message_type_t::SHARED_ESP, &message );
 	}
 }
