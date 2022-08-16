@@ -53,6 +53,7 @@
 #include "interfaces/c_cs_player_resource.h"
 #include "interfaces/i_localize.h"
 #include "interfaces/i_panel.h"
+#include "interfaces/i_engine_sound.h"
 
 #include "../utils/steam/steamnetworkingsockets.h"
 #include "../utils/steam/isteamnetworkingmessages.h"
