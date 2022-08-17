@@ -108,6 +108,7 @@
     <ClCompile Include="events\events.cpp" />
     <ClCompile Include="features\dormant\dormant.cpp" />
     <ClCompile Include="features\fakelags\fakelags.cpp" />
+    <ClCompile Include="features\misc\misc.cpp" />
     <ClCompile Include="features\misc\movement.cpp" />
     <ClCompile Include="features\ragebot\prediction.cpp" />
     <ClCompile Include="features\shared\proto\shared.pb.cc" />
@@ -169,6 +170,7 @@
     <ClInclude Include="features\dormant\dormant.hpp" />
     <ClInclude Include="features\fakelags\fakelags.h" />
     <ClInclude Include="features\features.h" />
+    <ClInclude Include="features\misc\misc.h" />
     <ClInclude Include="features\misc\movement.h" />
     <ClInclude Include="features\ragebot\prediction.h" />
     <ClInclude Include="features\shared\chams\shared_chams.hpp" />

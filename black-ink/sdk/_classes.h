@@ -270,7 +270,7 @@ public:
 	NETVAR(get_view_punch_angle(), qangle_t, "CBasePlayer->m_viewPunchAngle")
 	NETVAR(get_aim_punch_angle(), qangle_t, "CBasePlayer->m_aimPunchAngle")
 	NETVAR(get_aim_punch_angle_vel(), vec3_t, "CBasePlayer->m_aimPunchAngleVel")
-	NETVAR(get_view_model(), c_base_handle, "CBasePlayer->m_hViewModel[0]")
+	NETVAR(get_view_model(), c_base_handle  , "CBasePlayer->m_hViewModel[0]")
 	NETVAR_OFFSET(get_cur_cmd(), c_user_cmd*, "CBasePlayer->m_hConstraintEntity", -0xC)
 		
 	OFFSET(get_last_cmd(), c_user_cmd, 0x3298)

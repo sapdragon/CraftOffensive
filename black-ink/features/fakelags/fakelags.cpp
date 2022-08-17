@@ -3,7 +3,7 @@
 void c_fake_lags::on_create_move( )
 {
 
-	if ( !globals::m_local || !globals::m_local->is_alive( ) || globals::m_local->get_flags() & FL_FROZEN )
+	if ( !globals::m_local || !globals::m_local->is_alive( ) || globals::m_local->get_flags().has(FL_FROZEN ) )
 		return;
 
 	bool in_attack = false;
@@ -43,7 +43,7 @@ void c_fake_lags::on_create_move( )
 			
 
 			if ( weapon->get_next_primary_attack( ) <= player_time )//g_EnginePrediction->CanAttack( true ) )
-				if ( ( globals::m_cur_cmd->m_buttons & IN_ATTACK ) || ( ( globals::m_cur_cmd->m_buttons & IN_ATTACK2 ) && weapon->get_cs_weapon_data( )->m_weapon_type == WEAPON_TYPE_KNIFE ) )
+				if ( ( globals::m_cur_cmd->m_buttons & IN_ATTACK ) || ( ( globals::m_cur_cmd->m_buttons.has ( IN_ATTACK2)  ) && weapon->get_cs_weapon_data( )->m_weapon_type == WEAPON_TYPE_KNIFE ) )
 					in_attack = true;
 		}
 	}
@@ -65,7 +65,7 @@ void c_fake_lags::on_create_move( )
 
 		if ( m_choked_commands > m_maximim_choked || m_choked_commands >= cfg::get< int >( FNV1A( "fakelags.amount" ) ) ||
 			( globals::m_local->get_origin( ) - m_networked_origin ).length_2d_sqr( ) > 4096.0f ||
-			globals::m_local->get_flags( ) & FL_FROZEN
+			globals::m_local->get_flags( ).has( FL_FROZEN )
 			||
 			in_attack ) 
 		{

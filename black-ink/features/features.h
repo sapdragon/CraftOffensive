@@ -7,6 +7,8 @@
 
 #include "misc/movement.h"
 
+#include "misc/misc.h"
+
 #include "fakelags/fakelags.h"
 
 #include "visuals/player_esp.h"
