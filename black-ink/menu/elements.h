@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utils/render/render.h"
+#include "../api/api.h"
 
 #include "../utils/imgui/imgui.h"
 #include "../utils/imgui/imgui_internal.h"
@@ -320,4 +321,73 @@ namespace elements {
         return pressed;
     }
 
+    inline bool config( config_t conf ) {
+        using namespace ImGui;
+
+        ImGuiWindow* window = GetCurrentWindow( );
+        if ( window->SkipItems )
+            return false;
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiID id = window->GetID( conf.m_secure_id.c_str() );
+    
+        ImVec2 pos = window->DC.CursorPos;
+        ImVec2 size = CalcItemSize( {405, 50}, 100, 50 );
+
+        const ImRect bb( pos, pos + size );
+        ItemSize( size, style.FramePadding.y );
+        if ( !ItemAdd( bb, id ) )
+            return false;
+
+        bool hovered, held;
+        bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
+
+        window->DrawList->PushClipRect( bb.Min, bb.Max, true );
+        window->DrawList->AddImage( assets::dirt, bb.Min, bb.Min + ImVec2( 600, 51 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->PopClipRect( );
+
+        auto hoveredAnimate = animationsHovered.ValueInSine( conf.m_secure_id, hovered, 0.f, 1.f, 0.05f );
+        window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 45, 45, 45, int( 50 * hoveredAnimate ) ) );
+
+        window->DrawList->AddImage( assets::creeper, bb.Min + ImVec2(4,4), bb.Min + ImVec2( 46, 46 ));
+        window->DrawList->AddRect( bb.Min + ImVec2( 4, 4 ), bb.Min + ImVec2( 46, 46 ), ImColor( 0, 0, 0 ) );
+
+        window->DrawList->AddText( bb.Min + ImVec2(52, 8), ImColor(255, 255, 255), conf.m_name.c_str() );
+        window->DrawList->AddText( bb.Min + ImVec2( 52, 26 ), ImColor( 190, 190, 190 ), std::string("By " + conf.m_author).c_str( ) );
+
+        window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ) );
+
+        window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 10 - 50, 10 }, bb.Min + ImVec2{ 405 - 10, 40 }, true );
+        window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->AddText( bb.Min + ImVec2{ 405 - 10 - 25, 24 } - ImGui::CalcTextSize( "Load" ) / 2, ImColor( 255, 255, 255 ), "Load" );
+        window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 10 - 50, 10 }, bb.Min + ImVec2{ 405 - 10, 40 }, ImColor( 0, 0, 0 ) );
+        window->DrawList->PopClipRect( );
+
+        if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 10 - 50, 10 }, bb.Min + ImVec2{ 405 - 10, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
+            cloud->load_config( conf.m_secure_id );
+        }
+
+        window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 20 - 100, 10 }, bb.Min + ImVec2{ 405 - 20 - 50, 40 }, true );
+        window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->AddText( bb.Min + ImVec2{ 405 - 20 - 75, 24 } - ImGui::CalcTextSize( "Save" ) / 2, ImColor( 255, 255, 255 ), "Save" );
+        window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 20 - 100, 10 }, bb.Min + ImVec2{ 405 - 20 - 50, 40 }, ImColor( 0, 0, 0 ) );
+        window->DrawList->PopClipRect( );
+
+        if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 20 - 100, 10 }, bb.Min + ImVec2{ 405 - 20 - 50, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
+            cloud->save_config( conf.m_secure_id );
+        }
+
+        window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 30 - 150, 10 }, bb.Min + ImVec2{ 405 - 30 - 100, 40 }, true );
+        window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->AddText( bb.Min + ImVec2{ 405 - 30 - 125, 24 } - ImGui::CalcTextSize( "Delete" ) / 2, ImColor( 255, 255, 255 ), "Delete" );
+        window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 30 - 150, 10 }, bb.Min + ImVec2{ 405 - 30 - 100, 40 }, ImColor( 0, 0, 0 ) );
+        window->DrawList->PopClipRect( );
+
+        if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 30 - 150, 10 }, bb.Min + ImVec2{ 405 - 30 - 100, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
+            cloud->delete_config( conf.m_secure_id );
+        }
+
+        return pressed;
+    }
 }

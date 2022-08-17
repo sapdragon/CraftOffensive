@@ -134,16 +134,16 @@ void c_menu::on_paint() {
 				}
 
 				if ( m_selected_tab == 4 ) {
-					elements::child( _( "Actions" ), { 220, 335 }, [ ] ( ) {
-						if ( elements::button( _( "Refresh configurations" ), ImVec2( 200, 30 ) ) )
+					elements::child( _( "Actions" ), { 190, 335 }, [ ] ( ) {
+						if ( elements::button( _( "Refresh configurations" ), ImVec2( 170, 30 ) ) )
 							cloud->get_configs( );
 
 						ImGui::Separator( );
 
-						static char config_name[ 32 ];
-						ImGui::InputText( _("Configuration name" ), config_name, 32 );
+						static char config_name[ 24 ];
+						ImGui::InputText( _("Configuration name" ), config_name, 24 );
 
-						if ( elements::button( _( "Create configuration" ), ImVec2( 200, 30 ) ) )
+						if ( elements::button( _( "Create configuration" ), ImVec2( 170, 30 ) ) )
 							if( !std::string( config_name ).empty() )
 								cloud->create_config( config_name );
 							else 
@@ -151,18 +151,20 @@ void c_menu::on_paint() {
 
 					} );
 
-					ImGui::SameLine( 231 );
+					ImGui::SameLine( 201 );
 
-					elements::child( _( "List" ), { 400, 335 }, [ ] ( ) {
+					elements::child( _( "List" ), { 430, 335 }, [ ] ( ) {
 						if ( cloud->user_configs.empty( ) ) {
 							auto drawchild = ImGui::GetWindowDrawList( );
 							auto poschild = ImGui::GetWindowPos( );
 
-							drawchild->AddImage( assets::creeper, poschild + ImVec2( 150, 90 ), poschild + ImVec2( 230, 170 ));
-							drawchild->AddText( poschild + ImVec2( 190 - ImGui::CalcTextSize( "Nothing to show ;(" ).x / 2, 190 ), ImColor( 255, 255, 255 ), "Nothing to show ;(" );
+							drawchild->AddImage( assets::creeper, poschild + ImVec2( 165, 90 ), poschild + ImVec2( 245, 170 ));
+							drawchild->AddText( poschild + ImVec2( 205 - ImGui::CalcTextSize( "Nothing to show ;(" ).x / 2, 190 ), ImColor( 255, 255, 255 ), "Nothing to show ;(" );
 						}
 						else {
-
+							for ( auto conf : cloud->user_configs ) {
+								elements::config( conf );
+							}
 						}
 					} );
 				}

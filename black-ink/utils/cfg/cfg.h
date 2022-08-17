@@ -20,9 +20,10 @@ struct chams_entity_settings_t
 };
 
 namespace cfg {
-	void init( );
-	std::string json_action( bool load );
+	extern void init( );
+	extern std::string json_action( bool load );
 
+	inline nlohmann::json jsonk;
 	inline std::unordered_map<uint32_t, std::any> m_items;
 
 	template<class T = bool>

@@ -105,7 +105,7 @@ void save_config_internal( std::string secure_id )
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( "Cloud Configs" , "Config was successfully deleted."  );
+		notifies::push( "Cloud Configs" , "Config was successfully saved."  );
 	}
 
 	curl_easy_cleanup( inited_curl );
@@ -337,4 +337,15 @@ void c_cloud_api::sigin( std::string login, std::string password )
 void c_cloud_api::signup( std::string login, std::string password, std::string email )
 {
 	std::thread( signup_internal, login, password, email ).detach( );
+}
+
+void c_cloud_api::load_config( std::string secure_id )
+{
+	for ( auto conf : user_configs ) {
+		if ( conf.m_secure_id == secure_id ) {
+			cfg::jsonk = nlohmann::json::parse( conf.m_data );
+			cfg::json_action( true );
+			notifies::push( "Cloud Configs", "Config was successfully loaded." );
+		}
+	}
 }

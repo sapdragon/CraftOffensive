@@ -46,6 +46,7 @@ namespace render {
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};
 		style.ItemSpacing = {};
+		style.ScrollbarSize = 2.f;
 
 		ImGuiFreeType::BuildFontAtlas(io.Fonts);
 	}

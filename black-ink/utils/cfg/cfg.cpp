@@ -56,6 +56,26 @@ namespace cfg_internal {
 		else
 			key = col_t(j[0].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ));
 	}
+	void jsonify_chams( nlohmann::json& j, bool load, uint32_t hash, std::string prefix )
+	{
+		auto chams = cfg::get< chams_entity_settings_t >( hash );
+		chams_entity_settings_t temp = chams;
+
+		jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "enable" ], load, temp.m_invisible.m_enable );
+		jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "enable" ], load, temp.m_visible.m_enable );
+
+		for ( auto a = 0; a < 6; a++ ) {
+			jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "enable" ], load, temp.m_visible.m_materials[ a ].m_enable );
+			jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "material" ], load, temp.m_visible.m_materials[ a ].m_material );
+			jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "color" ], load, temp.m_visible.m_materials[ a ].m_color );
+			jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "enable" ], load, temp.m_invisible.m_materials[ a ].m_enable );
+			jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "material" ], load, temp.m_invisible.m_materials[ a ].m_material );
+			jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "color" ], load, temp.m_invisible.m_materials[ a ].m_color );
+		}
+
+		if( !load )
+			cfg::set< chams_entity_settings_t >( hash, temp );
+	}
 }
 
 namespace cfg {
@@ -83,16 +103,14 @@ namespace cfg {
 		set< chams_entity_settings_t >( FNV1A( "chams.teammate" ), chams_entity_settings_t( ) );
 	}
 
-	nlohmann::json jsonk;
-
 	std::string json_action( bool load ) 
 	{
 		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.enable"  ], load, FNV1A( "misc.view_model.enable"  ) );
 		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
 		cfg_internal::jsonify<int>( jsonk[  "misc.view_model.fov" ], load, FNV1A(  "misc.view_model.fov" ) );
-		cfg_internal::jsonify<int>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
-		cfg_internal::jsonify<int>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
-		cfg_internal::jsonify<int>( jsonk[ "misc.view_model.z"  ], load, FNV1A( "misc.view_model.z"  ) );
+		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
+		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
+		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.z"  ], load, FNV1A( "misc.view_model.z"  ) );
 
 		cfg_internal::jsonify<bool>( jsonk[ "visuals_enable" ], load, FNV1A( "visuals_enable" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "box_esp" ], load, FNV1A( "box_esp" ) );
@@ -104,25 +122,9 @@ namespace cfg {
 		cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
 		cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
 
-		auto chams_action = [ ] ( uint32_t hash, std::string prefix, bool load ) {
-			auto chams = get< chams_entity_settings_t >( hash );
-
-			cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "invisible" ][ "enable" ], load, chams.m_invisible.m_enable );
-			cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "visible" ][ "enable" ], load, chams.m_visible.m_enable );
-
-			for ( auto a = 0; a < 6; a++ ) {
-				cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "enable" ], load, chams.m_visible.m_materials[ a ].m_enable );
-				cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "material" ], load, chams.m_visible.m_materials[ a ].m_material );
-				cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "color" ], load, chams.m_visible.m_materials[ a ].m_color );
-				cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "enable" ], load, chams.m_invisible.m_materials[ a ].m_enable );
-				cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "material" ], load, chams.m_invisible.m_materials[ a ].m_material );
-				cfg_internal::jsonify_basic( jsonk[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "color" ], load, chams.m_invisible.m_materials[ a ].m_color );
-			}
-		};
-
-		chams_action( FNV1A( "chams.local_player" ), "local", load );
-		chams_action( FNV1A( "chams.enemy" ), "enemy", load );
-		chams_action( FNV1A( "chams.teammate" ), "teammate", load );
+		cfg_internal::jsonify_chams( jsonk, load, FNV1A( "chams.local_player" ), "local" );
+		cfg_internal::jsonify_chams( jsonk, load, FNV1A( "chams.enemy" ), "enemy" );
+		cfg_internal::jsonify_chams( jsonk, load, FNV1A( "chams.teammate" ), "teammate" );
 
 		return jsonk.dump( );
 	}
