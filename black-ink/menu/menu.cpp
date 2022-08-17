@@ -4,7 +4,7 @@
 #include "elements.h"
 
 #include "../api/api.h"
-
+#include "../features/visuals/model/model.h"
 std::string tabLabels[ 6 ] = { _( "Legit" ), _( "Visuals" ), _( "Misc" ), _( "Skins" ), _( "Files" ), _( "Dashboard" ) };
 
 static char login[ 32 ];
@@ -107,6 +107,17 @@ void c_menu::on_paint() {
 			ImGui::SetCursorPos( { 15, 95 } );
 			ImGui::BeginGroup( );
 			{
+				if ( g_Model.get_preview_texture( ) != nullptr )
+				{
+					ImGui::GetForegroundDrawList( )->AddImage(
+						g_Model.get_preview_texture( )->m_handles[ 0 ]->m_texture,
+						ImGui::GetWindowPos( ),
+						ImGui::GetWindowPos( ) + ImVec2( g_Model.get_preview_texture( )->get_actual_width( ), g_Model.get_preview_texture( )->get_actual_height( ) ),
+						ImVec2( 0, 0 ), ImVec2( 1, 1 ),
+						ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
+
+				}
+
 				if ( m_selected_tab == 0 ) {
 					elements::child( _( "General" ), { 220, 500 }, [ ] ( ) {
 						elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
@@ -119,11 +130,11 @@ void c_menu::on_paint() {
 						elements::slider_float( _( "viewmodel y" ), FNV1A( "misc.view_model.y" ), -50, 50, "viewmodel y: %0.1f" );
 						elements::slider_float( _( "viewmodel z" ), FNV1A( "misc.view_model.z" ), -50, 50, "viewmodel z: %0.1f" );
 
-						
+
 						elements::checkbox( _( "override view model fov  when scoped" ), FNV1A( "misc.view_model.override_while_scoped" ) );
 						elements::slider_int( _( "viewmodel fov" ), FNV1A( "misc.view_model.fov" ), 60, 120, "viewmodel fov: %i" );
 
-
+						
 
 						if ( elements::button( _( "Button" ), ImVec2( 200, 30 ) ) )
 						{

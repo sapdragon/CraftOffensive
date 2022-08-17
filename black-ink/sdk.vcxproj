@@ -89,7 +89,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -116,6 +115,7 @@
     <ClCompile Include="features\shared\proto\shared.pb.cc" />
     <ClCompile Include="features\shared\shared.cpp" />
     <ClCompile Include="features\visuals\chams.cpp" />
+    <ClCompile Include="features\visuals\model\model.cpp" />
     <ClCompile Include="features\visuals\player_esp.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="hooks\vtables\client_dll.cpp" />
@@ -181,6 +181,7 @@
     <ClInclude Include="features\shared\proto\shared.pb.h" />
     <ClInclude Include="features\shared\shared.hpp" />
     <ClInclude Include="features\visuals\chams.h" />
+    <ClInclude Include="features\visuals\model\model.h" />
     <ClInclude Include="features\visuals\player_esp.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="hooks\hooks.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="sdk\interfaces\i_panel.h" />
     <ClInclude Include="sdk\interfaces\i_prediction.h" />
     <ClInclude Include="sdk\interfaces\i_render_view.h" />
+    <ClInclude Include="sdk\interfaces\i_studio_render.h" />
     <ClInclude Include="sdk\interfaces\i_surface.h" />
     <ClInclude Include="sdk\interfaces\i_surface_data.h" />
     <ClInclude Include="sdk\interfaces\i_view_render_beams.h" />

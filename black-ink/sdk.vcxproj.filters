@@ -55,6 +55,7 @@
     <ClCompile Include="features\fakelags\fakelags.cpp" />
     <ClCompile Include="features\misc\misc.cpp" />
     <ClCompile Include="features\legitbot\aimbot\aimbot.cpp" />
+    <ClCompile Include="features\visuals\model\model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\api.h" />
@@ -216,6 +217,8 @@
     <ClInclude Include="features\misc\misc.h" />
     <ClInclude Include="features\legitbot\aimbot\aimbot.hpp" />
     <ClInclude Include="sdk\interfaces\i_file_system.h" />
+    <ClInclude Include="features\visuals\model\model.h" />
+    <ClInclude Include="sdk\interfaces\i_studio_render.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="api\LibCurl.lib" />

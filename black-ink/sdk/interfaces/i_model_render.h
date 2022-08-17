@@ -45,4 +45,6 @@ public:
 	VFUNC(forced_material_override(i_material* material = nullptr, e_override_type type = OVERRIDE_NORMAL), 1, void(__thiscall*)(void*, i_material*, e_override_type, int), material, type, 0)
 	VFUNC(is_forced_material_override(), 2, bool(__thiscall*)(void*))
 	VFUNC(draw_model_execute(void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones), 21, void(__thiscall*)(void*, void*, const draw_model_state_t&, const model_render_info_t&, matrix3x4_t*), context, state, info, bones)
+	VFUNC(suppress_engine_lighting( bool suppress ), 24, void( __thiscall* )( void*, bool ), suppress );
+
 };

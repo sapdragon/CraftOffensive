@@ -1,4 +1,5 @@
 #include "../hooks.h"
+#include "../../features/visuals/model/model.h"
 
 void __fastcall hooks::panel::paint_traverse::hook(void* ecx, void* edx, uint32_t id, bool force_repaint, bool allow_force) {
 	paint_traverse_original(ecx, id, force_repaint, allow_force);
@@ -18,4 +19,6 @@ void __fastcall hooks::panel::paint_traverse::hook(void* ecx, void* edx, uint32_
 	}
 
 	render::begin();
+
+	g_Model.on_render( );
 }

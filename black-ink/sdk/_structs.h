@@ -268,11 +268,92 @@ public:
 	float	m_recoil_magnitude_variance_alt;
 };
 
+struct vplane_t {
+	vec3_t m_normal;
+	vec3_t m_dist;
+};
+
+typedef vplane_t frustum_t[ 0x6 ];
+
 class c_process_spotted_entity_update
 {
 public:
 	char PAD[ 0xC ];
 	int m_size;
+};
+
+struct c_mdl {
+	std::byte pad_0[ 0x58 ];
+	int32_t m_sequence;
+	std::byte pad_1[ 0x8 ];
+	float_t m_time;
+	float_t m_current_anim_end_time;
+	std::byte pad_2[ 0x611 ];
+	bool m_use_sequence_playback_fps;
+	std::byte pad_3[ 0x67 ];
+	float_t m_time_basis_adjustment;
+};
+
+struct texture_t {
+	std::byte pad_0[ 0xC ];
+	IDirect3DTexture9* m_texture;
+};
+
+class c_texture {
+public:
+	std::byte pad_0[ 0x50 ];
+	texture_t** m_handles;
+
+	VFUNC( get_actual_width( ), 3, int( __thiscall* )( void* ) );
+	VFUNC( get_actual_height( ), 4, int( __thiscall* )( void* ) );
+};
+class i_material;
+
+class i_material_render_context {
+public:
+	VFUNC( release( ), 1, int( __thiscall* )( void* ) );
+	VFUNC( bind_local_cubemap( c_texture* texture ), 5, void( __thiscall* )( void*, c_texture* ), texture );
+	VFUNC( set_render_target( c_texture* texture ), 6, void( __thiscall* )( void*, c_texture* ), texture );
+	VFUNC( clear_buffers( bool clear_color, bool clear_depth, bool clear_stencil ), 12, void( __thiscall* )( void*, bool, bool, bool ), clear_color, clear_depth, clear_stencil );
+	VFUNC( viewport( int32_t x, int32_t y, int32_t width, int32_t height ), 40, void( __thiscall* )( void*, int32_t, int32_t, int32_t, int32_t ), x, y, width, height );
+	VFUNC( get_viewport( int32_t& x, int32_t& y, int32_t& width, int32_t& height ), 41, void( __thiscall* )( void*, int32_t&, int32_t&, int32_t&, int32_t& ), x, y, width, height );
+	VFUNC( clear_color_3ub( uint8_t r, uint8_t g, uint8_t b ), 78, void( __thiscall* )( void*, uint8_t, uint8_t, uint8_t ), r, g, b );
+	VFUNC( clear_color_4ub( uint8_t r, uint8_t g, uint8_t b, uint8_t a ), 79, void( __thiscall* )( void*, uint8_t, uint8_t, uint8_t, uint8_t ), r, g, b, a );
+	VFUNC( override_depth_enable( bool enable, bool depth_write_enable, bool depth_test_enable ), 80, void( __thiscall* )( void*, bool, bool, bool ), enable, depth_write_enable, depth_test_enable );
+	VFUNC( draw_screen_space_rectangle( i_material* material, int32_t dest_x, int32_t dest_y, int32_t width, int32_t height, float_t src_texture_x0, float_t src_texture_y0, float_t src_texture_x1, float_t src_texture_y1, int32_t src_texture_width, int32_t src_texture_height, void* client_renderable = nullptr, int32_t dice_x = 1, int32_t dice_y = 1 ), 114, void( __thiscall* )( void*, i_material*, int32_t, int32_t, int32_t, int32_t, float_t, float_t, float_t, float_t, int32_t, int32_t, void*, int32_t, int32_t ), material, dest_x, dest_y, width, height, src_texture_x0, src_texture_y0, src_texture_x1, src_texture_y1, src_texture_width, src_texture_height, client_renderable, dice_x, dice_y );
+	VFUNC( push_render_target_and_viewport( ), 119, void( __thiscall* )( void* ) );
+	VFUNC( pop_render_target_and_viewport( ), 120, void( __thiscall* )( void* ) );
+	VFUNC( set_int_rendering_parameter( int parm_number, int value ), 126, void( __thiscall* )( void*, int, int ), parm_number, value );
+	VFUNC( begin_pix_event( unsigned long color, const char* name ), 144, void( __thiscall* )( void*, unsigned long, const char* ), color, name );
+	VFUNC( end_pix_event( ), 145, void( __thiscall* )( void* ) );
+	VFUNC( set_lighting_origin( float_t x, float_t y, float_t z ), 158, void( __thiscall* )( void*, float_t, float_t, float_t ), x, y, z );
+};
+
+class c_merged_mdl {
+public:
+	c_mdl m_root_mdl;
+
+	VFUNC(draw( const matrix3x4_t& mat_root_to_world ), 0, void( __thiscall* )( void*, const matrix3x4_t& ), mat_root_to_world );
+	VFUNC(set_mdl( const char* model_path, void* custom_material_owner = nullptr, void* proxy_data = nullptr ), 4, void( __thiscall* )( void*, const char*, void*, void* ), model_path, custom_material_owner, proxy_data );
+
+	void setup_bones_for_attachment_queries( ) {
+		static auto setup_bones_for_attachment_queries_addr = utils::find_pattern_from_module( GetModuleHandleA( _( "client.dll" ) ), _( "55 8B EC 83 EC 14 83 3D ? ? ? ? ? 53" ) );
+
+		reinterpret_cast< void( __thiscall* )( void* ) >( setup_bones_for_attachment_queries_addr )( this );
+	}
+
+	void set_merge_mdl( const char* model_path, void* custom_material_owner = nullptr, void* proxy_data = nullptr, const bool request_bone_merge_takeover = false ) {
+		static auto set_merge_mdl_addr = utils::find_pattern_from_module( GetModuleHandleA( _( "client.dll" ) ), _( "55 8B EC 57 8B F9 8B 0D ? ? ? ? 85 C9 75" ) );
+
+
+		reinterpret_cast< void( __thiscall* )( void*, const char*, void*, void*, bool ) >( set_merge_mdl_addr )( this, model_path, custom_material_owner, proxy_data, request_bone_merge_takeover );
+	}
+
+	void set_sequence( const int32_t sequence, const bool use_sequence_playback_fps ) {
+		m_root_mdl.m_sequence = sequence;
+		m_root_mdl.m_use_sequence_playback_fps = use_sequence_playback_fps;
+		m_root_mdl.m_time_basis_adjustment = m_root_mdl.m_time;
+	}
 };
 
 enum e_cs_weapon_type {
@@ -1360,4 +1441,23 @@ enum e_game_mode {
 	GAME_MODE_GUARDIAN,
 	GAME_MODE_COOPSTRIKE,
 	GAME_MODE_DANGERZONE
+};
+
+
+enum RenderTargetSizeMode_t
+{
+	RT_SIZE_NO_CHANGE = 0,
+	RT_SIZE_DEFAULT = 1,
+	RT_SIZE_PICMIP = 2,
+	RT_SIZE_HDR = 3,
+	RT_SIZE_FULL_FRAME_BUFFER = 4,
+	RT_SIZE_OFFSCREEN = 5,
+	RT_SIZE_FULL_FRAME_BUFFER_ROUNDED_UP = 6
+};
+enum MaterialRenderTargetDepth_t
+{
+	MATERIAL_RT_DEPTH_SHARED = 0x0,
+	MATERIAL_RT_DEPTH_SEPARATE = 0x1,
+	MATERIAL_RT_DEPTH_NONE = 0x2,
+	MATERIAL_RT_DEPTH_ONLY = 0x3,
 };

@@ -16,3 +16,5 @@
 #include "shared/shared.hpp"
 
 #include "legitbot/aimbot/aimbot.hpp"
+
+#include "visuals/model/model.h"

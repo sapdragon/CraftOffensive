@@ -35,6 +35,22 @@ namespace math {
 		return res;
 	}
 
+	void angle_matrix(const qangle_t& ang_view, matrix3x4_t& mat_output, const vec3_t& vec_origin)
+	{
+		float sp, sy, sr, cp, cy, cr;
+
+		math::sin_cos(deg_to_rad(ang_view.x), sp, cp);
+		math::sin_cos(deg_to_rad(ang_view.y), sy, cy);
+		math::sin_cos(deg_to_rad(ang_view.z), sr, cr);
+
+		const float_t crcy = cr * cy;
+		const float_t crsy = cr * sy;
+		const float_t srcy = sr * cy;
+		const float_t srsy = sr * sy;
+
+		mat_output = matrix3x4_t(vec3_t(cp * cy, cp * sy, -sp), vec3_t(sp * srcy - crsy, sp * srsy + crcy, sr * cp), vec3_t(sp * crcy + srsy, sp * crsy - srcy, cr * cp), vec_origin);
+	}
+
 	void angle_vectors(const qangle_t& angles, vec3_t* forward, vec3_t* right, vec3_t* up) {
 		vec3_t cos, sin;
 

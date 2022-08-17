@@ -14,7 +14,11 @@ struct view_setup_t {
 	float		m_view_model_fov;
 	vec3_t		m_origin;
 	qangle_t	m_angles;
-	char		pad1[124];
+	float m_near;
+	float m_far;
+	float m_near_viewmodel;
+	float m_far_viewmodel;
+	float m_aspect_ratio;
 };
 
 class i_client_mode {
