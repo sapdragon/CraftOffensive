@@ -8,6 +8,24 @@ std::wstring c_base_combat_weapon::get_name() {
 	return interfaces::m_localize->find_safe(weapon_data->m_hud_name);
 }
 
+bool c_base_combat_weapon::is_gun()
+{
+	switch (get_cs_weapon_data()->m_weapon_type)
+	{
+	case WEAPON_TYPE_C4:
+		return false;
+	case WEAPON_TYPE_GRENADE:
+		return false;
+	case WEAPON_TYPE_KNIFE:
+		return false;
+	case WEAPON_TYPE_UNKNOWN:
+		return false;
+	default:
+		return true;
+	}
+}
+
+
 c_cs_weapon_data* c_base_combat_weapon::get_cs_weapon_data() { return interfaces::m_weapon_system->get_cs_weapon_data(get_item_definition_index()); }
 
 player_info_t c_cs_player::get_info() {
@@ -50,3 +68,10 @@ bool c_base_entity::is_enemy(c_base_entity* from) {
 
 	return get_team() != from->get_team();
 }
+
+bool c_cs_player::is_defusing()
+{
+	return *(bool*)((DWORD)(this) + 0x997C);
+}
+
+

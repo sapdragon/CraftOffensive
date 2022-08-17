@@ -54,6 +54,8 @@ void __stdcall hooks::client_dll::create_move::hook(int sequence_number, float i
 
 	movement->on_create_move(false);
 
+	fake_lags->on_create_move( );
+
 	engine_prediction->process();
 
 	/* */
@@ -72,4 +74,11 @@ void __stdcall hooks::client_dll::create_move::hook(int sequence_number, float i
 
 	verified->m_cmd = *cmd;
 	verified->m_crc = cmd->get_check_sum();
+}
+
+void __fastcall hooks::client_dll::level_init_pre_entity::hook( void* ecx, void* edx, const char* map_name )
+{
+	fake_lags->reset_data( );
+
+	return hooks::level_init_pre_entity_original( ecx, map_name );
 }

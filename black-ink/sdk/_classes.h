@@ -359,6 +359,18 @@ public:
 
 	player_info_t get_info();
 
+	bool is_defusing( );
+
+	__forceinline bool is_wait_for_no_attack( )
+	{
+		return *( bool* ) ( ( DWORD ) ( this ) + 0x99BC );
+	}
+
+	__forceinline int player_state( )
+	{
+		return *( int* ) ( ( DWORD ) ( this ) + 0x9978 );
+	}
+
 	__forceinline static uintptr_t* get_vtable() {
 		static const auto vtable = SIG("client.dll", "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 89 7C 24 0C").self_offset(0x47).cast<uintptr_t*>();
 
@@ -385,8 +397,12 @@ public:
 	NETVAR(get_next_primary_attack(), float, "CBaseCombatWeapon->m_flNextPrimaryAttack")
 	NETVAR(get_next_secondary_attack(), float, "CBaseCombatWeapon->m_flNextSecondaryAttack")
 	NETVAR(get_world_model(), c_base_handle, "CBaseCombatWeapon->m_hWeaponWorldModel")
+	DATA_MAP( get_activity(), int, "m_Activity" );
 
 	std::wstring get_name();
+
+	bool is_gun( );
+
 
 	c_cs_weapon_data* get_cs_weapon_data();
 };

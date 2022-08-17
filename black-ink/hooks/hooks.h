@@ -32,6 +32,13 @@ namespace hooks {
 			void __stdcall gate(int sequence_number, float sample_frametime, bool active);
 			using fn = void(__stdcall*)(int, float, bool);
 		}
+
+		namespace level_init_pre_entity
+		{
+				void __fastcall hook( void* ecx, void* edx, const char* map_name );
+				using fn = void( __thiscall* )( void*, const char* );
+			
+		}
 	}
 
 	namespace client_mode {
@@ -83,6 +90,12 @@ namespace hooks {
 			void __fastcall hook( void* ecx, void* edx );
 			using fn = void( __fastcall* )( void*, void* );
 		}
+
+		namespace cl_move
+		{
+			void __cdecl hook( float frame_time, bool final_tick );
+			using fn = void( __cdecl* )( float, bool );
+		}
 	}
 
 	namespace other
@@ -99,6 +112,15 @@ namespace hooks {
 			void* __fastcall hook( void* ecx, void* edx, int size );
 			using fn = void* ( __fastcall* )( void*, void*, int );
 
+		}
+	}
+
+	namespace mdl_cache
+	{
+		namespace find_mdl
+		{
+			unsigned short __fastcall hook( void* ecx, void* edx, char* path );
+			using fn = unsigned short ( __thiscall* )( void*, char* path );
 		}
 	}
 
@@ -125,6 +147,8 @@ namespace hooks {
 	inline hooks::other::process_spotted_entity_update::fn process_spotted_entity_update_original = nullptr;
 	inline hooks::other::allocate_memory::fn allocate_memory_original = nullptr;
 	inline hooks::engine_dll::host_run_frame_input::fn host_run_frame_input_original = nullptr;
-
+	inline hooks::mdl_cache::find_mdl::fn find_mdl_original = nullptr;
+	inline hooks::networking::cl_move::fn cl_move_original = nullptr;
+	inline hooks::client_dll::level_init_pre_entity::fn level_init_pre_entity_original = nullptr;
 
 }
