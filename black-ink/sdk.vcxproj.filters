@@ -51,6 +51,7 @@
     <ClCompile Include="utils\render\render.cpp" />
     <ClCompile Include="utils\steam_sockets\steam_sockets.cpp" />
     <ClCompile Include="api\MD5\MD5.cpp" />
+    <ClCompile Include="hooks\vtables\mdl_cache.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\api.h" />

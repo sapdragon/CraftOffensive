@@ -102,6 +102,15 @@ namespace hooks {
 		}
 	}
 
+	namespace mdl_cache
+	{
+		namespace find_mdl
+		{
+			unsigned short __fastcall hook( void* ecx, void* edx, char* path );
+			using fn = unsigned short ( __thiscall* )( void*, char* path );
+		}
+	}
+
 	namespace engine_dll
 	{
 		namespace host_run_frame_input
@@ -125,6 +134,7 @@ namespace hooks {
 	inline hooks::other::process_spotted_entity_update::fn process_spotted_entity_update_original = nullptr;
 	inline hooks::other::allocate_memory::fn allocate_memory_original = nullptr;
 	inline hooks::engine_dll::host_run_frame_input::fn host_run_frame_input_original = nullptr;
+	inline hooks::mdl_cache::find_mdl::fn find_mdl_original = nullptr;
 
 
 }
