@@ -18,8 +18,6 @@ void get_configs_internal( )
 	curl_global_init( CURL_GLOBAL_ALL );
 	auto inited_curl = curl_easy_init( );
 
-	auto headers = curl_slist_append( NULL, _( "Expect:" ) );
-	curl_easy_setopt( inited_curl, CURLOPT_HTTPHEADER, headers );
 	curl_easy_setopt( inited_curl, CURLOPT_URL, szRequest.c_str( ) );
 	curl_easy_setopt( inited_curl, CURLOPT_POST, 1 );
 	curl_easy_setopt( inited_curl, CURLOPT_POSTFIELDS, request_body.c_str( ) );
@@ -39,13 +37,14 @@ void get_configs_internal( )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Something went wrong." ) );
+		notifies::push( "Cloud Configs" ,  "Something went wrong."  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Empty" ) )
 	{
-		cloud->user_configs.clear( );
+		if(!cloud->user_configs.empty() )
+			cloud->user_configs.clear( );
 
-		notifies::push( _( "Cloud Configs" ), _( "No cloud configs founded." ) );
+		notifies::push( "Cloud Configs" ,  "No cloud configs founded."  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
@@ -66,11 +65,10 @@ void get_configs_internal( )
 			} );
 		}
 
-		notifies::push( _( "Cloud Configs" ), _( "Configs was successfully fetched." ) );
+		notifies::push(  "Cloud Configs" ,  "Configs was successfully fetched." );
 	}
 
 	curl_easy_cleanup( inited_curl );
-	curl_slist_free_all( headers );
 }
 
 void save_config_internal( std::string secure_id )
@@ -226,7 +224,7 @@ void sigin_internal( std::string login, std::string password )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Empty fields" ) )
 	{
-		notifies::push( _( "Authorization" ), _( "Error" ) );
+		notifies::push(  "Authorization" ,  "Error"  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "OK" ) )
 	{
@@ -238,11 +236,11 @@ void sigin_internal( std::string login, std::string password )
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "User not found" ) )
 	{
-		notifies::push( _( "Authorization" ), _( "User not found" ) );
+		notifies::push(  "Authorization" ,  "User not found"  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Wrong password" ) )
 	{
-		notifies::push( _( "Authorization" ), _( "Wrong password" ) );
+		notifies::push(  "Authorization" ,  "Wrong password"  );
 	}
 
 	curl_easy_cleanup( inited_curl );
@@ -292,13 +290,13 @@ void signup_internal( std::string login, std::string password, std::string email
 
 		get_configs_internal( );
 	}
-	else if ( json_resp[ _( "Status" ) ] == _( "User not found" ) )
+	else if ( json_resp[ _( "Status" ) ] ==  "User not found" )
 	{
-		notifies::push( _( "Authorization" ), _( "User not found" ) );
+		notifies::push( "Authorization",   "User not found"  );
 	}
-	else if ( json_resp[ _( "Status" ) ] == _( "Wrong password" ) )
+	else if ( json_resp[ _( "Status" ) ] ==  "Wrong password"  )
 	{
-		notifies::push( _( "Authorization" ), _( "Wrong password" ) );
+		notifies::push(  "Authorization",  "Wrong password" );
 	}
 
 	curl_easy_cleanup( inited_curl );
