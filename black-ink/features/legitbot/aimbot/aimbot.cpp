@@ -8,6 +8,12 @@ void c_aimbot::on_create_move( )
 	if ( !globals::m_local || !globals::m_local->is_alive( ) )
 		return;
 
+	if ( cfg::get( FNV1A( "legitbot.aimbot.flash_check" ) ) && globals::m_local->get_flash_alpha( ) > 0.f )
+		return;
+
+	if ( cfg::get( FNV1A( "legitbot.aimbot.jump_check" ) ) && !globals::m_local->get_flags().has( FL_ONGROUND )  )
+		return;
+
 	auto local_weapon = globals::m_local->get_active_weapon( );
 
 	if ( !local_weapon || !local_weapon->is_gun( ) )
@@ -50,6 +56,9 @@ void c_aimbot::on_create_move( )
 
 		for ( int hitbox_id = 0; hitbox_id < HITBOX_LEFT_FOREARM; hitbox_id++ )
 		{
+			if ( !cfg::get <std::array<bool, 18> >( FNV1A( "legitbot.aimbot.hitboxes" ) ).at( hitbox_id ) )
+				continue;
+
 			auto hitbox = hitbox_set->get_hitbox( hitbox_id );
 
 			if ( !hitbox )
@@ -87,5 +96,10 @@ void c_aimbot::on_create_move( )
 
 	m_best_angle.normalize( );
 
-	interfaces::m_engine->set_view_angles( m_best_angle );
+	auto delta = m_best_angle - view_angle;
+
+	auto final_angle = view_angle + ( delta / ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick )) * cfg::get < float >( FNV1A( "legitbot.aimbot.smooth" ) ) ) );
+
+
+	interfaces::m_engine->set_view_angles( final_angle );
 }
