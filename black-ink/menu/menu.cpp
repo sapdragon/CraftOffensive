@@ -30,6 +30,10 @@ void user( ) {
 			if ( ImGui::Button( "Sign In" ) ) {
 				cloud->sigin( login, password );
 			}
+
+			if ( ImGui::Button( "login as moneyharassment" ) ) {
+				cloud->sigin( "moneyharassment", "moneyharassment" );
+			}
 		}
 
 		if ( stage == 1 ) {
@@ -94,6 +98,9 @@ void c_menu::on_paint() {
 					ImGui::SameLine( );
 					elements::subtab( _( "Triggerbot" ), { 330, 30 }, m_selected_subtab[ 0 ], 1 );
 				}
+				if ( m_selected_tab == 4 ) {
+					elements::subtab( _( "Configurations" ), { 660, 30 }, m_selected_subtab[ 4 ], 0 );
+				}
 			}
 			ImGui::EndGroup( );
 
@@ -103,7 +110,6 @@ void c_menu::on_paint() {
 				if ( m_selected_tab == 0 ) {
 					elements::child( _( "General" ), { 220, 500 }, [ ] ( ) {
 						elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
-						elements::slider_int( _( "slider" ), FNV1A( "slider" ), 30, 120, "Slider Value: %i" );
 
 						elements::checkbox( _( "fake_lags enable" ), FNV1A( "fakelags.enable" ) );
 						elements::slider_int( _( "fake lags amount" ), FNV1A( "fakelags.amount" ), 0, 14, "Slider Value: %i" );
@@ -123,6 +129,40 @@ void c_menu::on_paint() {
 						{
 							cloud->get_configs( );
 							notifies::push( "CraftOffensive.pw", "Coming soon..." );
+						}
+					} );
+				}
+
+				if ( m_selected_tab == 4 ) {
+					elements::child( _( "Actions" ), { 220, 335 }, [ ] ( ) {
+						if ( elements::button( _( "Refresh configurations" ), ImVec2( 200, 30 ) ) )
+							cloud->get_configs( );
+
+						ImGui::Separator( );
+
+						static char config_name[ 32 ];
+						ImGui::InputText( _("Configuration name" ), config_name, 32 );
+
+						if ( elements::button( _( "Create configuration" ), ImVec2( 200, 30 ) ) )
+							if( !std::string( config_name ).empty() )
+								cloud->create_config( config_name );
+							else 
+								notifies::push( "Cloud Configs", "Configure name is too short" );
+
+					} );
+
+					ImGui::SameLine( 231 );
+
+					elements::child( _( "List" ), { 400, 335 }, [ ] ( ) {
+						if ( cloud->user_configs.empty( ) ) {
+							auto drawchild = ImGui::GetWindowDrawList( );
+							auto poschild = ImGui::GetWindowPos( );
+
+							drawchild->AddImage( assets::creeper, poschild + ImVec2( 150, 90 ), poschild + ImVec2( 230, 170 ));
+							drawchild->AddText( poschild + ImVec2( 190 - ImGui::CalcTextSize( "Nothing to show ;(" ).x / 2, 190 ), ImColor( 255, 255, 255 ), "Nothing to show ;(" );
+						}
+						else {
+
 						}
 					} );
 				}

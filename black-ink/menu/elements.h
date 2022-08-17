@@ -96,12 +96,14 @@ namespace elements {
 
             ImGui::GetWindowDrawList( )->AddText( pos + ImVec2(10, 7), ImColor( 220, 220, 220 ), label.c_str( ) );
 
-            ImGui::SetCursorPos( {10, 35} );
-            ImGui::BeginChild( std::string(label+"child").c_str(), size_arg - ImVec2( 20, 40 ), false, ImGuiWindowFlags_NoBackground );
+            ImGui::SetCursorPos( {10, 39} );
+            ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, { 10, 6 } );
+            ImGui::BeginChild( std::string(label+"child").c_str(), size_arg - ImVec2( 20, 44 ), false, ImGuiWindowFlags_NoBackground );
             {
                func( );
             }
             ImGui::EndChild( );
+            ImGui::PopStyleVar( );
         }
         ImGui::EndChild( );
     }
@@ -119,7 +121,7 @@ namespace elements {
         const ImVec2 label_size = CalcTextSize( label.c_str( ), NULL, true );
 
         ImVec2 pos = window->DC.CursorPos;
-        ImVec2 size = CalcItemSize( { ImGui::GetWindowSize().x, 25}, 100, 50 );
+        ImVec2 size = CalcItemSize( { ImGui::GetWindowSize().x, 22}, 100, 50 );
 
         const ImRect bb( pos, pos + size );
         ItemSize( size, style.FramePadding.y );
@@ -143,7 +145,7 @@ namespace elements {
         window->DrawList->AddImage( assets::dirt, bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), {}, {1, 1}, ImColor(255, 255, 255, int(150 )) );
         window->DrawList->PopClipRect( );
 
-        window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 2, 3 ), bb.Min + ImVec2{ 18, 19 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
+        window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 1, 3 ), bb.Min + ImVec2{ 19, 21 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
 
         window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ) );
 
@@ -205,7 +207,7 @@ namespace elements {
 
         const ImVec2 label_size = CalcTextSize( label, NULL, true );
         const ImRect frame_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( ImGui::GetWindowSize( ).x, 25 ) );
-        const ImRect total_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( ImGui::GetWindowSize( ).x, 30 ) );
+        const ImRect total_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( ImGui::GetWindowSize( ).x, 25 ) );
 
         ItemSize( total_bb, style.FramePadding.y );
         if ( !ItemAdd( total_bb, id, &frame_bb ) )
@@ -281,7 +283,7 @@ namespace elements {
             cfg::set<int>( v, value );
     }
 
-    inline bool button( std::string label, ImVec2 size_arg ) {
+    inline bool button( const char* label, ImVec2 size_arg ) {
         using namespace ImGui;
 
         ImGuiWindow* window = GetCurrentWindow( );
@@ -290,8 +292,8 @@ namespace elements {
 
         ImGuiContext& g = *GImGui;
         const ImGuiStyle& style = g.Style;
-        const ImGuiID id = window->GetID( label.c_str( ) );
-        const ImVec2 label_size = CalcTextSize( label.c_str( ), NULL, true );
+        const ImGuiID id = window->GetID( label );
+        const ImVec2 label_size = CalcTextSize( label, NULL, true );
 
         ImVec2 pos = window->DC.CursorPos;
         ImVec2 size = CalcItemSize( size_arg, 100, 50 );
@@ -311,8 +313,7 @@ namespace elements {
         auto hoveredAnimate = animationsHovered.ValueInSine( label, hovered, 0.f, 1.f, 0.05f );
         window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int(50 * hoveredAnimate) ) );
 
-
-        RenderTextClipped( bb.Min, bb.Max, label.c_str(), "", NULL, ImVec2( 0.5f, 0.5f ) );
+        RenderTextClipped( bb.Min, bb.Max, label, "", NULL, ImVec2( 0.5f, 0.5f ) );
 
         window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ) );
 

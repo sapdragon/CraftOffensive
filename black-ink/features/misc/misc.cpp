@@ -14,12 +14,12 @@ void c_misc::force_viewmodel_origin( )
 	math::angle_vectors( view_model->get_abs_angles( ), &forward, &right, &up );
 
 	/* force modificated origin*/
-	view_model->set_abs_origin( view_model->get_abs_origin( ) + ( right * cfg::get < float >( FNV1A( _( "misc.view_model.x" ) ) ) ) + ( forward * cfg::get < float >( FNV1A( _( "misc.view_model.y" )  ) ) ) + ( up * cfg::get < float >( FNV1A( _( "misc.view_model.z" )  ) ) ) );
+	view_model->set_abs_origin( view_model->get_abs_origin( ) + ( right * cfg::get < float >( FNV1A(  "misc.view_model.x"  ) ) ) + ( forward * cfg::get < float >( FNV1A(  "misc.view_model.y"  ) ) ) + ( up * cfg::get < float >( FNV1A(  "misc.view_model.z"  ) ) ) );
 
 }
 
 void c_misc::on_override_view( view_setup_t* setup )
 {
-	if( cfg::get < bool >( FNV1A( _( "misc.view_model.enable" ) ) ) )
+	if( cfg::get < bool >( FNV1A(  "misc.view_model.enable" ) ) )
 		force_viewmodel_origin( );
 }

@@ -73,7 +73,7 @@ void get_configs_internal( )
 
 void save_config_internal( std::string secure_id )
 {
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&secureid=" + secure_id + "&content=" + secure_id;
+	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&secureid=" + secure_id + "&content=" + cfg::json_action( false );
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/saveConfig" );
 	std::string szResponse;
 
@@ -101,20 +101,22 @@ void save_config_internal( std::string secure_id )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Something went wrong." ) );
+		notifies::push( "Cloud Configs" ,  "Something went wrong."  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Config was successfully deleted." ) );
+		notifies::push( "Cloud Configs" , "Config was successfully deleted."  );
 	}
 
 	curl_easy_cleanup( inited_curl );
 	curl_slist_free_all( headers );
+
+	get_configs_internal( );
 }
 
 void create_config_internal( std::string name )
 {
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&name=" + name + "&content=";
+	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&name=" + name + "&content=" + cfg::json_action( false );
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/createConfig" );
 	std::string szResponse;
 
@@ -142,15 +144,17 @@ void create_config_internal( std::string name )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Something went wrong." ) );
+		notifies::push( "Cloud Configs" , "Something went wrong."  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Config was successfully created." ) );
+		notifies::push( "Cloud Configs" , "Config was successfully created."  );
 	}
 
 	curl_easy_cleanup( inited_curl );
 	curl_slist_free_all( headers );
+
+	get_configs_internal( );
 }
 
 void delete_config_internal( std::string secure_id )
@@ -183,15 +187,17 @@ void delete_config_internal( std::string secure_id )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Something went wrong." ) );
+		notifies::push(  "Cloud Configs" , "Something went wrong."  );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( _( "Cloud Configs" ), _( "Config was successfully deleted." ) );
+		notifies::push( "Cloud Configs" ,  "Config was successfully deleted." );
 	}
 
 	curl_easy_cleanup( inited_curl );
 	curl_slist_free_all( headers );
+
+	get_configs_internal( );
 }
 
 void sigin_internal( std::string login, std::string password )
