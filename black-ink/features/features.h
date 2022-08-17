@@ -14,3 +14,5 @@
 #include "visuals/player_esp.h"
 
 #include "shared/shared.hpp"
+
+#include "legitbot/aimbot/aimbot.hpp"

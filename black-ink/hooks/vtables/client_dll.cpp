@@ -58,6 +58,9 @@ void __stdcall hooks::client_dll::create_move::hook(int sequence_number, float i
 
 	engine_prediction->process();
 
+
+	aimbot->on_create_move( );
+
 	/* */
 
 	engine_prediction->restore();

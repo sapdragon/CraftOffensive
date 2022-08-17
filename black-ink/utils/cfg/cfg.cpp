@@ -3,6 +3,19 @@
 
 namespace cfg {
 	void init() {
+
+		set < bool >( FNV1A( "legitbot.aimbot.enable" ), false );
+
+		set < std::array <bool, 18 > >( FNV1A( "legitbot.aimbot.hitboxes" ), { true, true,  true, true, true, true,  true, true, true, true,  true, true, true, true,  true, true, true, true} );
+
+		set < float >( FNV1A( "legitbot.aimbot.fov" ), 25.f );
+		set < float >( FNV1A( "legitbot.aimbot.smooth" ), 15.f );
+
+		set < bool >( FNV1A( "legitbot.aimbot.flash_check" ), true );
+		set < bool >( FNV1A( "legitbot.aimbot.jump_check" ), true );
+		set < bool >( FNV1A( "legitbot.aimbot.smoke_check" ), true );
+
+
 		set( FNV1A( "visuals_enable" ), false );
 		set( FNV1A( "box_esp" ), false);
 		set( FNV1A( "name_esp" ), false);

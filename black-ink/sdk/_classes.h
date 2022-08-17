@@ -310,7 +310,7 @@ public:
 	NETPROP(get_client_side_animation_prop(), "CBaseAnimating->m_bClientSideAnimation")
 	NETVAR(get_client_side_animation(), bool, "CBaseAnimating->m_bClientSideAnimation")
 	NETVAR(get_sequence(), int, "CBaseAnimating->m_nSequence")
-		
+	NETVAR( get_hitbox_set( ), int, "CBaseAnimating->m_nHitboxSet" )
 	VFUNC(set_sequence(int sequence), 219, void(__thiscall*)(void*, int), sequence)
 	VFUNC(studio_frame_advance(), 220, void(__thiscall*)(void*))
 	VFUNC(get_layer_sequence_cycle_rate(anim_layer_t* layer, int sequence), 223, float(__thiscall*)(void*, anim_layer_t*, int), layer, sequence)
@@ -348,6 +348,7 @@ public:
 	NETVAR(get_lby(), float, "CCSPlayer->m_flLowerBodyYawTarget")
 	NETVAR_OFFSET(get_flash_alpha(), float, "CCSPlayer->m_flFlashMaxAlpha", -0x8)
 	NETVAR_OFFSET(get_anim_state(), c_anim_state*, "CCSPlayer->m_bIsScoped", -0x14)
+
 
 	VFUNC(standard_blending_rules(c_studio_hdr* hdr, vec3_t* vec, vec4_t* q, float time, int mask), 206, void(__thiscall*)(void*, c_studio_hdr*, vec3_t*, vec4_t*, float, int), hdr, vec, q, time, mask)
 	VFUNC(build_transformations(c_studio_hdr* hdr, vec3_t* vec, vec4_t* q, matrix3x4_t& transform, int mask, uint8_t* computed), 190, void(__thiscall*)(void*, c_studio_hdr*, vec3_t*, vec4_t*, matrix3x4_t const&, int, uint8_t*), hdr, vec, q, transform, mask, computed)

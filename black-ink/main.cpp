@@ -53,9 +53,9 @@ unsigned long __stdcall init(LPVOID module) {
 		render::init();
 		netvars::init();
 		cfg::init();
+		shared->init( );
 		hooks::init();
 		events::init();
-		shared->init( );
 
 		cloud->user_profile.m_hwid = md5(GetCPUId( ));
 	}

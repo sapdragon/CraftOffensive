@@ -6,6 +6,35 @@ namespace math {
 		cos = math::cos(rad);
 	}
 
+	qangle_t calculate_angle(vec3_t& src, vec3_t& dst)
+	{
+		qangle_t angle;
+		vec3_t delta((src.x - dst.x), (src.y - dst.y), (src.z - dst.z));
+		double hyp = sqrt(delta.x * delta.x + delta.y * delta.y);
+
+		angle.x = float(math::atan(float(delta.z / hyp)) * 57.295779513082f);
+		angle.y = float(math::atan(float(delta.y / delta.x)) * 57.295779513082f);
+		angle.z = 0.0f;
+
+		if (delta.x >= 0.0)
+			angle.y += 180.0f;
+
+		return angle;
+	}
+
+	float get_fov(qangle_t& view_angle, qangle_t& aim_angle)
+	{
+		vec3_t ang, aim;
+
+		angle_vectors(view_angle, &aim);
+		angle_vectors(aim_angle, &ang);
+
+		auto res = rad_to_deg(math::acos(aim.dot_product(ang) / aim.length_sqr()));
+		if (std::isnan(res))
+			res = 0.f;
+		return res;
+	}
+
 	void angle_vectors(const qangle_t& angles, vec3_t* forward, vec3_t* right, vec3_t* up) {
 		vec3_t cos, sin;
 
