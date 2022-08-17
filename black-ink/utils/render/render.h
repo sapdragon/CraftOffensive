@@ -41,6 +41,7 @@ namespace assets {
 	inline IDirect3DTexture9* background;
 	inline IDirect3DTexture9* dirt;
 	inline IDirect3DTexture9* diamond;
+	inline IDirect3DTexture9* creeper;
 	
 	inline IDirect3DTexture9* icons[6];
 }

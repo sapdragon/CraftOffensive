@@ -24,6 +24,7 @@ namespace render {
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &BackgroundRaw, sizeof( BackgroundRaw ), &assets::background );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DirtRaw, sizeof( DirtRaw ), &assets::dirt );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DiamondRaw, sizeof( DiamondRaw ), &assets::diamond );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &CreeperRaw, sizeof( CreeperRaw ), &assets::creeper );
 
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Aimbot, sizeof( Aimbot ), &assets::icons[ 0 ] );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 1 ] );
