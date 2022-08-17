@@ -215,6 +215,7 @@
     <ClInclude Include="features\fakelags\fakelags.h" />
     <ClInclude Include="features\misc\misc.h" />
     <ClInclude Include="features\legitbot\aimbot\aimbot.hpp" />
+    <ClInclude Include="sdk\interfaces\i_file_system.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="api\LibCurl.lib" />

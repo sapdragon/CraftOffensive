@@ -65,6 +65,7 @@ namespace interfaces {
 	extern i_panel*					m_panel;
 	extern i_render_view*			m_render_view;
 	extern i_engine_sound* m_sound_engine;
+	extern i_file_system* m_file_system;
 
 	extern IDirect3DDevice9*		m_d3d_device;
 

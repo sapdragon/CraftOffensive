@@ -36,6 +36,8 @@ namespace interfaces {
 
 		m_sound_engine = get<i_engine_sound*>( FNV1A( "engine.dll" ), FNV1A( "IEngineSoundClient003" ) );
 
+		m_file_system = get<i_file_system*>( FNV1A( "filesystem_stdio.dll" ), FNV1A( "VBaseFileSystem011" ) );
+
 		m_glow_manager = *SIG("client.dll", "0F 11 05 ? ? ? ? 83 C8 01").self_offset(0x3).cast<i_glow_object_manager**>();
 		m_beams = *SIG("client.dll", "B9 ? ? ? ? A1 ? ? ? ? FF 10 A1 ? ? ? ? B9").self_offset(0x1).cast<i_view_render_beams**>();
 		m_weapon_system = *SIG("client.dll", "8B 35 ? ? ? ? FF 10 0F B7 C0").self_offset(0x2).cast<i_weapon_system**>();
@@ -106,18 +108,20 @@ namespace interfaces {
 	i_panel*				m_panel = nullptr;
 	i_render_view*			m_render_view = nullptr;
 	i_engine_sound*			m_sound_engine = nullptr;
+	i_file_system* m_file_system;
+
 
 	IDirect3DDevice9*		m_d3d_device = nullptr;
 
-	extern ISteamClient* m_steam_client = nullptr;
-	extern ISteamHTTP* m_steam_http = nullptr;
-	extern ISteamUser* m_steam_user = nullptr;
-	extern ISteamFriends* m_steam_friends = nullptr;
-	extern ISteamInventory* m_steam_inventory = nullptr;
-	extern ISteamGameCoordinator* m_steam_game_coordinator = nullptr;
-	extern ISteamMatchmaking* m_steam_matchmaking = nullptr;
+	ISteamClient* m_steam_client = nullptr;
+	ISteamHTTP* m_steam_http = nullptr;
+	ISteamUser* m_steam_user = nullptr;
+	ISteamFriends* m_steam_friends = nullptr;
+	ISteamInventory* m_steam_inventory = nullptr;
+	ISteamGameCoordinator* m_steam_game_coordinator = nullptr;
+	ISteamMatchmaking* m_steam_matchmaking = nullptr;
 
-	extern ISteamNetworkingMessages* m_steam_networking_messages = nullptr;
-	extern ISteamNetworkingSockets* m_steam_networking_sockets = nullptr;
-	extern ISteamNetworkingUtils* m_steam_networking_utils = nullptr;
+	ISteamNetworkingMessages* m_steam_networking_messages = nullptr;
+	ISteamNetworkingSockets* m_steam_networking_sockets = nullptr;
+	ISteamNetworkingUtils* m_steam_networking_utils = nullptr;
 }

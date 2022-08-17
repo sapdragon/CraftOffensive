@@ -15,3 +15,13 @@ void* __fastcall hooks::other::allocate_memory::hook( void* ecx, void* edx, int 
 
 	return allocate_memory_original(ecx, edx, size);
 }
+
+bool __fastcall hooks::other::loose_file_allowed::hook( void* ecx, void* edx )
+{
+	return true;
+}
+
+int __stdcall hooks::other::get_unverified_file_hashes::hook( void* this_pointer, int max_files )
+{
+	return 0;
+}

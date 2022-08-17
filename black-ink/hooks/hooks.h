@@ -113,6 +113,18 @@ namespace hooks {
 			using fn = void* ( __fastcall* )( void*, void*, int );
 
 		}
+
+		namespace loose_file_allowed
+		{
+			bool __fastcall hook( void* ecx, void* edx );
+			using fn = bool ( __fastcall* )( void*, void* );
+		}
+
+		namespace get_unverified_file_hashes
+		{
+			int __stdcall hook( void* this_pointer, int max_files );
+			using fn = int( __stdcall* )( void*, int* );
+		}
 	}
 
 	namespace mdl_cache
@@ -150,5 +162,6 @@ namespace hooks {
 	inline hooks::mdl_cache::find_mdl::fn find_mdl_original = nullptr;
 	inline hooks::networking::cl_move::fn cl_move_original = nullptr;
 	inline hooks::client_dll::level_init_pre_entity::fn level_init_pre_entity_original = nullptr;
+	inline hooks::other::loose_file_allowed::fn loose_file_allowed_original = nullptr;
 
 }
