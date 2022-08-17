@@ -15,6 +15,10 @@ void steamsockets::c_socket_netchannel::new_frame( )
 	SteamNetworkingMessage_t* message{ nullptr };
 	SteamNetworkingMessage_t* message_array{ nullptr };
 
+	if ( m_open_ports.empty( ) )
+		return;
+
+
 	for ( auto port : m_open_ports )
 	{
 		int amount_recived_messages = interfaces::m_steam_networking_messages->ReceiveMessagesOnChannel( port, &message_array, 1 );

@@ -190,6 +190,9 @@ struct vec3_t {
 
 	__forceinline float length_2d() const { return math::sqrt(x * x + y * y); }
 
+	__forceinline float length_2d_sqr( ) const { return x * x + y * y; }
+
+
 	__forceinline float dot_product(const vec3_t& value) const { return x * value.x + y * value.y + z * value.z; }
 
 	__forceinline float dot_product(const float* value) const { return x * value[0] + y * value[1] + z * value[2]; }

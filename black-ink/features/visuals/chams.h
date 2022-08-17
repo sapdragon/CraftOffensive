@@ -5,24 +5,6 @@ enum e_material_type {
 	MATERIAL_TYPE_REGULAR,
 	MATERIAL_TYPE_FLAT
 };
-struct chams_material_settings_t
-{
-	bool m_enable;
-	int m_material = MATERIAL_TYPE_REGULAR;
-	col_t m_color = col_t( 255, 0, 0 );
-};
-
-struct chams_settings_t
-{
-	bool m_enable = false;
-	std::array < chams_material_settings_t, 6 > m_materials;
-};
-
-struct chams_entity_settings_t
-{
-	chams_settings_t m_visible;
-	chams_settings_t m_invisible;
-};
 
 class c_chams : public c_singleton<c_chams> {
 private:

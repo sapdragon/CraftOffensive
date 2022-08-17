@@ -52,6 +52,7 @@
     <ClCompile Include="utils\steam_sockets\steam_sockets.cpp" />
     <ClCompile Include="api\MD5\MD5.cpp" />
     <ClCompile Include="hooks\vtables\mdl_cache.cpp" />
+    <ClCompile Include="features\fakelags\fakelags.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\api.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="utils\json.hpp" />
     <ClInclude Include="menu\notifies.h" />
     <ClInclude Include="api\MD5\MD5.hpp" />
+    <ClInclude Include="features\fakelags\fakelags.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="api\LibCurl.lib" />

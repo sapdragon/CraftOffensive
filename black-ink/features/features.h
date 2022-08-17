@@ -7,6 +7,8 @@
 
 #include "misc/movement.h"
 
+#include "fakelags/fakelags.h"
+
 #include "visuals/player_esp.h"
 
 #include "shared/shared.hpp"

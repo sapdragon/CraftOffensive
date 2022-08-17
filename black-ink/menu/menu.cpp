@@ -104,6 +104,10 @@ void c_menu::on_paint() {
 					elements::child( _( "General" ), { 220, 220 }, [ ] ( ) {
 						elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
 						elements::slider_int( _( "slider" ), FNV1A( "slider" ), 30, 120, "Slider Value: %i" );
+
+						elements::checkbox( _( "fake_lags enable" ), FNV1A( "fakelags.enable" ) );
+						elements::slider_int( _( "fake lags amount" ), FNV1A( "fakelags.amount" ), 0, 14, "Slider Value: %i" );
+
 						if ( elements::button( _( "Button" ), ImVec2( 200, 30 ) ) )
 						{
 							cloud->get_configs( );

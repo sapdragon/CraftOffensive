@@ -12,6 +12,7 @@ namespace hooks {
 		const auto eye_angles_index = reinterpret_cast<void*>(get_virtual(c_cs_player::get_vtable(), 170u));
 		const auto lock_cursor_index = reinterpret_cast<void*>(get_virtual(interfaces::m_surface, 67u));
 		const auto set_mdl_index = reinterpret_cast< void* >( get_virtual( interfaces::m_model_cache, 10u ) );
+		const auto level_init_pre_entity = reinterpret_cast< void* >( get_virtual( interfaces::m_client_dll, 5u ) );
 
 
 
@@ -21,7 +22,8 @@ namespace hooks {
 		auto host_run_frame_input = utils::find_pattern_from_module( GetModuleHandleA( _(  "engine.dll" ) ) , _( "E8 ? ? ? ? F3 0F 10 45 ? F2 0F 10 4D ?" ) );
 		host_run_frame_input = memory::address_t( host_run_frame_input ).rel32( );
 		const auto packet_end = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "56 8B F1 E8 ? ? ? ? 8B 8E ? ? ? ? 3B 8E ? ? ? ?" ) ) );
-		
+		const auto cl_move = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "55 8B EC 81 EC 64 01 00 00 53 56 8A F9" ) ) );
+
 
 
 		if (MH_Initialize() != MH_OK)
@@ -70,9 +72,15 @@ namespace hooks {
 			throw std::runtime_error( "Failed to initialize packet_end." );
 
 		if ( MH_CreateHook( set_mdl_index, &mdl_cache::find_mdl::hook, reinterpret_cast< void** >( &find_mdl_original ) ) != MH_OK )
-			throw std::runtime_error( "Failed to initialize packet_end." );
+			throw std::runtime_error( "Failed to initialize set_mdl." );
 
-		
+		if ( MH_CreateHook( cl_move, &networking::cl_move::hook, reinterpret_cast< void** >( &cl_move_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize cl_move." );
+
+		if ( MH_CreateHook( level_init_pre_entity, &client_dll::level_init_pre_entity::hook, reinterpret_cast< void** >( &level_init_pre_entity_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize level_init_pre_entity." );
+
+
 
 		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 			throw std::runtime_error("failed to enable all hooks.");

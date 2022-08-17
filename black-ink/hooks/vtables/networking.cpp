@@ -20,3 +20,9 @@ void __fastcall hooks::networking::packet_end::hook( void* ecx, void* edx )
 	return hooks::packet_end_original( ecx, edx);
 
 }
+
+void __cdecl hooks::networking::cl_move::hook( float frame_time, bool final_tick )
+{
+	fake_lags->set_maximium_chock( 14 );
+	return hooks::cl_move_original( frame_time, final_tick );
+}
