@@ -24,6 +24,10 @@ namespace hooks {
 		const auto packet_end = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "56 8B F1 E8 ? ? ? ? 8B 8E ? ? ? ? 3B 8E ? ? ? ?" ) ) );
 		const auto cl_move = reinterpret_cast< void* >( utils::find_pattern_from_module( GetModuleHandleA( _( "engine.dll" ) ), _( "55 8B EC 81 EC 64 01 00 00 53 56 8A F9" ) ) );
 
+		//file_system = ( void*) ( (uintptr_t) ( file_system) + 0x2 );
+
+		const auto loose_file_allowed_index = reinterpret_cast< void* >( get_virtual( interfaces::m_file_system, 128u ) );
+		const auto get_unverified_file_hashes_index = reinterpret_cast< void* >( get_virtual( interfaces::m_file_system, 101u ) );
 
 
 		if (MH_Initialize() != MH_OK)
@@ -80,7 +84,12 @@ namespace hooks {
 		if ( MH_CreateHook( level_init_pre_entity, &client_dll::level_init_pre_entity::hook, reinterpret_cast< void** >( &level_init_pre_entity_original ) ) != MH_OK )
 			throw std::runtime_error( "Failed to initialize level_init_pre_entity." );
 
+		if ( MH_CreateHook( loose_file_allowed_index, &other::loose_file_allowed::hook, reinterpret_cast< void** >( &loose_file_allowed_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize loose_file_allowed." );
 
+		if ( MH_CreateHook( get_unverified_file_hashes_index, &other::get_unverified_file_hashes::hook, nullptr) != MH_OK )
+			throw std::runtime_error( "Failed to initialize get_unvirifed_file_hashes." );
+	
 
 		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 			throw std::runtime_error("failed to enable all hooks.");

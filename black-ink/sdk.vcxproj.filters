@@ -54,6 +54,7 @@
     <ClCompile Include="hooks\vtables\mdl_cache.cpp" />
     <ClCompile Include="features\fakelags\fakelags.cpp" />
     <ClCompile Include="features\misc\misc.cpp" />
+    <ClCompile Include="features\legitbot\aimbot\aimbot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\api.h" />
@@ -213,6 +214,8 @@
     <ClInclude Include="api\MD5\MD5.hpp" />
     <ClInclude Include="features\fakelags\fakelags.h" />
     <ClInclude Include="features\misc\misc.h" />
+    <ClInclude Include="features\legitbot\aimbot\aimbot.hpp" />
+    <ClInclude Include="sdk\interfaces\i_file_system.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="api\LibCurl.lib" />

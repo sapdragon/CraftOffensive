@@ -54,7 +54,7 @@
 #include "interfaces/i_localize.h"
 #include "interfaces/i_panel.h"
 #include "interfaces/i_engine_sound.h"
-
+#include "interfaces/i_file_system.h"
 #include "../utils/steam/steamnetworkingsockets.h"
 #include "../utils/steam/isteamnetworkingmessages.h"
 #include "../utils/steam/isteamnetworkingutils.h"
