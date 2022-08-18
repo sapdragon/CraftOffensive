@@ -14,6 +14,24 @@ namespace elements {
 	inline ImAnimations::Animator<std::string, float> animationsPressed;
     inline ImAnimations::Animator<std::string, float> animationsHovered;
 
+    static const char* __PatchFormatStringFloatToInt( const char* fmt )
+    {
+        if ( fmt[ 0 ] == '%' && fmt[ 1 ] == '.' && fmt[ 2 ] == '0' && fmt[ 3 ] == 'f' && fmt[ 4 ] == 0 ) // Fast legacy path for "%.0f" which is expected to be the most common case.
+            return "%d";
+        const char* fmt_start = ImParseFormatFindStart( fmt );    // Find % (if any, and ignore %%)
+        const char* fmt_end = ImParseFormatFindEnd( fmt_start );  // Find end of format specifier, which itself is an exercise of confidence/recklessness (because snprintf is dependent on libc or user).
+        if ( fmt_end > fmt_start && fmt_end[ -1 ] == 'f' )
+        {
+            if ( fmt_start == fmt && fmt_end[ 0 ] == 0 )
+                return "%d";
+            ImGuiContext& g = *GImGui;
+            ImFormatString( g.TempBuffer, IM_ARRAYSIZE( g.TempBuffer ), "%.*s%%d%s", ( int ) ( fmt_start - fmt ), fmt, fmt_end ); // Honor leading and trailing decorations, but lose alignment/precision.
+            return g.TempBuffer;
+        }
+        return fmt;
+    }
+
+
 	inline void tab( std::string label, ImTextureID texture, int& selected, int index ) {
         using namespace ImGui;
 
@@ -151,23 +169,6 @@ namespace elements {
         window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ) );
 
         window->DrawList->AddText( bb.Min + ImVec2( 27, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
-    }
-
-    static const char* __PatchFormatStringFloatToInt( const char* fmt )
-    {
-        if ( fmt[ 0 ] == '%' && fmt[ 1 ] == '.' && fmt[ 2 ] == '0' && fmt[ 3 ] == 'f' && fmt[ 4 ] == 0 ) // Fast legacy path for "%.0f" which is expected to be the most common case.
-            return "%d";
-        const char* fmt_start = ImParseFormatFindStart( fmt );    // Find % (if any, and ignore %%)
-        const char* fmt_end = ImParseFormatFindEnd( fmt_start );  // Find end of format specifier, which itself is an exercise of confidence/recklessness (because snprintf is dependent on libc or user).
-        if ( fmt_end > fmt_start && fmt_end[ -1 ] == 'f' )
-        {
-            if ( fmt_start == fmt && fmt_end[ 0 ] == 0 )
-                return "%d";
-            ImGuiContext& g = *GImGui;
-            ImFormatString( g.TempBuffer, IM_ARRAYSIZE( g.TempBuffer ), "%.*s%%d%s", ( int ) ( fmt_start - fmt ), fmt, fmt_end ); // Honor leading and trailing decorations, but lose alignment/precision.
-            return g.TempBuffer;
-        }
-        return fmt;
     }
 
     inline int __DataTypeFormatString( char* buf, int buf_size, ImGuiDataType data_type, const void* p_data, const char* format )
@@ -391,6 +392,27 @@ namespace elements {
         return pressed;
     }
 
+    inline bool color_edit4( const char* label, col_t* v, bool show_alpha = true )
+    {
+        auto clr = ImVec4{
+            v->r( ) / 255.0f,
+            v->g( ) / 255.0f,
+            v->b( ) / 255.0f,
+            v->a( ) / 255.0f
+        };
+
+        if ( ImGui::ColorEdit4( label, &clr.x, show_alpha ) ) {
+            *v = col_t( clr.x * 255, clr.y * 255, clr.z * 255, clr.w * 255 );
+            return true;
+        }
+        return false;
+    }
+
+    inline bool color_edit3( const char* label, col_t* v )
+    {
+        return color_edit4( label, v, false );
+    }
+
     inline bool chams_item( int index, std::vector<chams_material_settings_t>& source ) {
         using namespace ImGui;
 
@@ -455,4 +477,10 @@ namespace elements {
         return pressed;
     }
 
+    inline void combo( const char* label, uint32_t hash, const char* const items[], int items_count ) 
+    {
+        int val = cfg::get<int>( hash );
+        if ( ImGui::Combo( label, &val, items, items_count) )
+            cfg::set<int>( hash, val );
+    }
 }
