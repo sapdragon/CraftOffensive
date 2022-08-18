@@ -58,7 +58,7 @@ namespace cfg_internal {
 	}
 	void jsonify_chams( nlohmann::json& j, bool load, uint32_t hash, std::string prefix )
 	{
-		auto chams = cfg::get< chams_entity_settings_t >( hash );
+		/*auto chams = cfg::get< chams_entity_settings_t >( hash );
 		chams_entity_settings_t temp = chams;
 
 		jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "enable" ], load, temp.m_invisible.m_enable );
@@ -74,7 +74,7 @@ namespace cfg_internal {
 		}
 
 		if( !load )
-			cfg::set< chams_entity_settings_t >( hash, temp );
+			cfg::set< chams_entity_settings_t >( hash, temp );*/
 	}
 }
 
@@ -111,10 +111,6 @@ namespace cfg {
 		set < float >( FNV1A( "misc.view_model.z" ), 1.f );
 		set < int >( FNV1A( "misc.view_model.fov" ), 90.f );
 		set < bool >( FNV1A( "misc.view_model.override_while_scoped" ), true );
-
-		set< chams_entity_settings_t >( FNV1A( "chams.local_player" ), chams_entity_settings_t( ) );
-		set< chams_entity_settings_t >( FNV1A( "chams.enemy" ), chams_entity_settings_t( ) );
-		set< chams_entity_settings_t >( FNV1A( "chams.teammate" ), chams_entity_settings_t( ) );
 	}
 
 	std::string json_action( bool load ) 

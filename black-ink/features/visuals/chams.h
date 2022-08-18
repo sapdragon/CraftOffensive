@@ -6,12 +6,15 @@ enum e_material_type {
 	MATERIAL_TYPE_FLAT
 };
 
+using chams_array = std::vector < chams_material_settings_t>;
+
 class c_chams : public c_singleton<c_chams> {
 private:
 
 	void override_material(int type, const col_t& clr, bool ignorez);
 
-	void draw_material_on_entity( chams_entity_settings_t options, i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones );
+
+	void draw_material_on_entity( chams_array visible, chams_array invisible, i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones );
 
 	i_material* create_material(std::string_view material_name, std::string_view shader_type, std::string_view material_data);
 
@@ -21,9 +24,7 @@ private:
 	i_material* m_flat = nullptr;
 	i_material* m_flat_z = nullptr;
 
-
-
-	std::map < int, chams_entity_settings_t > m_shared_players;
+	//std::map < int, chams_entity_settings_t > m_shared_players;
 public:
 	c_chams() {
 		m_regular = create_material(_("black_ink_regular.vmt"), _("VertexLitGeneric"), _(R"#("VertexLitGeneric" {
@@ -73,8 +74,8 @@ public:
 })#"));
 	}
 
-	chams_entity_settings_t get_shared_player( int player_index ) { return m_shared_players[ player_index ]; }
-	chams_entity_settings_t set_shared_chams( int player_index, chams_entity_settings_t settings ) { return m_shared_players[ player_index ] = settings; }
+	//chams_entity_settings_t get_shared_player( int player_index ) { return m_shared_players[ player_index ]; }
+	//chams_entity_settings_t set_shared_chams( int player_index, chams_entity_settings_t settings ) { return m_shared_players[ player_index ] = settings; }
 
 	bool on_draw_model(i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones);
 };

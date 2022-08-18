@@ -49,6 +49,41 @@ void user( ) {
 	ImGui::End( );
 }
 
+void chams_page( std::vector < chams_material_settings_t>& chams ) {
+	static int selected_material = 0;
+	static char label[ 12 ];
+
+	elements::child( _( "Added Materials" ), { 220, 335 }, [ & ] ( ) {
+		ImGui::BeginChild( "Layers", ImVec2( 200, 245 ), false, ImGuiWindowFlags_NoBackground );
+		{
+			for ( auto mats = 0; mats < chams.size( ); mats++ ) {
+				if ( elements::chams_item( mats, chams ) ) {
+					selected_material = mats;
+					memset( label, 0, sizeof label );
+				}
+			}
+		}
+		ImGui::EndChild( );
+
+		ImGui::SetCursorPos( { 0, 255 } );
+		if ( elements::button( _( "New Material" ), ImVec2( 200, 30 ) ) ) {
+			chams.push_back( chams_material_settings_t{} );
+		}
+	} );
+
+	if ( !chams.empty( ) ) {
+		ImGui::SameLine( 230 );
+
+		elements::child( _( "Edit Material" ), { 400, 240 }, [ & ] ( ) {
+
+			if ( ImGui::InputText( "Material Label", label, 12 ) ) {
+				chams[ selected_material ].label = std::string( label );
+			}
+			ImGui::InputInt( "Material", &chams[ selected_material ].m_material, 0, 1 );
+		} );
+	}
+}
+
 void c_menu::on_paint() {
 	notifies::handle( ImGui::GetForegroundDrawList( ) );
 
@@ -74,7 +109,7 @@ void c_menu::on_paint() {
 	else {
 		ImGui::Begin( _( "CraftOffensive" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration );
 		{
-			ImGui::SetWindowSize( ImVec2( 660, 445 ), ImGuiCond_Once );
+			ImGui::SetWindowSize( ImVec2( 660, 475 ), ImGuiCond_Once );
 
 			auto draw = ImGui::GetWindowDrawList( );
 			auto pos = ImGui::GetWindowPos( );
@@ -98,16 +133,46 @@ void c_menu::on_paint() {
 					ImGui::SameLine( );
 					elements::subtab( _( "Triggerbot" ), { 330, 30 }, m_selected_subtab[ 0 ], 1 );
 				}
+				if ( m_selected_tab == 1 ) {
+					elements::subtab( _( "ESP" ), { 220, 30 }, m_selected_subtab[ 1 ], 0 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Chams" ), { 220, 30 }, m_selected_subtab[ 1 ], 1 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Glow" ), { 220, 30 }, m_selected_subtab[ 1 ], 2 );
+				}
 				if ( m_selected_tab == 4 ) {
 					elements::subtab( _( "Configurations" ), { 660, 30 }, m_selected_subtab[ 4 ], 0 );
 				}
 			}
 			ImGui::EndGroup( );
 
-			ImGui::SetCursorPos( { 15, 95 } );
+			static int selected_chams_tab = 0;
+
+			if ( m_selected_tab == 1 && m_selected_subtab[ 1 ] == 1 ) {
+				draw->AddRectFilled( pos + ImVec2( 0, 80 ), pos + ImVec2( 660, 110 ), ImColor( 25, 25, 25, 210 ) );
+
+				ImGui::SetCursorPos( { 0, 80 } );
+				ImGui::BeginGroup( );
+				{
+					elements::subtab( _( "Local Visible" ), { 110, 30 }, selected_chams_tab, 0 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Local Invisible" ), { 110, 30 }, selected_chams_tab, 1 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Enemy Visible" ), { 110, 30 }, selected_chams_tab, 2 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Enemy Invisible" ), { 110, 30 }, selected_chams_tab, 3 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Team Visible" ), { 110, 30 }, selected_chams_tab, 4 );
+					ImGui::SameLine( );
+					elements::subtab( _( "Team Invisible" ), { 110, 30 }, selected_chams_tab, 5 );
+				}
+				ImGui::EndGroup( );
+			}
+
+			ImGui::SetCursorPos( { 15, ( m_selected_tab == 1 && m_selected_subtab[ 1 ]  == 1) ? 125.f : 95.f } );
 			ImGui::BeginGroup( );
 			{
-				if ( g_Model.get_preview_texture( ) != nullptr )
+				/*if ( g_Model.get_preview_texture( ) != nullptr )
 				{
 					ImGui::GetForegroundDrawList( )->AddImage(
 						g_Model.get_preview_texture( )->m_handles[ 0 ]->m_texture,
@@ -116,7 +181,7 @@ void c_menu::on_paint() {
 						ImVec2( 0, 0 ), ImVec2( 1, 1 ),
 						ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
-				}
+				}*/
 
 				if ( m_selected_tab == 0 ) {
 					elements::child( _( "General" ), { 220, 500 }, [ ] ( ) {
@@ -144,8 +209,27 @@ void c_menu::on_paint() {
 					} );
 				}
 
+				if ( m_selected_tab == 1 ) 
+				{
+					if ( m_selected_subtab[ 1 ] == 1 ) 
+					{
+						if ( selected_chams_tab == 0 )
+							chams_page( cfg::local_player_visible );
+						if ( selected_chams_tab == 1 )
+							chams_page( cfg::local_player_invisible );
+						if ( selected_chams_tab == 2 )
+							chams_page( cfg::enemy_visible );
+						if ( selected_chams_tab == 3 )
+							chams_page( cfg::enemy_invisible );
+						if ( selected_chams_tab == 4 )
+							chams_page( cfg::teammates_visible );
+						if ( selected_chams_tab == 5 )
+							chams_page( cfg::teammates_invisible );
+					}
+				}
+
 				if ( m_selected_tab == 4 ) {
-					elements::child( _( "Actions" ), { 190, 335 }, [ ] ( ) {
+					elements::child( _( "Actions" ), { 190, 365 }, [ ] ( ) {
 						if ( elements::button( _( "Refresh configurations" ), ImVec2( 170, 30 ) ) )
 							cloud->get_configs( );
 
@@ -164,7 +248,7 @@ void c_menu::on_paint() {
 
 					ImGui::SameLine( 201 );
 
-					elements::child( _( "List" ), { 430, 335 }, [ ] ( ) {
+					elements::child( _( "List" ), { 430, 365 }, [ ] ( ) {
 						if ( cloud->user_configs.empty( ) ) {
 							auto drawchild = ImGui::GetWindowDrawList( );
 							auto poschild = ImGui::GetWindowPos( );

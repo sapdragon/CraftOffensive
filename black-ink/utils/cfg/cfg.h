@@ -4,19 +4,8 @@ struct chams_material_settings_t
 {
 	bool m_enable = true;
 	int m_material = 0;
+	std::string label = "Unnamed";
 	col_t m_color = col_t( 255, 0, 0 );
-};
-
-struct chams_settings_t
-{
-	bool m_enable = true;
-	std::array < chams_material_settings_t, 6 > m_materials = { chams_material_settings_t (), chams_material_settings_t( ), chams_material_settings_t( ), chams_material_settings_t( ), chams_material_settings_t( ), chams_material_settings_t( ) };
-};
-
-struct chams_entity_settings_t
-{
-	chams_settings_t m_visible = chams_settings_t( );
-	chams_settings_t m_invisible = chams_settings_t( );
 };
 
 namespace cfg {
@@ -25,6 +14,13 @@ namespace cfg {
 
 	inline nlohmann::json jsonk;
 	inline std::unordered_map<uint32_t, std::any> m_items;
+
+	inline std::vector < chams_material_settings_t> local_player_visible;
+	inline std::vector < chams_material_settings_t> enemy_visible;
+	inline std::vector < chams_material_settings_t> teammates_visible;
+	inline std::vector < chams_material_settings_t> local_player_invisible;
+	inline std::vector < chams_material_settings_t> enemy_invisible;
+	inline std::vector < chams_material_settings_t> teammates_invisible;
 
 	template<class T = bool>
 	T get( uint32_t hash ) {

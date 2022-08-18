@@ -390,4 +390,69 @@ namespace elements {
 
         return pressed;
     }
+
+    inline bool chams_item( int index, std::vector<chams_material_settings_t>& source ) {
+        using namespace ImGui;
+
+        ImGuiWindow* window = GetCurrentWindow( );
+        if ( window->SkipItems )
+            return false;
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiID id = window->GetID( std::string(std::to_string( index) + source[index].label ).c_str( ) );
+
+        ImVec2 pos = window->DC.CursorPos;
+        ImVec2 size = CalcItemSize( { ImGui::GetWindowSize( ).x - 5, 26 }, 100, 50 );
+
+        const ImRect bb( pos, pos + size );
+        ItemSize( size, style.FramePadding.y );
+        if ( !ItemAdd( bb, id ) )
+            return false;
+
+        bool hovered, held;
+        bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
+
+        window->DrawList->PushClipRect( bb.Min, bb.Max, true );
+        window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        window->DrawList->PopClipRect( );
+
+        auto hoveredAnimate = animationsHovered.ValueInSine( std::string( std::to_string( index ) + source[ index ].label ), hovered, 0.f, 1.f, 0.05f );
+        window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ) );
+        window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ) );
+
+        // enabled
+        window->DrawList->AddRectFilled( bb.Min + ImVec2( 3, 3 ), bb.Min + ImVec2( 23, 23 ), ImColor( 28, 28, 27 ) );
+
+        window->DrawList->PushClipRect( bb.Min + ImVec2( 3, 3 ), bb.Min + ImVec2( 23, 23 ), true );
+        window->DrawList->AddImage( assets::dirt, bb.Min + ImVec2( 3, 3 ), bb.Min + ImVec2( 23, 23 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+        if ( source[ index ].m_enable ) {
+            window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 3, 3 ), bb.Min + ImVec2( 23, 23 ), {}, { 1, 1 }, ImColor( 255, 255, 255, 255 ) );
+        }
+        window->DrawList->AddRect( bb.Min + ImVec2( 3, 3 ), bb.Min + ImVec2( 23, 23 ), ImColor( 0, 0, 0 ) );
+        window->DrawList->PopClipRect( );
+
+
+        // label
+        window->DrawList->AddText( bb.Min + ImVec2( 30, 5 ), ImColor( 255, 255, 255 ), source[ index ].label.c_str() );
+
+        if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2( 3, 3 ), bb.Min + ImVec2( 23, 23 ) ) && ImGui::IsMouseClicked( 0 ) )
+            source[index].m_enable = !source[ index ].m_enable;
+   
+        if ( source.size( ) != 1 ) {
+            if ( index != source.size( ) - 1 ) {
+                window->DrawList->AddText( bb.Max - ImVec2( 13, 13 ) - ImGui::CalcTextSize( "D" )/2, ImColor( 255, 255, 255 ), "D" );
+                if ( ImGui::IsMouseHoveringRect( bb.Max - ImVec2( 26, 26 ), bb.Max ) && ImGui::IsMouseClicked( 0 ) )
+                    std::swap( source[ index ], source[ index + 1 ] );
+            }
+            if ( index != 0 ) {
+                window->DrawList->AddText( bb.Max - ImVec2( 13 + 26, 13 ) - ImGui::CalcTextSize( "U" ) / 2, ImColor( 255, 255, 255 ), "U" );
+                if ( ImGui::IsMouseHoveringRect( bb.Max - ImVec2( 52, 26 ), bb.Max - ImVec2( 26, 0 ) ) && ImGui::IsMouseClicked( 0 ) )
+                    std::swap( source[ index ], source[ index - 1 ] );
+            }
+        }
+
+        return pressed;
+    }
+
 }
