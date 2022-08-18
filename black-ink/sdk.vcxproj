@@ -143,6 +143,7 @@
     <ClCompile Include="utils\imgui\imgui_impl_dx9.cpp" />
     <ClCompile Include="utils\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="utils\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="utils\imgui\TextEditor.cpp" />
     <ClCompile Include="utils\input\input.cpp" />
     <ClCompile Include="utils\math\datatypes.cpp" />
     <ClCompile Include="utils\math\math.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="utils\imgui\imstb_rectpack.h" />
     <ClInclude Include="utils\imgui\imstb_textedit.h" />
     <ClInclude Include="utils\imgui\imstb_truetype.h" />
+    <ClInclude Include="utils\imgui\TextEditor.h" />
     <ClInclude Include="utils\input\input.h" />
     <ClInclude Include="utils\json.hpp" />
     <ClInclude Include="utils\math\datatypes.h" />

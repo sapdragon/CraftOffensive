@@ -1,12 +1,25 @@
 #include "../features.h"
 #include "../../hooks/hooks.h"
 
-void c_chams::create_material(std::string_view material_name, std::string_view label, std::string_view shader_type, std::string_view material_data) {
+void c_chams::create_material( chams_layer material ) {
+	const auto key_values = reinterpret_cast< c_key_values* >( interfaces::m_mem_alloc->alloc( 36u ) );
+
+	key_values->init( material.shader_type.data( ) );
+	key_values->load_from_buffer( material.file_name.data( ), material.material_data.data( ) );
+
+	material.mat = interfaces::m_material_system->create_material( material.file_name.data( ), key_values );
+	if ( material.mat != nullptr )
+		material.inited = true;
+ 
+	materials.push_back( material );
+}
+
+void c_chams::create_material(std::string_view material_name, std::string_view label, bool buildin, std::string_view shader_type, std::string_view material_data) {
 	auto data = chams_layer{};
 
 	data.file_name = material_name;
 	data.shader_type = shader_type;
-	data.buildin = true;
+	data.buildin = buildin;
 	data.material_data = material_data;
 	data.label = label;
 
@@ -44,11 +57,10 @@ void c_chams::draw_material_on_entity( chams_array visible, chams_array invisibl
 				continue;
 
 			override_material( material_options.m_material, material_options.m_color, true );
-
 			hooks::draw_model_execute_original( ecx, context, state, info, bones );
-			interfaces::m_model_render->forced_material_override( nullptr );
 		}
 	}
+
 
 	if ( !visible.empty( ) ) {
 		for ( auto& material_options : visible )
@@ -57,6 +69,7 @@ void c_chams::draw_material_on_entity( chams_array visible, chams_array invisibl
 				continue;
 
 			override_material( material_options.m_material, material_options.m_color, false );
+			hooks::draw_model_execute_original( ecx, context, state, info, bones );
 		}
 	}
 }

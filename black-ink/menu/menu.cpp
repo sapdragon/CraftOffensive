@@ -51,7 +51,6 @@ void user( ) {
 }
 
 void chams_page( std::vector < chams_material_settings_t>& chams_source ) {
-	static int selected_material = 0;
 	static char label[ 12 ];
 
 	elements::child( _( "Added Materials" ), { 220, 335 }, [ & ] ( ) {
@@ -59,7 +58,7 @@ void chams_page( std::vector < chams_material_settings_t>& chams_source ) {
 		{
 			for ( auto mats = 0; mats < chams_source.size( ); mats++ ) {
 				if ( elements::chams_item( mats, chams_source ) ) {
-					selected_material = mats;
+					menu->selected_material = mats;
 					memset( label, 0, sizeof label );
 				}
 			}
@@ -78,28 +77,37 @@ void chams_page( std::vector < chams_material_settings_t>& chams_source ) {
 		elements::child( _( "Edit Material" ), { 400, 335 }, [ & ] ( ) {
 
 			if ( ImGui::InputText( "Material Label", label, 12 ) ) {
-				chams_source[ selected_material ].label = std::string( label );
+				chams_source[ menu->selected_material ].label = std::string( label );
 			}
 
-			if ( ImGui::BeginCombo( "Material", chams->materials[ chams_source[ selected_material ].m_material ].label.c_str( ) ) )
+			if ( ImGui::BeginCombo( "Material", chams->materials[ chams_source[ menu->selected_material ].m_material ].label.c_str( ) ) )
 			{
 				for ( auto a = 0; a < chams->materials.size( ); a++ ) {
-					if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ), chams_source[ selected_material ].m_material == a ) )
-						chams_source[ selected_material ].m_material = a;
+					if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ), chams_source[ menu->selected_material ].m_material == a ) )
+						chams_source[ menu->selected_material ].m_material = a;
 				}
 
 				ImGui::EndCombo( );
 			}
 
-			elements::color_edit4( "Color", &chams_source[ selected_material ].m_color );
+			elements::color_edit4( "Color", &chams_source[ menu->selected_material ].m_color );
 
 			ImGui::SetCursorPos( { 0, 255 } );
 			if ( elements::button( _( "Delete current material" ), ImVec2( 380, 30 ) ) ) {
-				chams_source.erase( chams_source.begin( ) + selected_material );
-				selected_material = 0;
+				chams_source.erase( chams_source.begin( ) + menu->selected_material );
+				menu->selected_material = 0;
 			}
 		} );
 	}
+}
+
+bool array_have_that_name( std::vector < chams_layer > materials, std::string name ) {
+	for ( auto a = 0; a < materials.size( ); a++ ) {
+		if ( materials[ a ].label == name )
+			return true;
+	}
+
+	return false;
 }
 
 void c_menu::on_paint() {
@@ -159,7 +167,9 @@ void c_menu::on_paint() {
 					elements::subtab( _( "Glow" ), { 220, 30 }, m_selected_subtab[ 1 ], 2 );
 				}
 				if ( m_selected_tab == 4 ) {
-					elements::subtab( _( "Configurations" ), { 660, 30 }, m_selected_subtab[ 4 ], 0 );
+					elements::subtab( _( "Configurations" ), { 330, 30 }, m_selected_subtab[ 4 ], 0 ); 
+					ImGui::SameLine( );
+					elements::subtab( _( "Chams Materials" ), { 330, 30 }, m_selected_subtab[ 4 ], 1 );
 				}
 			}
 			ImGui::EndGroup( );
@@ -172,17 +182,17 @@ void c_menu::on_paint() {
 				ImGui::SetCursorPos( { 0, 80 } );
 				ImGui::BeginGroup( );
 				{
-					elements::subtab( _( "Local Visible" ), { 110, 30 }, selected_chams_tab, 0 );
+					elements::subtab( _( "Local Visible" ), { 110, 30 }, selected_chams_tab, 0 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
 					ImGui::SameLine( );
-					elements::subtab( _( "Local Invisible" ), { 110, 30 }, selected_chams_tab, 1 );
+					elements::subtab( _( "Local Invisible" ), { 110, 30 }, selected_chams_tab, 1 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
 					ImGui::SameLine( );
-					elements::subtab( _( "Enemy Visible" ), { 110, 30 }, selected_chams_tab, 2 );
+					elements::subtab( _( "Enemy Visible" ), { 110, 30 }, selected_chams_tab, 2 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
 					ImGui::SameLine( );
-					elements::subtab( _( "Enemy Invisible" ), { 110, 30 }, selected_chams_tab, 3 );
+					elements::subtab( _( "Enemy Invisible" ), { 110, 30 }, selected_chams_tab, 3 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
 					ImGui::SameLine( );
-					elements::subtab( _( "Team Visible" ), { 110, 30 }, selected_chams_tab, 4 );
+					elements::subtab( _( "Team Visible" ), { 110, 30 }, selected_chams_tab, 4 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
 					ImGui::SameLine( );
-					elements::subtab( _( "Team Invisible" ), { 110, 30 }, selected_chams_tab, 5 );
+					elements::subtab( _( "Team Invisible" ), { 110, 30 }, selected_chams_tab, 5 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
 				}
 				ImGui::EndGroup( );
 			}
@@ -236,39 +246,88 @@ void c_menu::on_paint() {
 				}
 
 				if ( m_selected_tab == 4 ) {
-					elements::child( _( "Actions" ), { 190, 365 }, [ ] ( ) {
-						if ( elements::button( _( "Refresh configurations" ), ImVec2( 170, 30 ) ) )
-							cloud->get_configs( );
+					if ( m_selected_subtab[ 4 ] == 0 )
+					{
+						elements::child( _( "Actions" ), { 190, 365 }, [ ] ( ) {
+							if ( elements::button( _( "Refresh configurations" ), ImVec2( 170, 30 ) ) )
+								cloud->get_configs( );
 
-						ImGui::Separator( );
+							ImGui::Separator( );
 
-						static char config_name[ 24 ];
-						ImGui::InputText( _("Configuration name" ), config_name, 24 );
+							static char config_name[ 24 ];
+							ImGui::InputText( _( "Configuration name" ), config_name, 24 );
 
-						if ( elements::button( _( "Create configuration" ), ImVec2( 170, 30 ) ) )
-							if( !std::string( config_name ).empty() )
-								cloud->create_config( config_name );
-							else 
-								notifies::push( "Cloud Configs", "Configure name is too short" );
+							if ( elements::button( _( "Create configuration" ), ImVec2( 170, 30 ) ) )
+								if ( !std::string( config_name ).empty( ) )
+									cloud->create_config( config_name );
+								else
+									notifies::push( "Cloud Configs", "Configure name is too short" );
 
-					} );
+						} );
 
-					ImGui::SameLine( 201 );
+						ImGui::SameLine( 201 );
 
-					elements::child( _( "List" ), { 430, 365 }, [ ] ( ) {
-						if ( cloud->user_configs.empty( ) ) {
-							auto drawchild = ImGui::GetWindowDrawList( );
-							auto poschild = ImGui::GetWindowPos( );
+						elements::child( _( "List" ), { 430, 365 }, [ ] ( ) {
+							if ( cloud->user_configs.empty( ) ) {
+								auto drawchild = ImGui::GetWindowDrawList( );
+								auto poschild = ImGui::GetWindowPos( );
 
-							drawchild->AddImage( assets::creeper, poschild + ImVec2( 165, 90 ), poschild + ImVec2( 245, 170 ));
-							drawchild->AddText( poschild + ImVec2( 205 - ImGui::CalcTextSize( "Nothing to show ;(" ).x / 2, 190 ), ImColor( 255, 255, 255 ), "Nothing to show ;(" );
-						}
-						else {
-							for ( auto conf : cloud->user_configs ) {
-								elements::config( conf );
+								drawchild->AddImage( assets::creeper, poschild + ImVec2( 165, 90 ), poschild + ImVec2( 245, 170 ) );
+								drawchild->AddText( poschild + ImVec2( 205 - ImGui::CalcTextSize( "Nothing to show ;(" ).x / 2, 190 ), ImColor( 255, 255, 255 ), "Nothing to show ;(" );
 							}
-						}
-					} );
+							else {
+								for ( auto conf : cloud->user_configs ) {
+									elements::config( conf );
+								}
+							}
+						} );
+					}
+					else if ( m_selected_subtab[ 4 ] == 1 )
+					{
+						static chams_layer data;
+						static char label[ 12 ];
+						const char* shader_list[] = { "VertexLitGeneric", "UnlitGeneric" };
+						static int shader = 0;
+
+						elements::child( _( "Materials" ), { 190, 365 }, [ ] ( ) {
+							for ( auto a = 0; a < chams->materials.size( ); a++ ) {
+								if ( chams->materials[ a ].buildin )
+									continue;
+
+								ImGui::Selectable( chams->materials[ a ].label.c_str( ) );
+							}
+						} );
+
+						ImGui::SameLine( 201 );
+
+						elements::child( _( "Editor" ), { 430, 365 }, [ & ] ( ) {
+
+							ImGui::Combo( "Shader", &shader, shader_list, 2 );
+
+							if ( ImGui::InputText( "Material Label", label, 12 ) ) {
+								data.label = std::string( label );
+							}
+
+							editor.Render( "TextEditor", { 410, 185 } );
+
+							ImGui::SetCursorPos( { 0, 285 } );
+							if ( elements::button( _( "New Material" ), ImVec2( 200, 30 ) ) ) {
+								data.material_data = editor.GetText( );
+								data.buildin = false;
+								data.label = std::string( label );
+								data.file_name = std::string( label ) + ".vmt";
+								data.shader_type = shader == 0 ? "VertexLitGeneric" : "UnlitGeneric";
+
+								if ( array_have_that_name( chams->materials, data.label ) == false ) {
+									chams->create_material( data );
+									data = chams_layer{};
+								}
+								else {
+									notifies::push( "Chams System", "That name already taken" );
+								}
+							}
+						} );
+					}
 				}
 			}
 			ImGui::EndGroup( );

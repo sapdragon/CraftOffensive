@@ -9,15 +9,18 @@ struct chams_layer {
 	std::string shader_type;
 	std::string material_data;
 	std::string label;
+	std::string file_name;
 
 	bool buildin = true;
-	std::string file_name;
+	bool inited = false;
 };
 
 class c_chams : public c_singleton<c_chams> {
 public:
 	std::vector < chams_layer > materials;
-	void create_material( std::string_view material_name, std::string_view label, std::string_view shader_type, std::string_view material_data );
+	void create_material( std::string_view material_name, std::string_view label, bool buildin, std::string_view shader_type, std::string_view material_data );
+	void create_material( chams_layer material );
+
 
 private:
 
@@ -27,7 +30,7 @@ private:
 	//std::map < int, chams_entity_settings_t > m_shared_players;
 public:
 	c_chams() {
-		create_material(_("black_ink_regular.vmt"), _("Regular" ), _( "VertexLitGeneric" ), _( R"#("VertexLitGeneric" {
+		create_material(_("black_ink_regular.vmt"), _("Regular" ), true,  _( "VertexLitGeneric" ), _( R"#("VertexLitGeneric" {
 	"$basetexture" "vgui/white_additive"
 	"$ignorez"      "0"
 	"$model"		"1"
@@ -38,7 +41,7 @@ public:
 	"$wireframe"	"0"
 })#"));
 
-		create_material(_("black_ink_flat.vmt"), _( "Flat" ), _("UnlitGeneric"), _(R"#("UnlitGeneric" {
+		create_material(_("black_ink_flat.vmt"), _( "Flat" ), true, _("UnlitGeneric"), _(R"#("UnlitGeneric" {
 	"$basetexture" "vgui/white_additive"
 	"$ignorez"      "0"
 	"$model"		"1"

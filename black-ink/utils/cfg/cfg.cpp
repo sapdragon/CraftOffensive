@@ -1,6 +1,72 @@
 #include "../utils.h"
+#include "../../features/visuals/chams.h"
 
 namespace cfg_internal {
+	enum State { ESCAPED, UNESCAPED };
+
+	std::string unescapeJSON( const std::string& input )
+	{
+		State s = UNESCAPED;
+		std::string output;
+		output.reserve( input.length( ) );
+
+		for ( std::string::size_type i = 0; i < input.length( ); ++i )
+		{
+			switch ( s )
+			{
+			case ESCAPED:
+			{
+				switch ( input[ i ] )
+				{
+				case '"':
+					output += '\"';
+					break;
+				case '/':
+					output += '/';
+					break;
+				case 'b':
+					output += '\b';
+					break;
+				case 'f':
+					output += '\f';
+					break;
+				case 'n':
+					output += '\n';
+					break;
+				case 'r':
+					output += '\r';
+					break;
+				case 't':
+					output += '\t';
+					break;
+				case '\\':
+					output += '\\';
+					break;
+				default:
+					output += input[ i ];
+					break;
+				}
+
+				s = UNESCAPED;
+				break;
+			}
+			case UNESCAPED:
+			{
+				switch ( input[ i ] )
+				{
+				case '\\':
+					s = ESCAPED;
+					break;
+				default:
+					output += input[ i ];
+					break;
+				}
+			}
+			}
+		}
+		return output;
+	}
+
 	template <class T>
 	void jsonify( nlohmann::json& j, bool load, uint32_t key )
 	{
@@ -56,25 +122,98 @@ namespace cfg_internal {
 		else
 			key = col_t(j[0].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ));
 	}
-	void jsonify_chams( nlohmann::json& j, bool load, uint32_t hash, std::string prefix )
+	void jsonify_basic( nlohmann::json& j, bool load, std::string& key )
 	{
-		/*auto chams = cfg::get< chams_entity_settings_t >( hash );
-		chams_entity_settings_t temp = chams;
+		if ( j.is_null( ) && load )
+			return;
 
-		jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "enable" ], load, temp.m_invisible.m_enable );
-		jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "enable" ], load, temp.m_visible.m_enable );
+		if ( !load )
+			j = key;
+		else
+			key = j.get<std::string>( );
+	}
+	void jsonify_chams( nlohmann::json& j, bool load, std::vector < chams_material_settings_t>& hash, std::string prefix )
+	{
+		if ( !load ) {
+			for ( auto a = 0; a < hash.size( ); a++ ) {
+				j[ "chams" ][ prefix ][ a ][ "m_enable" ] = hash[ a ].m_enable;
 
-		for ( auto a = 0; a < 6; a++ ) {
-			jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "enable" ], load, temp.m_visible.m_materials[ a ].m_enable );
-			jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "material" ], load, temp.m_visible.m_materials[ a ].m_material );
-			jsonify_basic( j[ "chams" ][ prefix ][ "visible" ][ "mat" ][ a ][ "color" ], load, temp.m_visible.m_materials[ a ].m_color );
-			jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "enable" ], load, temp.m_invisible.m_materials[ a ].m_enable );
-			jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "material" ], load, temp.m_invisible.m_materials[ a ].m_material );
-			jsonify_basic( j[ "chams" ][ prefix ][ "invisible" ][ "mat" ][ a ][ "color" ], load, temp.m_invisible.m_materials[ a ].m_color );
+				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 0 ] = hash[a].m_color.r();
+				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 1 ] = hash[ a ].m_color.g( );
+				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 2 ] = hash[ a ].m_color.b( );
+				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 3 ] = hash[ a ].m_color.a( );
+
+				j[ "chams" ][ prefix ][ a ][ "label" ] = hash[ a ].label;
+				j[ "chams" ][ prefix ][ a ][ "m_material" ] = hash[ a ].m_material;
+			}
 		}
+		else {
+			if ( j[ "chams" ][ prefix ].is_null( ) )
+				return;
 
-		if( !load )
-			cfg::set< chams_entity_settings_t >( hash, temp );*/
+			auto size = j[ "chams" ][ prefix ].size( );
+
+			for ( auto a = 0; a < size; a++ ) {
+				auto data = chams_material_settings_t{
+					j[ "chams" ][ prefix ][ a ][ "m_enable" ].get<bool>( ),
+					j[ "chams" ][ prefix ][ a ][ "m_material" ].get<int>( ),
+					j[ "chams" ][ prefix ][ a ][ "label" ].get<std::string>( ),
+					col_t(
+						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 0 ].get<int>( ),
+						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 1 ].get<int>( ),
+						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 2 ].get<int>( ),
+						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 3 ].get<int>( )
+					)
+				};
+
+				hash.push_back( data );
+			}
+		}
+	}
+	void jsonify_materials( nlohmann::json& j, bool load, std::vector < chams_layer >& hash )
+	{
+		if ( !load ) {
+			for ( auto a = 0; a < hash.size( ); a++ ) {
+				if ( hash[ a ].buildin )
+					continue;
+
+				j[ "custom_materials" ][ a ][ "file_name" ] = hash[ a ].file_name;
+				j[ "custom_materials" ][ a ][ "label" ] = hash[ a ].label;
+				j[ "custom_materials" ][ a ][ "material_data" ] = hash[ a ].material_data;
+				j[ "custom_materials" ][ a ][ "shader_type" ] = hash[ a ].shader_type;
+			}
+		}
+		else {
+			if ( j[ "custom_materials" ].is_null( ) )
+				return;
+
+			for ( auto a = 0; a < hash.size( ); a++ ) {
+				if ( hash[ a ].buildin ) continue;
+
+				hash.erase( hash.begin( ) + a );
+			}
+
+			auto size = j[ "custom_materials" ].size();
+
+			for ( auto a = 0; a < size; a++ )
+			{
+				if ( j[ "custom_materials" ][a].is_null( ) )
+					continue;
+
+				chams_layer data;
+
+				data.material_data = unescapeJSON(j[ "custom_materials" ][ a ][ "material_data" ].get<std::string>());
+				data.shader_type = unescapeJSON( j[ "custom_materials" ][ a ][ "shader_type" ].get<std::string>( ) );
+				data.label = unescapeJSON( j[ "custom_materials" ][ a ][ "label" ].get<std::string>( ) );
+				data.file_name = unescapeJSON( j[ "custom_materials" ][ a ][ "file_name" ].get<std::string>( ));
+
+				data.buildin = false;
+
+				chams->create_material( data );
+			}
+
+			menu->selected_material = 0;
+		}
 	}
 }
 
@@ -132,9 +271,14 @@ namespace cfg {
 		cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
 		cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
 
-		cfg_internal::jsonify_chams( jsonk, load, FNV1A( "chams.local_player" ), "local" );
-		cfg_internal::jsonify_chams( jsonk, load, FNV1A( "chams.enemy" ), "enemy" );
-		cfg_internal::jsonify_chams( jsonk, load, FNV1A( "chams.teammate" ), "teammate" );
+		cfg_internal::jsonify_chams( jsonk, load, local_player_visible, "local_player_visible" );
+		cfg_internal::jsonify_chams( jsonk, load, enemy_visible, "enemy_visible" );
+		cfg_internal::jsonify_chams( jsonk, load, teammates_visible, "teammates_visible" );
+		cfg_internal::jsonify_chams( jsonk, load, local_player_invisible, "local_player_invisible" );
+		cfg_internal::jsonify_chams( jsonk, load, enemy_invisible, "enemy_invisible" );
+		cfg_internal::jsonify_chams( jsonk, load, teammates_invisible, "teammates_invisible" );
+
+		cfg_internal::jsonify_materials( jsonk, load, chams->materials );
 
 		return jsonk.dump( );
 	}
