@@ -1,5 +1,5 @@
 #include "model.h"
-
+bool inited = false;
 void c_model::on_render( )
 {
     if ( !m_texture ) {
@@ -8,7 +8,26 @@ void c_model::on_render( )
         interfaces::m_material_system->finish_render_target_allocation( );
     }
 
-    if ( !m_model ) {
+    if ( !inited && interfaces::m_engine->is_in_game ( ) ) {
+        c_merged_mdl* new_model = static_cast< c_merged_mdl* >( interfaces::m_mem_alloc->alloc( 0x75C ) );
+        static auto create_model_addr = utils::find_pattern_from_module( GetModuleHandleA( _( "client.dll" ) ), _( "53 8B D9 56 57 8D 4B 04 C7 03 ? ? ? ? E8 ? ? ? ? 6A" ) );
+        reinterpret_cast< void( __thiscall* )( void* ) >( create_model_addr )( new_model );
+
+        if ( !new_model )
+            return;
+
+        m_model = new_model;
+
+        m_model->set_mdl( "models/player/custom_player/uiplayer/animset_uiplayer.mdl" );
+        m_model->set_merge_mdl( "models/player/custom_player/legacy/tm_balkan_variantg.mdl" );
+        m_model->set_sequence( 214, false );
+        m_model->setup_bones_for_attachment_queries( );
+        m_model->set_merge_mdl( "models/weapons/w_minecraft_pickaxe.mdl" );
+
+        inited = true;
+    }
+    else if ( !m_model )
+    {
         c_merged_mdl* new_model = static_cast< c_merged_mdl* >( interfaces::m_mem_alloc->alloc( 0x75C ) );
         static auto create_model_addr = utils::find_pattern_from_module( GetModuleHandleA( _( "client.dll" ) ), _( "53 8B D9 56 57 8D 4B 04 C7 03 ? ? ? ? E8 ? ? ? ? 6A" ) );
         reinterpret_cast< void( __thiscall* )( void* ) >( create_model_addr )( new_model );
@@ -37,7 +56,7 @@ void c_model::on_render( )
     view_setup.m_height = 400;
     view_setup.m_fov = 100.f;
     view_setup.m_origin = vec3_t( -69.f, -9.f, 29.f );
-    view_setup.m_angles = qangle_t( 0.0f, 0.0f, 0.0f );
+    view_setup.m_angles = qangle_t( 0.0f, 0.0f, -90.0f );
     view_setup.m_near = 7.0f;
     view_setup.m_far = 1000.0f;
 
