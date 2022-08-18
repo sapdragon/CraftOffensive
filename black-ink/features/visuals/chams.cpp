@@ -1,22 +1,27 @@
 #include "../features.h"
 #include "../../hooks/hooks.h"
 
-i_material* c_chams::create_material(std::string_view material_name, std::string_view shader_type, std::string_view material_data) {
+void c_chams::create_material(std::string_view material_name, std::string_view label, std::string_view shader_type, std::string_view material_data) {
+	auto data = chams_layer{};
+
+	data.file_name = material_name;
+	data.shader_type = shader_type;
+	data.buildin = true;
+	data.material_data = material_data;
+	data.label = label;
+
 	const auto key_values = reinterpret_cast<c_key_values*>(interfaces::m_mem_alloc->alloc(36u));
 
 	key_values->init(shader_type.data());
 	key_values->load_from_buffer(material_name.data(), material_data.data());
 
-	return interfaces::m_material_system->create_material(material_name.data(), key_values);
+	data.mat = interfaces::m_material_system->create_material( material_name.data( ), key_values );
+
+	materials.push_back( data );
 }
 
 void c_chams::override_material(int type, const col_t& clr, bool ignorez ) {
-	i_material* material = nullptr;
-
-	switch (type) {
-	case MATERIAL_TYPE_REGULAR: material =  m_regular; break;
-	case MATERIAL_TYPE_FLAT: material = ignorez ? m_flat_z : m_flat; break;
-	}
+	i_material* material = materials[ type ].mat;
 
 	material->set_flag( MATERIAL_FLAG_IGNOREZ, ignorez );
 
@@ -39,7 +44,9 @@ void c_chams::draw_material_on_entity( chams_array visible, chams_array invisibl
 				continue;
 
 			override_material( material_options.m_material, material_options.m_color, true );
+
 			hooks::draw_model_execute_original( ecx, context, state, info, bones );
+			interfaces::m_model_render->forced_material_override( nullptr );
 		}
 	}
 

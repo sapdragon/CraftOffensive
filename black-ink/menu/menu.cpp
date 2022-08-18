@@ -5,6 +5,7 @@
 
 #include "../api/api.h"
 #include "../features/visuals/model/model.h"
+#include "../features/visuals/chams.h"
 std::string tabLabels[ 6 ] = { _( "Legit" ), _( "Visuals" ), _( "Misc" ), _( "Skins" ), _( "Files" ), _( "Dashboard" ) };
 
 static char login[ 32 ];
@@ -49,15 +50,15 @@ void user( ) {
 	ImGui::End( );
 }
 
-void chams_page( std::vector < chams_material_settings_t>& chams ) {
+void chams_page( std::vector < chams_material_settings_t>& chams_source ) {
 	static int selected_material = 0;
 	static char label[ 12 ];
 
 	elements::child( _( "Added Materials" ), { 220, 335 }, [ & ] ( ) {
 		ImGui::BeginChild( "Layers", ImVec2( 200, 245 ), false, ImGuiWindowFlags_NoBackground );
 		{
-			for ( auto mats = 0; mats < chams.size( ); mats++ ) {
-				if ( elements::chams_item( mats, chams ) ) {
+			for ( auto mats = 0; mats < chams_source.size( ); mats++ ) {
+				if ( elements::chams_item( mats, chams_source ) ) {
 					selected_material = mats;
 					memset( label, 0, sizeof label );
 				}
@@ -67,19 +68,36 @@ void chams_page( std::vector < chams_material_settings_t>& chams ) {
 
 		ImGui::SetCursorPos( { 0, 255 } );
 		if ( elements::button( _( "New Material" ), ImVec2( 200, 30 ) ) ) {
-			chams.push_back( chams_material_settings_t{} );
+			chams_source.push_back( chams_material_settings_t{} );
 		}
 	} );
 
-	if ( !chams.empty( ) ) {
+	if ( !chams_source.empty( ) ) {
 		ImGui::SameLine( 230 );
 
-		elements::child( _( "Edit Material" ), { 400, 240 }, [ & ] ( ) {
+		elements::child( _( "Edit Material" ), { 400, 335 }, [ & ] ( ) {
 
 			if ( ImGui::InputText( "Material Label", label, 12 ) ) {
-				chams[ selected_material ].label = std::string( label );
+				chams_source[ selected_material ].label = std::string( label );
 			}
-			ImGui::InputInt( "Material", &chams[ selected_material ].m_material, 0, 1 );
+
+			if ( ImGui::BeginCombo( "Material", chams->materials[ chams_source[ selected_material ].m_material ].label.c_str( ) ) )
+			{
+				for ( auto a = 0; a < chams->materials.size( ); a++ ) {
+					if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ), chams_source[ selected_material ].m_material == a ) )
+						chams_source[ selected_material ].m_material = a;
+				}
+
+				ImGui::EndCombo( );
+			}
+
+			elements::color_edit4( "Color", &chams_source[ selected_material ].m_color );
+
+			ImGui::SetCursorPos( { 0, 255 } );
+			if ( elements::button( _( "Delete current material" ), ImVec2( 380, 30 ) ) ) {
+				chams_source.erase( chams_source.begin( ) + selected_material );
+				selected_material = 0;
+			}
 		} );
 	}
 }
@@ -172,17 +190,6 @@ void c_menu::on_paint() {
 			ImGui::SetCursorPos( { 15, ( m_selected_tab == 1 && m_selected_subtab[ 1 ]  == 1) ? 125.f : 95.f } );
 			ImGui::BeginGroup( );
 			{
-				/*if ( g_Model.get_preview_texture( ) != nullptr )
-				{
-					ImGui::GetForegroundDrawList( )->AddImage(
-						g_Model.get_preview_texture( )->m_handles[ 0 ]->m_texture,
-						ImGui::GetWindowPos( ),
-						ImGui::GetWindowPos( ) + ImVec2( g_Model.get_preview_texture( )->get_actual_width( ), g_Model.get_preview_texture( )->get_actual_height( ) ),
-						ImVec2( 0, 0 ), ImVec2( 1, 1 ),
-						ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
-
-				}*/
-
 				if ( m_selected_tab == 0 ) {
 					elements::child( _( "General" ), { 220, 500 }, [ ] ( ) {
 						elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
