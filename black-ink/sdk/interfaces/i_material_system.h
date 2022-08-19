@@ -1,5 +1,11 @@
 #pragma once
 
+template <typename T, typename ... args_t>
+constexpr T CallVFunc( void* thisptr, std::size_t nIndex, args_t... argList )
+{
+	using VirtualFn = T( __thiscall* )( void*, decltype( argList )... );
+	return ( *static_cast< VirtualFn** >( thisptr ) )[ nIndex ]( thisptr, argList... );
+}
 
 class i_material_system {
 public:
@@ -23,4 +29,9 @@ public:
 
 	VFUNC(finish_render_target_allocation( ), 136, void( __thiscall* )( void* ) );
 
+
+	c_texture* find_texture( char const* szTextureName, const char* szTextureGroupName, bool bComplain = true, int nAdditionalCreationFlags = 0 )
+	{
+		return CallVFunc<c_texture*>( this, 91, szTextureName, szTextureGroupName, bComplain, nAdditionalCreationFlags );
+	}
 };

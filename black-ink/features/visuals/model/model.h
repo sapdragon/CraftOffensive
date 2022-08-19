@@ -4,6 +4,7 @@
 class c_model {
 private:
 	c_texture* m_texture;
+	c_texture* m_cubemap = nullptr;
 	float preview_matrix = 180.f;
 	c_merged_mdl* m_model;
 public:

@@ -310,6 +310,13 @@ public:
 class i_material;
 
 class i_material_render_context {
+private:
+	template <typename T, typename ... args_t>
+	constexpr T CallVFunc( void* thisptr, std::size_t nIndex, args_t... argList )
+	{
+		using VirtualFn = T( __thiscall* )( void*, decltype( argList )... );
+		return ( *static_cast< VirtualFn** >( thisptr ) )[ nIndex ]( thisptr, argList... );
+	}
 public:
 	VFUNC( release( ), 1, int( __thiscall* )( void* ) );
 	VFUNC( bind_local_cubemap( c_texture* texture ), 5, void( __thiscall* )( void*, c_texture* ), texture );
@@ -327,6 +334,11 @@ public:
 	VFUNC( begin_pix_event( unsigned long color, const char* name ), 144, void( __thiscall* )( void*, unsigned long, const char* ), color, name );
 	VFUNC( end_pix_event( ), 145, void( __thiscall* )( void* ) );
 	VFUNC( set_lighting_origin( float_t x, float_t y, float_t z ), 158, void( __thiscall* )( void*, float_t, float_t, float_t ), x, y, z );
+
+	void SetAmbientLightCube( vec4_t vecCube[ 6 ] )
+	{
+		CallVFunc<void>( this, 18, vecCube );
+	}
 };
 
 class c_merged_mdl {

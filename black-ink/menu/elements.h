@@ -31,7 +31,6 @@ namespace elements {
         return fmt;
     }
 
-
 	inline void tab( std::string label, ImTextureID texture, int& selected, int index ) {
         using namespace ImGui;
 

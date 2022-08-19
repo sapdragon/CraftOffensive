@@ -250,6 +250,21 @@ namespace cfg {
 		set < float >( FNV1A( "misc.view_model.z" ), 1.f );
 		set < int >( FNV1A( "misc.view_model.fov" ), 90.f );
 		set < bool >( FNV1A( "misc.view_model.override_while_scoped" ), true );
+
+		set<col_t>( FNV1A( "esp.enemies.health.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ), col_t( 55, 55, 55 ) );
+
+		set<col_t>( FNV1A( "esp.enemies.armor.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.enemies.armor.border.inside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.enemies.armor.border.outside.color" ), col_t( 55, 55, 55 ) );
+
+		set<col_t>( FNV1A( "esp.enemies.nickname.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.enemies.weapon.color" ), col_t( 255, 255, 255 ) );
+
+		set<col_t>( FNV1A( "esp.enemies.box.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.enemies.box.border.inside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.enemies.box.border.outside.color" ), col_t( 55, 55, 55 ) );
 	}
 
 	std::string json_action( bool load ) 

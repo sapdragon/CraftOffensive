@@ -84,11 +84,11 @@ namespace hooks {
 		if ( MH_CreateHook( level_init_pre_entity, &client_dll::level_init_pre_entity::hook, reinterpret_cast< void** >( &level_init_pre_entity_original ) ) != MH_OK )
 			throw std::runtime_error( "Failed to initialize level_init_pre_entity." );
 
-		if ( MH_CreateHook( loose_file_allowed_index, &other::loose_file_allowed::hook, reinterpret_cast< void** >( &loose_file_allowed_original ) ) != MH_OK )
-			throw std::runtime_error( "Failed to initialize loose_file_allowed." );
+		//if ( MH_CreateHook( loose_file_allowed_index, &other::loose_file_allowed::hook, reinterpret_cast< void** >( &loose_file_allowed_original ) ) != MH_OK )
+		//	throw std::runtime_error( "Failed to initialize loose_file_allowed." );
 
-		if ( MH_CreateHook( get_unverified_file_hashes_index, &other::get_unverified_file_hashes::hook, nullptr) != MH_OK )
-			throw std::runtime_error( "Failed to initialize get_unvirifed_file_hashes." );
+		//if ( MH_CreateHook( get_unverified_file_hashes_index, &other::get_unverified_file_hashes::hook, nullptr) != MH_OK )
+		//	throw std::runtime_error( "Failed to initialize get_unvirifed_file_hashes." );
 	
 
 		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)

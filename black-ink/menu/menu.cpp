@@ -6,6 +6,7 @@
 #include "../api/api.h"
 #include "../features/visuals/model/model.h"
 #include "../features/visuals/chams.h"
+#include "../features/visuals/preview/preview.hpp"
 std::string tabLabels[ 6 ] = { _( "Legit" ), _( "Visuals" ), _( "Misc" ), _( "Skins" ), _( "Files" ), _( "Dashboard" ) };
 
 static char login[ 32 ];
@@ -137,8 +138,8 @@ void c_menu::on_paint() {
 		{
 			ImGui::SetWindowSize( ImVec2( 660, 475 ), ImGuiCond_Once );
 
-			auto draw = ImGui::GetWindowDrawList( );
-			auto pos = ImGui::GetWindowPos( );
+			draw = ImGui::GetWindowDrawList( );
+			pos = ImGui::GetWindowPos( );
 
 			draw->AddRectFilled( pos, pos + ImVec2( 660, 50 ), ImColor( 26, 26, 26 ) );
 			draw->AddImage( assets::background, pos + ImVec2( 0, 50 ), pos + ImVec2( 600, 475 ) );
@@ -174,30 +175,39 @@ void c_menu::on_paint() {
 			}
 			ImGui::EndGroup( );
 
-			static int selected_chams_tab = 0;
-
-			if ( m_selected_tab == 1 && m_selected_subtab[ 1 ] == 1 ) {
+			if ( m_selected_tab == 1 && (m_selected_subtab[ 1 ] == 1 || m_selected_subtab[ 1 ] == 0) ) {
 				draw->AddRectFilled( pos + ImVec2( 0, 80 ), pos + ImVec2( 660, 110 ), ImColor( 25, 25, 25, 210 ) );
 
 				ImGui::SetCursorPos( { 0, 80 } );
 				ImGui::BeginGroup( );
 				{
-					elements::subtab( _( "Local Visible" ), { 110, 30 }, selected_chams_tab, 0 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
-					ImGui::SameLine( );
-					elements::subtab( _( "Local Invisible" ), { 110, 30 }, selected_chams_tab, 1 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
-					ImGui::SameLine( );
-					elements::subtab( _( "Enemy Visible" ), { 110, 30 }, selected_chams_tab, 2 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
-					ImGui::SameLine( );
-					elements::subtab( _( "Enemy Invisible" ), { 110, 30 }, selected_chams_tab, 3 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
-					ImGui::SameLine( );
-					elements::subtab( _( "Team Visible" ), { 110, 30 }, selected_chams_tab, 4 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
-					ImGui::SameLine( );
-					elements::subtab( _( "Team Invisible" ), { 110, 30 }, selected_chams_tab, 5 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+					if ( m_selected_subtab[ 1 ] == 0 ) {
+						elements::subtab( _( "Enemy" ), { 165, 30 }, selected_esp_tab, 0 );
+						ImGui::SameLine( );
+						elements::subtab( _( "Teammates" ), { 165, 30 }, selected_esp_tab, 1 );
+						ImGui::SameLine( );
+						elements::subtab( _( "Weapons" ), { 165, 30 }, selected_esp_tab, 2 );
+						ImGui::SameLine( );
+						elements::subtab( _( "World" ), { 165, 30 }, selected_esp_tab, 3 );
+					}
+					if ( m_selected_subtab[ 1 ] == 1 ) {
+						elements::subtab( _( "Local Visible" ), { 110, 30 }, selected_chams_tab, 0 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+						ImGui::SameLine( );
+						elements::subtab( _( "Local Invisible" ), { 110, 30 }, selected_chams_tab, 1 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+						ImGui::SameLine( );
+						elements::subtab( _( "Enemy Visible" ), { 110, 30 }, selected_chams_tab, 2 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+						ImGui::SameLine( );
+						elements::subtab( _( "Enemy Invisible" ), { 110, 30 }, selected_chams_tab, 3 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+						ImGui::SameLine( );
+						elements::subtab( _( "Team Visible" ), { 110, 30 }, selected_chams_tab, 4 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+						ImGui::SameLine( );
+						elements::subtab( _( "Team Invisible" ), { 110, 30 }, selected_chams_tab, 5 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;
+					}
 				}
 				ImGui::EndGroup( );
 			}
 
-			ImGui::SetCursorPos( { 15, ( m_selected_tab == 1 && m_selected_subtab[ 1 ]  == 1) ? 125.f : 95.f } );
+			ImGui::SetCursorPos( { 15, ( m_selected_tab == 1 && ( m_selected_subtab[ 1 ] == 1 || m_selected_subtab[ 1 ] == 0 ) ) ? 125.f : 95.f } );
 			ImGui::BeginGroup( );
 			{
 				if ( m_selected_tab == 0 ) {
@@ -228,6 +238,10 @@ void c_menu::on_paint() {
 
 				if ( m_selected_tab == 1 ) 
 				{
+					if ( m_selected_subtab[ 1 ] == 0 )
+					{
+						
+					}
 					if ( m_selected_subtab[ 1 ] == 1 ) 
 					{
 						if ( selected_chams_tab == 0 )
@@ -333,5 +347,38 @@ void c_menu::on_paint() {
 			ImGui::EndGroup( );
 		}
 		ImGui::End( );
+
+		if ( m_selected_subtab[ 1 ] == 0 && m_selected_tab == 1 )
+		{
+			ImGui::Begin( "preview", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration );
+			{
+				ImGui::SetWindowSize( { 330, 475 } );
+				ImGui::SetWindowPos( pos + ImVec2{ 675, 0 } );
+
+				auto draw_model = ImGui::GetWindowDrawList( );
+				auto pos_model = ImGui::GetWindowPos( );
+
+				draw_model->PushClipRect( pos_model, pos_model + ImVec2(330, 35), true);
+				draw_model->AddImage(assets::dirt, pos_model, pos_model + ImVec2(600, 50));
+				draw_model->PopClipRect( );
+
+				draw_model->AddImage( assets::background, pos_model + ImVec2(0, 35), pos_model + ImVec2( 600, 475 ) );
+
+				if ( g_Model.get_preview_texture( ) != nullptr )
+				{
+					draw_model->AddImage(
+						g_Model.get_preview_texture( )->m_handles[ 0 ]->m_texture,
+						ImGui::GetWindowPos( ),
+						ImGui::GetWindowPos( ) + ImVec2( g_Model.get_preview_texture( )->get_actual_width( ), g_Model.get_preview_texture( )->get_actual_height( ) ),
+						ImVec2( 0, 0 ), ImVec2( 1, 1 ),
+						ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
+
+				}
+
+				player_esp_preview->instance( );
+			}
+			ImGui::End( );
+		}
+
 	}
 }

@@ -57,6 +57,7 @@
     <ClCompile Include="features\legitbot\aimbot\aimbot.cpp" />
     <ClCompile Include="features\visuals\model\model.cpp" />
     <ClCompile Include="utils\imgui\TextEditor.cpp" />
+    <ClCompile Include="features\visuals\preview\preview.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\api.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="features\visuals\model\model.h" />
     <ClInclude Include="sdk\interfaces\i_studio_render.h" />
     <ClInclude Include="utils\imgui\TextEditor.h" />
+    <ClInclude Include="features\visuals\preview\preview.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="api\LibCurl.lib" />
