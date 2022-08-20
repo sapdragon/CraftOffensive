@@ -4,7 +4,7 @@ void c_aimbot::on_create_move( )
 {
 	m_best_fov = 10000000;
 	m_best_distance = 10000000;
-	m_best_angle = qangle_t( 0, 0, 0 );
+	m_best_position = vec3_t( 0, 0, 0 );
 	if ( !globals::m_local || !globals::m_local->is_alive( ) )
 		return;
 
@@ -28,6 +28,7 @@ void c_aimbot::on_create_move( )
 
 	interfaces::m_engine->get_view_angles( view_angle );
 
+	float fov_settings = ( powf( cfg::get < float >( FNV1A( "legitbot.aimbot.fov" ) ) + 30.f, 2.0f ) / 200.f ) * 5.f;
 
 	for ( int i = 0; i < interfaces::m_global_vars->m_max_clients; i++ )
 	{ 
@@ -69,21 +70,18 @@ void c_aimbot::on_create_move( )
 			if ( !hitbox_position.is_valid( ) )
 				continue;
 
-			auto aimbot_angle = math::calculate_angle( local_eye_pos, hitbox_position );
+			vec3_t hitbox_on_screen = vec3_t( );
 
-			m_best_angle.normalize( );
-
-			float fov = math::get_fov( view_angle, aimbot_angle );
-
-			if ( fov * 5.f > cfg::get < float > ( FNV1A( "legitbot.aimbot.fov" ) ) )
-				continue;
+			if ( !render::world_to_screen(hitbox_position, hitbox_on_screen ) )
+					continue;
 
 			float distance = local_eye_pos.dist_to( hitbox_position );
+	
+			float fov = vec3_t( ImGui::GetIO( ).DisplaySize.x / 2, ImGui::GetIO( ).DisplaySize.y / 2, 0 ).dist_to( hitbox_on_screen );
 
-			if ( fov < m_best_fov || ( fov == m_best_fov && distance < m_best_distance  ) )
+			if ( fov <= fov_settings )
 			{
-				m_best_angle = aimbot_angle;
-				m_best_fov = fov;
+				m_best_position = hitbox_position;
 				m_best_distance = distance;
 
 			}
@@ -91,12 +89,16 @@ void c_aimbot::on_create_move( )
 		}
 	}
 
-	if ( m_best_angle.empty( ) )
+
+
+	if ( m_best_position.empty( ) )
 		return;
 
-	m_best_angle.normalize( );
+	auto aim_angle = math::calculate_angle( local_eye_pos, m_best_position );
 
-	auto delta = m_best_angle - view_angle;
+	aim_angle.normalize( );
+
+	auto delta = aim_angle - view_angle;
 
 	auto final_angle = view_angle + ( delta / ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick )) * cfg::get < float >( FNV1A( "legitbot.aimbot.smooth" ) ) ) );
 

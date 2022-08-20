@@ -22,19 +22,6 @@ namespace math {
 		return angle;
 	}
 
-	float get_fov(qangle_t& view_angle, qangle_t& aim_angle)
-	{
-		vec3_t ang, aim;
-
-		angle_vectors(view_angle, &aim);
-		angle_vectors(aim_angle, &ang);
-
-		auto res = rad_to_deg(math::acos(aim.dot_product(ang) / aim.length_sqr()));
-		if (std::isnan(res))
-			res = 0.f;
-		return res;
-	}
-
 	void angle_matrix(const qangle_t& ang_view, matrix3x4_t& mat_output, const vec3_t& vec_origin)
 	{
 		float sp, sy, sr, cp, cy, cr;
@@ -75,6 +62,33 @@ namespace math {
 			up->y = cos.z * sin.x * sin.y + -sin.z * cos.y;
 			up->z = cos.z * cos.x;
 		}
+	}
+
+	void vector_angles( const vec3_t& forward, qangle_t* angles )
+	{
+		float	tmp, yaw, pitch;
+
+		if ( forward[ 1 ] == 0 && forward[ 0 ] == 0 ) {
+			yaw = 0;
+			if ( forward[ 2 ] > 0 )
+				pitch = 270;
+			else
+				pitch = 90;
+		}
+		else {
+			yaw = ( atan2( forward[ 1 ], forward[ 0 ] ) * 180 / m_pi );
+			if ( yaw < 0 )
+				yaw += 360;
+
+			tmp = sqrt( forward[ 0 ] * forward[ 0 ] + forward[ 1 ] * forward[ 1 ] );
+			pitch = ( atan2( -forward[ 2 ], tmp ) * 180 / m_pi );
+			if ( pitch < 0 )
+				pitch += 360;
+		}
+
+		angles->x = pitch;
+		angles->y = yaw;
+		angles->z = 0;
 	}
 
 	float normalize_yaw(float yaw) {

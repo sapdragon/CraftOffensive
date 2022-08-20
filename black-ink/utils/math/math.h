@@ -140,8 +140,9 @@ namespace math {
 
 	qangle_t calculate_angle( vec3_t& src, vec3_t& dst );
 
-	float get_fov( qangle_t& view_angle, qangle_t& aim_angle );
+	float get_fov( qangle_t& view_angle );
 	void angle_matrix( const qangle_t& ang_view, matrix3x4_t& mat_output, const vec3_t& vec_origin );
 	void angle_vectors(const qangle_t& angles, vec3_t* forward, vec3_t* right = nullptr, vec3_t* up = nullptr);
+	void vector_angles( const vec3_t& forward, qangle_t* angles );
 	float normalize_yaw(float yaw);
 }

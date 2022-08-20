@@ -211,7 +211,16 @@ void c_menu::on_paint() {
 			ImGui::BeginGroup( );
 			{
 				if ( m_selected_tab == 0 ) {
-					elements::child( _( "General" ), { 220, 500 }, [ ] ( ) {
+					elements::child( _( "General" ), {220, 500}, [ ] ( ) {
+						
+						elements::checkbox( _( "Enable" ), FNV1A( "legitbot.aimbot.enable" ) );
+						elements::checkbox( _( "Flash check" ), FNV1A( "legitbot.aimbot.flash_check" ) );
+						elements::checkbox( _( "Jump check" ), FNV1A( "legitbot.aimbot.jump_check" ) );
+						elements::checkbox( _( "Smoke check" ), FNV1A( "legitbot.aimbot.smoke_check" ) );
+						elements::slider_float( _( "FOV" ), FNV1A( "legitbot.aimbot.fov" ), 1.f, 50, "FOV: %0.1f" );
+						elements::slider_float( _( "Smooth" ), FNV1A( "legitbot.aimbot.smooth" ), 1.f, 50, "Smooth: %0.1f" );
+
+						/*
 						elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
 
 						elements::checkbox( _( "fake_lags enable" ), FNV1A( "fakelags.enable" ) );
@@ -232,7 +241,7 @@ void c_menu::on_paint() {
 						{
 							cloud->get_configs( );
 							notifies::push( "CraftOffensive.pw", "Coming soon..." );
-						}
+						}*/
 					} );
 				}
 

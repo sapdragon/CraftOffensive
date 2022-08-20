@@ -16,7 +16,10 @@ long __stdcall hooks::d3d_device::present::hook(IDirect3DDevice9* device, RECT* 
 
 	menu->on_paint();
 
+
 	render::add_to_draw_list();
+
+	ImGui::GetBackgroundDrawList( )->AddCircle( ImVec2( 1280 / 2, 720 / 2 ), ( powf( cfg::get < float >( FNV1A( "legitbot.aimbot.fov" ) ) + 30.f, 2.0f ) / 200.f ) * 5.f, ImColor(255,0,0 ) , 100);
 
 	ImGui::EndFrame();
 	ImGui::Render();
