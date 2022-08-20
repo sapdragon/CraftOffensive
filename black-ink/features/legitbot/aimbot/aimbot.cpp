@@ -28,7 +28,7 @@ void c_aimbot::on_create_move( )
 
 	interfaces::m_engine->get_view_angles( view_angle );
 
-	float fov_settings = ( powf( cfg::get < float >( FNV1A( "legitbot.aimbot.fov" ) ) + 30.f, 2.0f ) / 200.f ) * 5.f;
+	float fov_settings =  cfg::get < float >( FNV1A( "legitbot.aimbot.fov" ) )  * 5.f;
 
 	for ( int i = 0; i < interfaces::m_global_vars->m_max_clients; i++ )
 	{ 
