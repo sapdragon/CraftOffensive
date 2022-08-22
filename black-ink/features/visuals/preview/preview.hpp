@@ -55,6 +55,16 @@ public:
 public:
 	void instance( );
 
+	std::vector<std::vector<MovableItems>> draggable_items = {
+		std::vector<MovableItems>{}, // Left 0 
+		std::vector<MovableItems>{}, // Right 1
+		std::vector<MovableItems>{}, // Top 2
+		std::vector<MovableItems>{}, // Bot 3
+		std::vector<MovableItems>{}, // Center 4
+		std::vector<MovableItems>{}, // Pool 5
+		std::vector<MovableItems>{}, // InMove 6
+	};
+
 private:
 	bool item_in_move( MovableItems Item );
 	void vector_to_vector( MovableItems Item, int Destination );
@@ -75,16 +85,6 @@ private:
 	bool isMouseInAction = false;
 	float RecalculateAnimation = 0.f;
 	bool RecalculateAnimationFlag = false;
-
-	std::vector<std::vector<MovableItems>> draggable_items = {
-		std::vector<MovableItems>{}, // Left 0 
-		std::vector<MovableItems>{}, // Right 1
-		std::vector<MovableItems>{}, // Top 2
-		std::vector<MovableItems>{}, // Bot 3
-		std::vector<MovableItems>{}, // Center 4
-		std::vector<MovableItems>{}, // Pool 5
-		std::vector<MovableItems>{}, // InMove 6
-	};
 };
 
 inline c_esp_preview* player_esp_preview = new c_esp_preview( 0, std::vector<MovableItems>{

@@ -391,7 +391,7 @@ namespace elements {
         return pressed;
     }
 
-    inline bool color_edit4( const char* label, col_t* v, bool show_alpha = true )
+    inline bool color_edit4( const char* label, col_t* v, ImGuiColorEditFlags flags )
     {
         auto clr = ImVec4{
             v->r( ) / 255.0f,
@@ -400,7 +400,7 @@ namespace elements {
             v->a( ) / 255.0f
         };
 
-        if ( ImGui::ColorEdit4( label, &clr.x, show_alpha ) ) {
+        if ( ImGui::ColorEdit4( label, &clr.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoOptions | flags ) ) {
             *v = col_t( clr.x * 255, clr.y * 255, clr.z * 255, clr.w * 255 );
             return true;
         }
@@ -409,7 +409,28 @@ namespace elements {
 
     inline bool color_edit3( const char* label, col_t* v )
     {
-        return color_edit4( label, v, false );
+        return color_edit4( label, v, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoOptions );
+    }
+
+    inline bool color_edit4( const char* label, uint32_t v, ImGuiColorEditFlags flags )
+    {
+        auto clr = ImVec4{
+            cfg::get<col_t>( v ).r( ) / 255.0f,
+            cfg::get<col_t>( v ).g( ) / 255.0f,
+            cfg::get<col_t>( v ).b( ) / 255.0f,
+            cfg::get<col_t>( v ).a( ) / 255.0f
+        };
+
+        if ( ImGui::ColorEdit4( label, &clr.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoOptions | flags ) ) {
+            cfg::set<col_t>( v, col_t(clr.x * 255, clr.y * 255, clr.z * 255, clr.w * 255) );
+            return true;
+        }
+        return false;
+    }
+
+    inline bool color_edit3( const char* label, uint32_t v )
+    {
+        return color_edit4( label, v, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoTooltip | ImGuiColorEditFlags_NoOptions );
     }
 
     inline bool chams_item( int index, std::vector<chams_material_settings_t>& source ) {

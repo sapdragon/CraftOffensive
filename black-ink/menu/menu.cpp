@@ -91,7 +91,7 @@ void chams_page( std::vector < chams_material_settings_t>& chams_source ) {
 				ImGui::EndCombo( );
 			}
 
-			elements::color_edit4( "Color", &chams_source[ menu->selected_material ].m_color );
+			elements::color_edit4( "Color", &chams_source[ menu->selected_material ].m_color, NULL );
 
 			ImGui::SetCursorPos( { 0, 255 } );
 			if ( elements::button( _( "Delete current material" ), ImVec2( 380, 30 ) ) ) {
@@ -250,7 +250,17 @@ void c_menu::on_paint() {
 				{
 					if ( m_selected_subtab[ 1 ] == 0 )
 					{
-						
+						elements::child( _( "Box" ), { 210, 335 }, [ & ] ( ) {
+							elements::color_edit4( "Box", FNV1A( "esp.enemies.box.color" ), NULL );
+							elements::color_edit4( "Box Outline 1", FNV1A( "esp.enemies.box.border.outside.color" ), NULL );
+							elements::color_edit4( "Box Outline 2", FNV1A( "esp.enemies.box.border.inside.color" ), NULL );
+						} );
+
+						ImGui::SameLine( 220 );
+
+						elements::child( _( "Edit Material" ), { 400, 335 }, [ & ] ( ) {
+
+						} );
 					}
 					if ( m_selected_subtab[ 1 ] == 1 ) 
 					{
