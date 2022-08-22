@@ -214,6 +214,7 @@ void c_menu::on_paint() {
 					elements::child( _( "General" ), {220, 500}, [ ] ( ) {
 						
 						elements::checkbox( _( "Enable" ), FNV1A( "legitbot.aimbot.enable" ) );
+						elements::checkbox( _( "Silent" ), FNV1A( "legitbot.aimbot.silent" ) );
 						elements::checkbox( _( "Flash check" ), FNV1A( "legitbot.aimbot.flash_check" ) );
 						elements::checkbox( _( "Jump check" ), FNV1A( "legitbot.aimbot.jump_check" ) );
 						elements::checkbox( _( "Smoke check" ), FNV1A( "legitbot.aimbot.smoke_check" ) );

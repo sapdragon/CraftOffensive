@@ -1,11 +1,20 @@
 #include "aimbot.hpp"
 
+void c_aimbot::recoil_control_system( qangle_t& view_angle )
+{
+	
+}
+
 void c_aimbot::on_create_move( )
 {
 	m_best_fov = 10000000;
 	m_best_distance = 10000000;
 	m_best_position = vec3_t( 0, 0, 0 );
 	if ( !globals::m_local || !globals::m_local->is_alive( ) )
+		return;
+
+
+	if ( !cfg::get( FNV1A( "legitbot.aimbot.enable" ) ) )
 		return;
 
 	if ( cfg::get( FNV1A( "legitbot.aimbot.flash_check" ) ) && globals::m_local->get_flash_alpha( ) > 0.f )
@@ -79,11 +88,14 @@ void c_aimbot::on_create_move( )
 	
 			float fov = vec3_t( ImGui::GetIO( ).DisplaySize.x / 2, ImGui::GetIO( ).DisplaySize.y / 2, 0 ).dist_to( hitbox_on_screen );
 
-			if ( fov <= fov_settings )
+			if ( fov > fov_settings )
+				continue;
+
+			if ( fov < m_best_fov )
 			{
 				m_best_position = hitbox_position;
 				m_best_distance = distance;
-
+				m_best_fov = fov;
 			}
 
 		}
@@ -98,10 +110,16 @@ void c_aimbot::on_create_move( )
 
 	aim_angle.normalize( );
 
-	auto delta = aim_angle - view_angle;
+	static auto recoil_scale = interfaces::m_cvar_system->find_var( FNV1A( "weapon_recoil_scale" ) )->get_float( );
+
+	auto punch_angle = globals::m_local->get_aim_punch_angle( ) * recoil_scale;
+
+	auto delta = aim_angle - ( view_angle + punch_angle ) ;
 
 	auto final_angle = view_angle + ( delta / ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick )) * cfg::get < float >( FNV1A( "legitbot.aimbot.smooth" ) ) ) );
 
+	if(!cfg::get(FNV1A("legitbot.aimbot.silent") ) )
+		interfaces::m_engine->set_view_angles( final_angle );
 
-	interfaces::m_engine->set_view_angles( final_angle );
+	globals::m_cur_cmd->m_view_angles = view_angle + delta;
 }

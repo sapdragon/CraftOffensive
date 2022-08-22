@@ -222,8 +222,11 @@ namespace cfg {
 	void init( ) {
 
 		set < bool >( FNV1A( "legitbot.aimbot.enable" ), false );
+		set < bool >( FNV1A( "legitbot.aimbot.silent" ), false );
 
-		set < std::array <bool, 18 > >( FNV1A( "legitbot.aimbot.hitboxes" ), { true, true,  true, true, true, true,  true, true, true, true,  true, true, true, true,  true, true, true, true } );
+
+
+		set < std::array <bool, 18 > >( FNV1A( "legitbot.aimbot.hitboxes" ), { true, false,  false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false } );
 
 		set < float >( FNV1A( "legitbot.aimbot.fov" ), 25.f );
 		set < float >( FNV1A( "legitbot.aimbot.smooth" ), 15.f );
@@ -250,7 +253,10 @@ namespace cfg {
 		set < float >( FNV1A( "misc.view_model.z" ), 1.f );
 		set < int >( FNV1A( "misc.view_model.fov" ), 90.f );
 		set < bool >( FNV1A( "misc.view_model.override_while_scoped" ), true );
+		set < bool >( FNV1A( "misc.sharerd.name" ), false );
 
+
+		
 		set<col_t>( FNV1A( "esp.enemies.health.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ), col_t( 55, 55, 55 ) );
 		set<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ), col_t( 55, 55, 55 ) );

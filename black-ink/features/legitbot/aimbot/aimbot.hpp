@@ -7,7 +7,11 @@ private:
 	float m_best_distance = 0.f;
 	vec3_t m_best_position = vec3_t( );
 
+	vec3_t m_old_punch = vec3_t( );
+
 public:
+
+	void recoil_control_system( qangle_t& view_angle);
 
 	void on_create_move( );
 };

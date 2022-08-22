@@ -56,7 +56,15 @@ namespace steamsockets
 
 		void add_opened_port( int port ) { m_open_ports.push_back( port ); }
 
+		bool is_connected( uint32_t steam_id ) {
 
+			for ( client_connection& connection : m_connections ) {
+				if ( connection.m_steam_id == steam_id ) {
+					return true;
+				}
+			}
+			return false;
+		};
 		void send_message_to_user( uint16_t message_type, google::protobuf::Message* message, int port, uint32_t steam_id );
 		void send_message_to_connected_user( uint16_t message_type, ::google::protobuf::Message* message, uint32_t steam_id ) {
 			for ( client_connection& connection : m_connections ) {

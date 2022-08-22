@@ -143,6 +143,12 @@ namespace hooks {
 			void __cdecl hook( void*, void*, float accumulated_extra_samples, bool final_tick );
 			using fn = void( __cdecl* )( float, bool );
 		}
+
+		namespace get_player_info
+		{
+			void __fastcall hook( void* ecx, void* edx, int index, player_info_t* info );
+			using fn = unsigned short( __fastcall* )( void*, void*, int, player_info_t* );
+		}
 	}
 
 	inline hooks::d3d_device::present::fn present_original = nullptr;
@@ -163,5 +169,6 @@ namespace hooks {
 	inline hooks::networking::cl_move::fn cl_move_original = nullptr;
 	inline hooks::client_dll::level_init_pre_entity::fn level_init_pre_entity_original = nullptr;
 	inline hooks::other::loose_file_allowed::fn loose_file_allowed_original = nullptr;
+	inline hooks::engine_dll::get_player_info::fn get_player_info_original = nullptr;
 
 }

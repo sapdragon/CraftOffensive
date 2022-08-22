@@ -13,6 +13,7 @@ namespace hooks {
 		const auto lock_cursor_index = reinterpret_cast<void*>(get_virtual(interfaces::m_surface, 67u));
 		const auto set_mdl_index = reinterpret_cast< void* >( get_virtual( interfaces::m_model_cache, 10u ) );
 		const auto level_init_pre_entity = reinterpret_cast< void* >( get_virtual( interfaces::m_client_dll, 5u ) );
+		const auto get_player_info_index = reinterpret_cast< void* >( get_virtual( interfaces::m_engine, 8u ) );
 
 
 
@@ -83,6 +84,10 @@ namespace hooks {
 
 		if ( MH_CreateHook( level_init_pre_entity, &client_dll::level_init_pre_entity::hook, reinterpret_cast< void** >( &level_init_pre_entity_original ) ) != MH_OK )
 			throw std::runtime_error( "Failed to initialize level_init_pre_entity." );
+
+		if ( MH_CreateHook( get_player_info_index, &engine_dll::get_player_info::hook, reinterpret_cast< void** >( &get_player_info_original ) ) != MH_OK )
+			throw std::runtime_error( "Failed to initialize get_player_info." );
+
 
 		//if ( MH_CreateHook( loose_file_allowed_index, &other::loose_file_allowed::hook, reinterpret_cast< void** >( &loose_file_allowed_original ) ) != MH_OK )
 		//	throw std::runtime_error( "Failed to initialize loose_file_allowed." );
