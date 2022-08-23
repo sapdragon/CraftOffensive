@@ -255,19 +255,27 @@ namespace cfg {
 		set < bool >( FNV1A( "misc.view_model.override_while_scoped" ), true );
 		set < bool >( FNV1A( "misc.sharerd.name" ), false );
 
+		set<col_t>( FNV1A( "esp.team.health.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.team.health.border.inside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.team.health.border.outside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.team.armor.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.team.armor.border.inside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.team.armor.border.outside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.team.nickname.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.team.weapon.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.team.box.color" ), col_t( 255, 255, 255 ) );
+		set<col_t>( FNV1A( "esp.team.box.border.inside.color" ), col_t( 55, 55, 55 ) );
+		set<col_t>( FNV1A( "esp.team.box.border.outside.color" ), col_t( 55, 55, 55 ) );
 
-		
+
 		set<col_t>( FNV1A( "esp.enemies.health.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ), col_t( 55, 55, 55 ) );
 		set<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ), col_t( 55, 55, 55 ) );
-
 		set<col_t>( FNV1A( "esp.enemies.armor.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.enemies.armor.border.inside.color" ), col_t( 55, 55, 55 ) );
 		set<col_t>( FNV1A( "esp.enemies.armor.border.outside.color" ), col_t( 55, 55, 55 ) );
-
 		set<col_t>( FNV1A( "esp.enemies.nickname.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.enemies.weapon.color" ), col_t( 255, 255, 255 ) );
-
 		set<col_t>( FNV1A( "esp.enemies.box.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.enemies.box.border.inside.color" ), col_t( 55, 55, 55 ) );
 		set<col_t>( FNV1A( "esp.enemies.box.border.outside.color" ), col_t( 55, 55, 55 ) );
@@ -281,17 +289,14 @@ namespace cfg {
 		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
 		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
 		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.z"  ], load, FNV1A( "misc.view_model.z"  ) );
-
 		cfg_internal::jsonify<bool>( jsonk[ "visuals_enable" ], load, FNV1A( "visuals_enable" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "box_esp" ], load, FNV1A( "box_esp" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "name_esp" ], load, FNV1A( "name_esp" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "health_esp" ], load, FNV1A( "health_esp" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "auto_strafe" ], load, FNV1A( "auto_strafe" ) );
-
 		cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
 		cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
-
 		cfg_internal::jsonify_chams( jsonk, load, local_player_visible, "local_player_visible" );
 		cfg_internal::jsonify_chams( jsonk, load, enemy_visible, "enemy_visible" );
 		cfg_internal::jsonify_chams( jsonk, load, teammates_visible, "teammates_visible" );

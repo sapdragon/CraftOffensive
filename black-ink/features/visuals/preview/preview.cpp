@@ -46,7 +46,7 @@ void c_esp_preview::vector_to_vector_indexed( MovableItems Item, int Destination
 
 __forceinline ImColor toColor( col_t color )
 {
-	return ImColor( color.r( ), color.b( ), color.g( ), color.a( ) );
+	return ImColor( color.r( ), color.g( ), color.b( ), color.a( ) );
 }
 
 inline void Username( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
@@ -114,7 +114,7 @@ inline void HealthBar( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size,
 		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ) ) ) );
 		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ) ) ) );
 
-		draw->AddRectFilled( pos + ImVec2( 6, 1 ), pos + size - ImVec2( 6, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.color" ) ) ) );
+		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.color" ) ) ) );
 	}
 
 	if ( cond == TOP_COND || cond == BOT_COND ) {
@@ -193,6 +193,150 @@ inline void GetDrawableEnemies( bool pressed, ImDrawList* draw, ImVec2 pos, ImVe
 	}
 }
 
+inline void UsernameTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
+{
+	ImVec2 ImTextSize = ImGui::CalcTextSize( "Nickname" );
+
+	if ( cond == LEFT_COND ) {
+		size = ImVec2( ImTextSize.x + 10, 14 + 6 );
+		draw->AddText( pos + ImVec2( 1, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) ), "Nickname" );
+	}
+
+	if ( cond == RIGHT_COND ) {
+		size = ImVec2( ImTextSize.x + 10, 14 + 6 );
+		draw->AddText( pos + ImVec2( 9, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) ), "Nickname" );
+	}
+
+	if ( cond == TOP_COND || cond == BOT_COND ) {
+		size = ImVec2( 110, 14 + 6 );
+		draw->AddText( pos + ImVec2( 55 - ImTextSize.x / 2, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) ), "Nickname" );
+	}
+
+	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
+		size = ImVec2( 70, 20 );
+
+		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
+		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
+		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), "Nickname" );
+	}
+}
+
+inline void WeaponTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
+{
+	ImVec2 ImTextSize = ImGui::CalcTextSize( "Dual Elites" );
+
+	if ( cond == LEFT_COND ) {
+		size = ImVec2( ImTextSize.x + 10, ImTextSize.y + 6 );
+		draw->AddText( pos + ImVec2( 1, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) ), "Dual Elites" );
+	}
+
+	if ( cond == RIGHT_COND ) {
+		size = ImVec2( ImTextSize.x + 10, ImTextSize.y + 6 );
+		draw->AddText( pos + ImVec2( 9, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) ), "Dual Elites" );
+	}
+
+	if ( cond == TOP_COND || cond == BOT_COND ) {
+		size = ImVec2( 110, ImTextSize.y + 6 );
+		draw->AddText( pos + ImVec2( 55 - ImGui::CalcTextSize( "Dual Elites" ).x / 2, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) ), "Dual Elites" );
+	}
+
+	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
+		size = ImVec2( 55, 20 );
+
+
+		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
+		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
+
+		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Weapon" ) );
+	}
+}
+
+inline void HealthBarTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
+{
+	if ( cond == LEFT_COND || cond == RIGHT_COND ) {
+		size = ImVec2( 6, 230 );
+		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.outside.color" ) ) ) );
+		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.inside.color" ) ) ) );
+
+		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.color" ) ) ) );
+	}
+
+	if ( cond == TOP_COND || cond == BOT_COND ) {
+		size = ImVec2( 110, 10 );
+		draw->AddRectFilled( pos + ImVec2( 4, 2 ), pos + size - ImVec2( 4, 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.outside.color" ) ) ) );
+		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 5, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.inside.color" ) ) ) );
+
+		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 56, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.color" ) ) ) );
+	}
+
+	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
+		size = ImVec2( 55, 20 );
+
+		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
+		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
+		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Health" ) );
+	}
+}
+
+inline void ArmorBarTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
+{
+	if ( cond == LEFT_COND || cond == RIGHT_COND ) {
+		size = ImVec2( 6, 230 );
+		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) ) );
+		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) ) );
+
+		draw->AddRectFilled( pos + ImVec2( 6, 1 ), pos + size - ImVec2( 6, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) ) );
+	}
+
+	if ( cond == TOP_COND || cond == BOT_COND ) {
+		size = ImVec2( 110, 10 );
+		draw->AddRectFilled( pos + ImVec2( 4, 2 ), pos + size - ImVec2( 4, 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) ) );
+		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 5, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) ) );
+
+		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 56, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) ) );
+	}
+
+	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
+		size = ImVec2( 45, 20 );
+
+		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
+		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
+
+		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Armor" ) );
+	}
+}
+
+inline void BoxTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
+{
+	if ( cond == CENTER_COND ) {
+		size = ImVec2( 110, 230 );
+
+		draw->AddRect( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.box.color" ) ) ) );
+		draw->AddRect( pos + ImVec2( 3, -1 ), pos + size - ImVec2( 3, -1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.outside.color" ) ) ) );
+		draw->AddRect( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.inside.color" ) ) ) );
+	}
+
+	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
+		size = ImVec2( 35, 20 );
+
+
+		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
+		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
+
+		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Box" ) );
+	}
+}
+
+inline void GetDrawableTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond, int var ) {
+	switch ( var ) {
+	case 0: return WeaponTeammates( pressed, draw, pos, size, cond ); break;
+	case 1: return UsernameTeammates( pressed, draw, pos, size, cond ); break;
+	case 2: return HealthBarTeammates( pressed, draw, pos, size, cond ); break;
+	case 3: return ArmorBarTeammates( pressed, draw, pos, size, cond ); break;
+	case 4: return BoxTeammates( pressed, draw, pos, size, cond ); break;
+	}
+}
+
 bool c_esp_preview::handle( MovableItems& Item )
 {
 	ImGuiWindow* window = ImGui::GetCurrentWindow( );
@@ -217,8 +361,11 @@ bool c_esp_preview::handle( MovableItems& Item )
 
 	ImGuiCol handle_color = ImColor( ImGui::GetStyle( ).Colors[ ImGuiCol_ButtonHovered ] );
 	ImDrawList* draw_list = ImGui::GetWindowDrawList( );
-
-	GetDrawableEnemies( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.TemporaryPos, Item.WidgetSize, Item.VectorCond, Item.Draw );
+	
+	if ( this->draw_type == 0)
+		GetDrawableEnemies( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.TemporaryPos, Item.WidgetSize, Item.VectorCond, Item.Draw );
+	if ( this->draw_type == 1 )
+		GetDrawableTeammates( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.TemporaryPos, Item.WidgetSize, Item.VectorCond, Item.Draw );
 
 	if ( is_active && ImGui::IsMouseDragging( 0 ) ) {
 		Item.TemporaryPos[ 0 ] += ImGui::GetIO( ).MouseDelta.x;

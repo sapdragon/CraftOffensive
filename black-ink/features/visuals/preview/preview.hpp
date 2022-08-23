@@ -95,3 +95,12 @@ inline c_esp_preview* player_esp_preview = new c_esp_preview( 0, std::vector<Mov
 		MovableItems( 4, "Box" , POOL_COND, { 260, 440 }, { 260, 440 }, 2 ),
 	}
 );
+
+inline c_esp_preview* player_team_esp_preview = new c_esp_preview( 1, std::vector<MovableItems>{
+		MovableItems( 0, "Weapon", POOL_COND, { 10, 440 }, { 10, 440 }, 0 ),
+		MovableItems( 1, "Username", POOL_COND, { 70, 440 }, { 70, 440 }, 0 ),
+		MovableItems( 2, "Health", POOL_COND, { 150, 440 }, { 150, 440 }, 1 ),
+		MovableItems( 3, "Armor", POOL_COND, { 210, 440 }, { 210, 440 }, 1 ),
+		MovableItems( 4, "Box", POOL_COND, { 260, 440 }, { 260, 440 }, 2 ),
+	}
+);

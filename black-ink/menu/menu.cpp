@@ -250,17 +250,100 @@ void c_menu::on_paint() {
 				{
 					if ( m_selected_subtab[ 1 ] == 0 )
 					{
-						elements::child( _( "Box" ), { 210, 335 }, [ & ] ( ) {
-							elements::color_edit4( "Box", FNV1A( "esp.enemies.box.color" ), NULL );
-							elements::color_edit4( "Box Outline 1", FNV1A( "esp.enemies.box.border.outside.color" ), NULL );
-							elements::color_edit4( "Box Outline 2", FNV1A( "esp.enemies.box.border.inside.color" ), NULL );
-						} );
+						if ( selected_esp_tab == 0 ) {
+							ImGui::BeginGroup( );
+							{
+								elements::child( _( "Box" ), { 200, 135 }, [ & ] ( ) {
+									elements::color_edit4( "Box", FNV1A( "esp.enemies.box.color" ), NULL );
+									elements::color_edit4( "Box Outline 1", FNV1A( "esp.enemies.box.border.outside.color" ), NULL );
+									elements::color_edit4( "Box Outline 2", FNV1A( "esp.enemies.box.border.inside.color" ), NULL );
+								} );
+							}
+							ImGui::EndGroup( );
 
-						ImGui::SameLine( 220 );
+							ImGui::SameLine( 215 );
 
-						elements::child( _( "Edit Material" ), { 400, 335 }, [ & ] ( ) {
+							ImGui::BeginGroup( );
+							{
+								elements::child( _( "Health" ), { 200, 135 }, [ & ] ( ) {
+									elements::color_edit4( "Health", FNV1A( "esp.enemies.health.color" ), NULL );
+									elements::color_edit4( "Health Outline 1", FNV1A( "esp.enemies.health.border.outside.color" ), NULL );
+									elements::color_edit4( "Health Outline 2", FNV1A( "esp.enemies.health.border.inside.color" ), NULL );
+								} );
 
-						} );
+								ImGui::NewLine( );
+
+								elements::child( _( "Armor" ), { 200, 135 }, [ & ] ( ) {
+									elements::color_edit4( "Armor", FNV1A( "esp.enemies.armor.color" ), NULL );
+									elements::color_edit4( "Armor Outline 1", FNV1A( "esp.enemies.armor.border.outside.color" ), NULL );
+									elements::color_edit4( "Armor Outline 2", FNV1A( "esp.enemies.armor.border.inside.color" ), NULL );
+								} );
+							}
+							ImGui::EndGroup( );
+
+							ImGui::SameLine( 430 );
+
+							ImGui::BeginGroup( );
+							{
+								elements::child( _( "Weapon" ), { 200, 70 }, [ & ] ( ) {
+									elements::color_edit4( "Weapon", FNV1A( "esp.enemies.weapon.color" ), NULL );
+								} );
+
+								ImGui::NewLine( );
+
+								elements::child( _( "Nickname" ), { 200, 70 }, [ & ] ( ) {
+									elements::color_edit4( "Nickname", FNV1A( "esp.enemies.nickname.color" ), NULL );
+								} );
+							}
+							ImGui::EndGroup( );
+						}
+						if ( selected_esp_tab == 1 ) {
+							ImGui::BeginGroup( );
+							{
+								elements::child( _( "Box" ), { 200, 135 }, [ & ] ( ) {
+									elements::color_edit4( "Box", FNV1A( "esp.team.box.color" ), NULL );
+									elements::color_edit4( "Box Outline 1", FNV1A( "esp.team.box.border.outside.color" ), NULL );
+									elements::color_edit4( "Box Outline 2", FNV1A( "esp.team.box.border.inside.color" ), NULL );
+								} );
+							}
+							ImGui::EndGroup( );
+
+							ImGui::SameLine( 215 );
+
+							ImGui::BeginGroup( );
+							{
+								elements::child( _( "Health" ), { 200, 135 }, [ & ] ( ) {
+									elements::color_edit4( "Health", FNV1A( "esp.team.health.color" ), NULL );
+									elements::color_edit4( "Health Outline 1", FNV1A( "esp.team.health.border.outside.color" ), NULL );
+									elements::color_edit4( "Health Outline 2", FNV1A( "esp.team.health.border.inside.color" ), NULL );
+								} );
+
+								ImGui::NewLine( );
+
+								elements::child( _( "Armor" ), { 200, 135 }, [ & ] ( ) {
+									elements::color_edit4( "Armor", FNV1A( "esp.team.armor.color" ), NULL );
+									elements::color_edit4( "Armor Outline 1", FNV1A( "esp.team.armor.border.outside.color" ), NULL );
+									elements::color_edit4( "Armor Outline 2", FNV1A( "esp.team.armor.border.inside.color" ), NULL );
+								} );
+							}
+							ImGui::EndGroup( );
+
+							ImGui::SameLine( 430 );
+
+							ImGui::BeginGroup( );
+							{
+								elements::child( _( "Weapon" ), { 200, 70 }, [ & ] ( ) {
+									elements::color_edit4( "Weapon", FNV1A( "esp.team.weapon.color" ), NULL );
+								} );
+
+								ImGui::NewLine( );
+
+								elements::child( _( "Nickname" ), { 200, 70 }, [ & ] ( ) {
+									elements::color_edit4( "Nickname", FNV1A( "esp.team.nickname.color" ), NULL );
+								} );
+							}
+							ImGui::EndGroup( );
+						}
 					}
 					if ( m_selected_subtab[ 1 ] == 1 ) 
 					{
@@ -395,8 +478,10 @@ void c_menu::on_paint() {
 
 				}
 
-				if ( m_selected_subtab[ 1 ] == 0 )
+				if ( m_selected_subtab[ 1 ] == 0 && selected_esp_tab == 0 )
 					player_esp_preview->instance( );
+				else if ( m_selected_subtab[ 1 ] == 0 && selected_esp_tab == 1 )
+					player_team_esp_preview->instance( );
 			}
 			ImGui::End( );
 		}

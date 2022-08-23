@@ -117,7 +117,7 @@ ImVec2 c_player_esp::get_position_offsetless( DraggableItemCondiction pos, ESPPl
 
 __forceinline ImColor toColor( col_t color )
 {
-	return ImColor( color.r( ), color.b( ), color.g( ), color.a( ) );
+	return ImColor( color.r( ), color.g( ), color.b( ), color.a( ) );
 }
 
 void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImColor color, ESPPlayerData_t* m_Data ) {
