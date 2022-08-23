@@ -368,7 +368,7 @@ void c_menu::on_paint() {
 		}
 		ImGui::End( );
 
-		if ( m_selected_subtab[ 1 ] == 0 && m_selected_tab == 1 )
+		if ( (m_selected_subtab[ 1 ] == 0 || m_selected_subtab[ 1 ] == 1 ) && m_selected_tab == 1 )
 		{
 			ImGui::Begin( "preview", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration );
 			{
@@ -395,7 +395,8 @@ void c_menu::on_paint() {
 
 				}
 
-				player_esp_preview->instance( );
+				if ( m_selected_subtab[ 1 ] == 0 )
+					player_esp_preview->instance( );
 			}
 			ImGui::End( );
 		}

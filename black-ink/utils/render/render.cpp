@@ -105,15 +105,15 @@ namespace render {
 	}
 
 	void rect(const vec2_t& pos, const vec2_t& size, const col_t& clr, float rounding) {
-		m_draw_list->AddRect(*reinterpret_cast<const ImVec2*>(&pos), ImVec2(pos.x + size.x, pos.y + size.y), clr.hex(), rounding);
+		m_draw_list->AddRect(*reinterpret_cast<const ImVec2*>(&pos), *reinterpret_cast< const ImVec2* >( &size ), clr.hex(), rounding);
 	}
 
 	void rect_filled(const vec2_t& pos, const vec2_t& size, const col_t& clr, float rounding) {
-		m_draw_list->AddRectFilled(*reinterpret_cast<const ImVec2*>(&pos), ImVec2(pos.x + size.x, pos.y + size.y), clr.hex(), rounding);
+		m_draw_list->AddRectFilled( *reinterpret_cast< const ImVec2* >( &pos ), *reinterpret_cast< const ImVec2* >( &size ), clr.hex(), rounding);
 	}
 
 	void rect_filled_multi_clr(const vec2_t& pos, const vec2_t& size, const col_t& clr_upr_left, const col_t& clr_upr_right, const col_t& clr_bot_left, const col_t& clr_bot_right) {
-		m_draw_list->AddRectFilledMultiColor(*reinterpret_cast<const ImVec2*>(&pos), ImVec2(pos.x + size.x, pos.y + size.y), clr_upr_left.hex(), clr_upr_right.hex(), clr_bot_right.hex(), clr_bot_left.hex());
+		m_draw_list->AddRectFilledMultiColor( *reinterpret_cast< const ImVec2* >( &pos ), *reinterpret_cast< const ImVec2* >( &size ), clr_upr_left.hex(), clr_upr_right.hex(), clr_bot_right.hex(), clr_bot_left.hex());
 	}
 
 	void rect_angle(int x1, int y1, int x2, int y2, col_t color, float thickness, float rounding) {

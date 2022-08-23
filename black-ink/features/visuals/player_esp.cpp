@@ -1,6 +1,8 @@
 #include "../features.h"
 
-__forceinline void VectorTransform( const vec3_t& in1, const matrix3x4_t& in2, vec3_t& out )
+constexpr float SPEED_FREQ = 255 / 4.0f;
+
+void VectorTransform( const vec3_t& in1, const matrix3x4_t& in2, vec3_t& out )
 {
 	out[ 0 ] = in1.dot_product( in2[ 0 ] ) + in2[ 0 ][ 3 ];
 	out[ 1 ] = in1.dot_product( in2[ 1 ] ) + in2[ 1 ][ 3 ];
@@ -37,7 +39,7 @@ RECT GetBBox( c_base_entity* pEntity )
 	std::array < vec3_t, 8 > m_ScreenPoints;
 	for ( int nVector = 0; nVector < 8; nVector++ )
 	{
-		if ( render::world_to_screen( m_PointsTransformated[ nVector ], m_ScreenPoints[ nVector ] ) )
+		if ( !render::world_to_screen( m_PointsTransformated[ nVector ], m_ScreenPoints[ nVector ] ) )
 			return { };
 	}
 
@@ -113,6 +115,11 @@ ImVec2 c_player_esp::get_position_offsetless( DraggableItemCondiction pos, ESPPl
 		return ImVec2( m_Data->m_aBBox.left, m_Data->m_aBBox.top - 4 );
 }
 
+__forceinline ImColor toColor( col_t color )
+{
+	return ImColor( color.r( ), color.b( ), color.g( ), color.a( ) );
+}
+
 void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImColor color, ESPPlayerData_t* m_Data ) {
 	ImVec2 ImTextSize = ImGui::CalcTextSize( text.c_str( ) );
 	ImVec2 Position = get_position( pos, m_Data );
@@ -138,29 +145,177 @@ void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImCo
 		m_Data->m_iUpOffset = m_Data->m_iUpOffset + ImTextSize.y;
 }
 
+void c_player_esp::add_bar( DraggableItemCondiction pos, float& percentage, float max, ImColor color, ImColor color1, ImColor color2, ESPPlayerData_t* m_Data ) {
+
+	ImVec2 Position = get_position_offsetless( pos, m_Data );
+	int XOffset, X2Offset;
+	int YOffset, Y2Offset;
+
+	auto widthSides = abs( m_Data->m_aBBox.bottom - m_Data->m_aBBox.top ) - ( ( ( abs( m_Data->m_aBBox.bottom - m_Data->m_aBBox.top ) * percentage ) / max ) );
+	auto widthUpDown = abs( m_Data->m_aBBox.left - m_Data->m_aBBox.right ) - ( ( ( abs( m_Data->m_aBBox.left - m_Data->m_aBBox.right ) * percentage ) / max ) );
+
+	if ( pos == RIGHT_COND ) {
+		XOffset = 1 + m_Data->m_iRightOffset;
+		X2Offset = 3 + m_Data->m_iRightOffset;
+		YOffset = 1;
+		Y2Offset = -1 + m_Data->m_iHeight;
+	}
+
+	if ( pos == LEFT_COND ) {
+		XOffset = -1 - m_Data->m_iLeftOffset;
+		X2Offset = -3 - m_Data->m_iLeftOffset;
+		YOffset = 1;
+		Y2Offset = -1 + m_Data->m_iHeight;
+	}
+
+	if ( pos == BOT_COND || pos == TOP_COND ) {
+		XOffset = 1;
+		X2Offset = m_Data->m_iWidth - 1;
+		YOffset = m_Data->m_iDownOffset;
+		Y2Offset = 2 + m_Data->m_iDownOffset;
+	}
+
+	render::rect_angle(
+		( float ) Position.x + XOffset - 1 + ( pos == LEFT_COND ? 1 : 0 ), ( float ) Position.y + YOffset - 1,
+		( float ) Position.x + X2Offset + 1 - ( pos == LEFT_COND ? 1 : 0 ), ( float ) Position.y + Y2Offset + 1,
+		col_t( 
+			( int ) ( color2.Value.x * 255 ),
+			( int ) ( color2.Value.y * 255 ), 
+			( int ) ( color2.Value.z * 255 ),
+			255
+		), 0, 0
+	);
+
+	render::rect_filled_int(
+		( float ) Position.x + XOffset - 1, ( float ) Position.y + YOffset - 1,
+		( float ) Position.x + X2Offset + 1, ( float ) Position.y + Y2Offset + 1,
+		col_t(
+			( int ) ( color1.Value.x * 255 ),
+			( int ) ( color1.Value.y * 255 ),
+			( int ) ( color1.Value.z * 255 ),
+			255
+		)
+	);
+
+	render::rect_filled_int(
+		( float ) Position.x + XOffset, ( float ) Position.y + YOffset + ( pos == LEFT_COND || pos == RIGHT_COND ? widthSides : 0 ),
+		( float ) Position.x + X2Offset - ( pos == BOT_COND || pos == TOP_COND ? widthUpDown : 0 ), ( float ) Position.y + Y2Offset,
+		col_t(
+			( int ) ( color.Value.x * 255 ),
+			( int ) ( color.Value.y * 255 ),
+			( int ) ( color.Value.z * 255 ),
+			255
+		)
+	);
+
+	if ( pos == RIGHT_COND )
+		m_Data->m_iRightOffset = m_Data->m_iRightOffset + 3;
+	if ( pos == LEFT_COND )
+		m_Data->m_iLeftOffset = m_Data->m_iLeftOffset + 3;
+	if ( pos == BOT_COND )
+		m_Data->m_iDownOffset = m_Data->m_iDownOffset + 5;
+	if ( pos == TOP_COND )
+		m_Data->m_iUpOffset = m_Data->m_iUpOffset + 5;
+}
+
+void c_player_esp::add_box( ESPPlayerData_t* m_Data )
+{
+	render::rect_angle(
+		m_Data->m_aBBox.left, m_Data->m_aBBox.top,
+		m_Data->m_aBBox.right, m_Data->m_aBBox.bottom,
+		col_t(
+			64, 64, 64, 255
+		), 1 , 0
+	);
+
+	render::rect_angle(
+		m_Data->m_aBBox.left + 1,  m_Data->m_aBBox.top + 1,
+		m_Data->m_aBBox.right - 1, m_Data->m_aBBox.bottom - 1,
+		col_t(
+			255, 255, 255, 255
+		), 1, 0
+	);
+
+	render::rect_angle(
+		m_Data->m_aBBox.left + 2, m_Data->m_aBBox.top + 2,
+		m_Data->m_aBBox.right - 2, m_Data->m_aBBox.bottom - 2,
+		col_t(
+			64, 64, 64, 255
+		), 1, 0
+	);
+}
+
 void c_player_esp::render_player_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data )
 {
-	m_Data->m_iDownOffset = 0;
-	m_Data->m_iUpOffset = 0;
-
-	m_Data->m_iLeftDownOffset = 0;
-	m_Data->m_iLeftOffset = 0;
-
-	m_Data->m_iRightDownOffset = 0;
-	m_Data->m_iRightOffset = 0;
-
 	for ( auto a = 0; a < POOL_COND; a++ )
 	{
+		m_Data->m_iDownOffset = 0;
+		m_Data->m_iUpOffset = 0;
+
+		m_Data->m_iLeftDownOffset = 0;
+		m_Data->m_iLeftOffset = 0;
+
+		m_Data->m_iRightDownOffset = 0;
+		m_Data->m_iRightOffset = 0;
+
 		for ( auto b = 0; b < preview->draggable_items[ a ].size( ); b++ )
 		{
 			if ( preview->draggable_items[ a ][ b ].Type == 0 ) {
+				std::string Text;
+				ImColor Color;
 
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Username" ) {
+					player_info_t info;
+					interfaces::m_engine->get_player_info( player->get_index( ), &info );
+
+					Text = info.m_name;
+					if ( Text.length( ) > 32 )
+					{
+						Text.erase( 32, Text.length( ) - 32 );
+						Text.append( "..." );
+					}
+		
+					Color = ImColor(255, 255, 255);
+				}
+
+				add_text( Text, ( DraggableItemCondiction ) a, Color, m_Data );
 			}
 			if ( preview->draggable_items[ a ][ b ].Type == 1 ) {
-				
+				ImColor Main;
+				ImColor Inner;
+				ImColor Outer;
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Health" ) {
+					auto iHealthValue = std::clamp( player->get_health( ), 0, 100 );
+					auto percentage = iHealthValue / 100.f;
+					if ( m_Data->m_flPrevHealth > iHealthValue )
+						m_Data->m_flPrevHealth -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
+					else
+						m_Data->m_flPrevHealth = iHealthValue;
+
+					Main = toColor(cfg::get<col_t>( FNV1A( "esp.enemies.health.color" )));
+					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ) ) );
+					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ) ) );
+
+					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevHealth, 100, Main, Inner, Outer, m_Data );
+				}
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Armor" ) {
+					auto iArmorValue = std::clamp( player->get_armor_value( ), 0, 100 );
+					if ( m_Data->m_flPrevArmor > iArmorValue )
+						m_Data->m_flPrevArmor -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
+					else
+						m_Data->m_flPrevArmor = iArmorValue;
+
+					Main = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.color" ) ) );
+					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.border.outside.color" ) ) );
+					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.border.inside.color" ) ) );
+
+					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevArmor, 100, Main, Inner, Outer, m_Data );
+				}
 			}
 			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
-
+					add_box( m_Data );
 			}
 		}
 	}

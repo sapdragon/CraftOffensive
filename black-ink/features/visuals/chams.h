@@ -20,11 +20,10 @@ public:
 	std::vector < chams_layer > materials;
 	void create_material( std::string_view material_name, std::string_view label, bool buildin, std::string_view shader_type, std::string_view material_data );
 	void create_material( chams_layer material );
-
+	void override_material( int type, const col_t& clr, bool ignorez );
 
 private:
 
-	void override_material(int type, const col_t& clr, bool ignorez);
 	void draw_material_on_entity( chams_array visible, chams_array invisible, i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones );
 
 	//std::map < int, chams_entity_settings_t > m_shared_players;

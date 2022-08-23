@@ -10,7 +10,7 @@ struct ESPPlayerData_t
 	float m_flPrevHealth = 0.0f;
 	float m_flPrevArmor = 0.0f;
 	float m_flPrevAmmo = 0.0f;
-	float m_flPlayerPercentage = 0.0f;
+	float m_flPlayerPercentage = 1.0f;
 
 	// box width && height
 	int m_iWidth = 0;
@@ -35,7 +35,9 @@ public:
 
 	void render_player_draggable(c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data );
 
+	void add_bar( DraggableItemCondiction pos, float& percentage, float max, ImColor color, ImColor color1, ImColor color2, ESPPlayerData_t* m_Data );
 	void add_text( std::string text, DraggableItemCondiction pos, ImColor color, ESPPlayerData_t* m_Data );
+	void add_box( ESPPlayerData_t* m_Data );
 
 	std::array < ESPPlayerData_t, 64 > m_PlayerData;
 };

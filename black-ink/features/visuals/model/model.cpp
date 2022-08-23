@@ -1,4 +1,5 @@
 #include "model.h"
+#include "../chams.h"
 bool inited = false;
 
 enum ClearFlags_t
@@ -66,7 +67,6 @@ void c_model::on_render( )
     render_context->set_int_rendering_parameter( 10, 0 );
     render_context->SetAmbientLightCube( white );
 
-
     frustum_t dummy_frustum;
     interfaces::m_render_view->push_3d_view( render_context, view_setup, VIEW_CLEAR_COLOR | VIEW_CLEAR_DEPTH | VIEW_CLEAR_STENCIL, m_texture, dummy_frustum );
 
@@ -80,6 +80,17 @@ void c_model::on_render( )
     math::angle_matrix( { 0.0f, preview_matrix, 90.0f }, mat_player_view, { 0.0f, 0.0f, 0.0f } );
 
     interfaces::m_model_render->suppress_engine_lighting( true );
+
+    //if ( !cfg::enemy_visible.empty( ) ) {
+    //    for ( auto& material_options : cfg::enemy_visible )
+    //   {
+    //        if ( !material_options.m_enable )
+    //            continue;
+    //
+    //        chams->override_material( material_options.m_material, material_options.m_color, false );
+    //    }
+    //}
+
 
     m_model->draw( mat_player_view );
 
