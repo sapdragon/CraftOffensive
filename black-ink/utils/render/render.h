@@ -47,6 +47,7 @@ namespace assets {
 }
 
 namespace fonts {
+	inline ImFont* m_minecraft12;
 	inline ImFont* m_minecraft14;
 	inline ImFont* m_minecraft16;
 }

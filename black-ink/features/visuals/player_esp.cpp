@@ -80,6 +80,9 @@ void c_player_esp::on_paint() {
 		if (!globals::m_local)
 			continue;
 
+		if ((c_cs_player*)globals::m_local == player )
+			continue;
+
 		bool is_team = player->get_team() == globals::m_local->get_team();
 
 		if (player->get_origin() == vec3_t(0, 0, 0))
@@ -89,7 +92,10 @@ void c_player_esp::on_paint() {
 		m_Data->m_iWidth = abs( m_Data->m_aBBox.right - m_Data->m_aBBox.left );
 		m_Data->m_iHeight = abs( m_Data->m_aBBox.top - m_Data->m_aBBox.bottom );
 
-		render_player_draggable( player_esp_preview, player, m_Data );
+		if ( !is_team )
+			render_enemy_draggable( player_esp_preview, player, m_Data ); 
+		else 
+			render_team_draggable( player_team_esp_preview, player, m_Data );
 	}
 }
 
@@ -133,7 +139,7 @@ void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImCo
 	if ( pos == TOP_COND )
 		Position = Position - ImVec2( ImTextSize.x / 2, ImTextSize.y );
 
-	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft14 );
+	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft12, FONT_OUTLINE );
 
 	if ( pos == RIGHT_COND )
 		m_Data->m_iRightDownOffset = m_Data->m_iRightDownOffset + ImTextSize.y;
@@ -245,7 +251,7 @@ void c_player_esp::add_box( ESPPlayerData_t* m_Data )
 	);
 }
 
-void c_player_esp::render_player_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data )
+void c_player_esp::render_enemy_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data )
 {
 	for ( auto a = 0; a < POOL_COND; a++ )
 	{
@@ -275,7 +281,20 @@ void c_player_esp::render_player_draggable( c_esp_preview* preview, c_cs_player*
 						Text.append( "..." );
 					}
 		
-					Color = ImColor(255, 255, 255);
+					Color = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.nickname.color" ) ) );
+				}
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Weapon" ) {
+					c_base_combat_weapon* pWeapon = player->get_active_weapon( );
+					if ( !pWeapon )
+						continue;
+
+					std::string weaponName = pWeapon->get_cs_weapon_data( )->m_hud_name;
+					Text = std::string(weaponName.begin() + 13, weaponName.end());
+					if ( Text.length( ) <= 0 )
+						continue;
+
+					Color = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.weapon.color" ) ) );
 				}
 
 				add_text( Text, ( DraggableItemCondiction ) a, Color, m_Data );
@@ -316,6 +335,95 @@ void c_player_esp::render_player_draggable( c_esp_preview* preview, c_cs_player*
 			}
 			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
 					add_box( m_Data );
+			}
+		}
+	}
+}
+
+void c_player_esp::render_team_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data )
+{
+	for ( auto a = 0; a < POOL_COND; a++ )
+	{
+		m_Data->m_iDownOffset = 0;
+		m_Data->m_iUpOffset = 0;
+
+		m_Data->m_iLeftDownOffset = 0;
+		m_Data->m_iLeftOffset = 0;
+
+		m_Data->m_iRightDownOffset = 0;
+		m_Data->m_iRightOffset = 0;
+
+		for ( auto b = 0; b < preview->draggable_items[ a ].size( ); b++ )
+		{
+			if ( preview->draggable_items[ a ][ b ].Type == 0 ) {
+				std::string Text;
+				ImColor Color;
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Username" ) {
+					player_info_t info;
+					interfaces::m_engine->get_player_info( player->get_index( ), &info );
+
+					Text = info.m_name;
+					if ( Text.length( ) > 32 )
+					{
+						Text.erase( 32, Text.length( ) - 32 );
+						Text.append( "..." );
+					}
+
+					Color = toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) );
+				}
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Weapon" ) {
+					c_base_combat_weapon* pWeapon = player->get_active_weapon( );
+					if ( !pWeapon )
+						continue;
+
+					std::string weaponName = pWeapon->get_cs_weapon_data( )->m_hud_name;
+					Text = std::string( weaponName.begin( ) + 13, weaponName.end( ) );
+					if ( Text.length( ) <= 0 )
+						continue;
+
+					Color = toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) );
+				}
+
+				add_text( Text, ( DraggableItemCondiction ) a, Color, m_Data );
+			}
+			if ( preview->draggable_items[ a ][ b ].Type == 1 ) {
+				ImColor Main;
+				ImColor Inner;
+				ImColor Outer;
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Health" ) {
+					auto iHealthValue = std::clamp( player->get_health( ), 0, 100 );
+					auto percentage = iHealthValue / 100.f;
+					if ( m_Data->m_flPrevHealth > iHealthValue )
+						m_Data->m_flPrevHealth -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
+					else
+						m_Data->m_flPrevHealth = iHealthValue;
+
+					Main = toColor( cfg::get<col_t>( FNV1A( "esp.team.health.color" ) ) );
+					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.outside.color" ) ) );
+					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.inside.color" ) ) );
+
+					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevHealth, 100, Main, Inner, Outer, m_Data );
+				}
+
+				if ( preview->draggable_items[ a ][ b ].ItemName == "Armor" ) {
+					auto iArmorValue = std::clamp( player->get_armor_value( ), 0, 100 );
+					if ( m_Data->m_flPrevArmor > iArmorValue )
+						m_Data->m_flPrevArmor -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
+					else
+						m_Data->m_flPrevArmor = iArmorValue;
+
+					Main = toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) );
+					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) );
+					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) );
+
+					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevArmor, 100, Main, Inner, Outer, m_Data );
+				}
+			}
+			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
+				add_box( m_Data );
 			}
 		}
 	}

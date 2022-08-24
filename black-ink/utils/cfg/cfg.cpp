@@ -224,8 +224,6 @@ namespace cfg {
 		set < bool >( FNV1A( "legitbot.aimbot.enable" ), false );
 		set < bool >( FNV1A( "legitbot.aimbot.silent" ), false );
 
-
-
 		set < std::array <bool, 18 > >( FNV1A( "legitbot.aimbot.hitboxes" ), { true, false,  false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false } );
 
 		set < float >( FNV1A( "legitbot.aimbot.fov" ), 25.f );
@@ -234,7 +232,6 @@ namespace cfg {
 		set < bool >( FNV1A( "legitbot.aimbot.flash_check" ), true );
 		set < bool >( FNV1A( "legitbot.aimbot.jump_check" ), true );
 		set < bool >( FNV1A( "legitbot.aimbot.smoke_check" ), true );
-
 
 		set<bool>( FNV1A( "visuals_enable" ), false );
 		set<bool>( FNV1A( "box_esp" ), false );
@@ -266,7 +263,6 @@ namespace cfg {
 		set<col_t>( FNV1A( "esp.team.box.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.team.box.border.inside.color" ), col_t( 55, 55, 55 ) );
 		set<col_t>( FNV1A( "esp.team.box.border.outside.color" ), col_t( 55, 55, 55 ) );
-
 
 		set<col_t>( FNV1A( "esp.enemies.health.color" ), col_t( 255, 255, 255 ) );
 		set<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ), col_t( 55, 55, 55 ) );

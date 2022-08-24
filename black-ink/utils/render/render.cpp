@@ -33,6 +33,9 @@ namespace render {
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Files, sizeof( Files ), &assets::icons[ 4 ] );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Dashboard, sizeof( Dashboard ), &assets::icons[ 5 ] );
 
+		ImFontConfig minecraft12;
+		minecraft12.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
+
 		ImFontConfig minecraft14;
 		minecraft14.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
 
@@ -41,7 +44,7 @@ namespace render {
 
 		fonts::m_minecraft14 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 14, &minecraft14 );
 		fonts::m_minecraft16 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 16, &minecraft16 );
-
+		fonts::m_minecraft12 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 12, &minecraft12 );
 
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};

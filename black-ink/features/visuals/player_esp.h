@@ -33,7 +33,8 @@ public:
 	ImVec2 get_position(DraggableItemCondiction pos, ESPPlayerData_t* m_Data);
 	ImVec2 get_position_offsetless(DraggableItemCondiction pos, ESPPlayerData_t* m_Data);
 
-	void render_player_draggable(c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data );
+	void render_enemy_draggable(c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data );
+	void render_team_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data );
 
 	void add_bar( DraggableItemCondiction pos, float& percentage, float max, ImColor color, ImColor color1, ImColor color2, ESPPlayerData_t* m_Data );
 	void add_text( std::string text, DraggableItemCondiction pos, ImColor color, ESPPlayerData_t* m_Data );

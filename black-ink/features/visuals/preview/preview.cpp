@@ -141,7 +141,7 @@ inline void ArmorBar( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, 
 		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.border.outside.color" ) ) ) );
 		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.border.inside.color" ) ) ) );
 
-		draw->AddRectFilled( pos + ImVec2( 6, 1 ), pos + size - ImVec2( 6, 98 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.color" ) ) ));
+		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.color" ) ) ));
 	}
 
 	if ( cond == TOP_COND || cond == BOT_COND ) {
@@ -285,7 +285,7 @@ inline void ArmorBarTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec
 		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) ) );
 		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) ) );
 
-		draw->AddRectFilled( pos + ImVec2( 6, 1 ), pos + size - ImVec2( 6, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) ) );
+		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) ) );
 	}
 
 	if ( cond == TOP_COND || cond == BOT_COND ) {
