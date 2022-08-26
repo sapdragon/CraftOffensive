@@ -44,7 +44,6 @@ void c_dormant_system::on_radar_data_received( c_process_spotted_entity_update* 
 
 }
 
-
 void c_dormant_system::on_post_network_data_received( )
 {
 	m_sound_data.m_current_sound_data.clear( );
@@ -131,3 +130,32 @@ bool c_dormant_system::is_valid_sound_data( sound_info_t sound )
 	return true;
 }
 
+float c_dormant_system::get_last_active_time( int nPlayerIndex )
+{
+	return m_dormant_players[ nPlayerIndex ].m_last_non_dormant_time;
+}
+
+float c_dormant_system::get_last_dormant_time( int nPlayerIndex )
+{
+	return m_dormant_players[ nPlayerIndex ].m_last_dormant_time;
+}
+
+float c_dormant_system::get_time_in_dormant( int nPlayerIndex )
+{
+	return fmax( 0.0f, interfaces::m_global_vars->m_real_time - m_dormant_players[ nPlayerIndex ].m_last_non_dormant_time );
+}
+
+float c_dormant_system::get_time_since_last_data( int nPlayerIndex )
+{
+	return fmax( 0.0f, interfaces::m_global_vars->m_real_time - m_dormant_players[ nPlayerIndex ].m_last_dormant_time );
+}
+
+vec3_t c_dormant_system::get_last_network_origin( int nPlayerIndex )
+{
+	return m_dormant_players[ nPlayerIndex ].m_network_origin;
+}
+
+vec3_t c_dormant_system::get_last_dormant_origin( int nPlayerIndex )
+{
+	return m_dormant_players[ nPlayerIndex ].m_origin;
+}

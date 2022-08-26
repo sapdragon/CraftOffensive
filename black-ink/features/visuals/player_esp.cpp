@@ -66,8 +66,41 @@ RECT GetBBox( c_base_entity* pEntity )
 	return RECT{ ( LONG ) ( flLeft ), ( LONG ) ( flBottom ), ( LONG ) ( flRight ), ( LONG ) ( flTop ) };
 }
 
+template < typename T>
+__forceinline T Interpolate( const T& T1, const T& T2, float flProgress )
+{
+	return T1 + ( ( T2 - T1 ) * flProgress );
+}
+
+bool c_player_esp::force_dormant( c_base_player* pPlayer )
+{
+	float flTimeInDormant = dormant->get_time_in_dormant( pPlayer->get_index( ) );
+	float flSinceLastData = dormant->get_time_since_last_data( pPlayer->get_index( ) );
+
+	if ( flTimeInDormant < flSinceLastData )
+	{
+		if ( flTimeInDormant < 8.0f )
+			pPlayer->set_abs_origin( dormant->get_last_network_origin( pPlayer->get_index( ) ) );
+		else if ( flSinceLastData < 8.0f )
+			pPlayer->set_abs_origin( dormant->get_last_dormant_origin( pPlayer->get_index( ) ) );
+	}
+	else
+	{
+		if ( flSinceLastData < 8.0f )
+			pPlayer->set_abs_origin( dormant->get_last_dormant_origin( pPlayer->get_index( ) ) );
+		else if ( flTimeInDormant < 8.0f )
+			pPlayer->set_abs_origin( dormant->get_last_network_origin( pPlayer->get_index( ) ) );
+	}
+
+	return flTimeInDormant < 8.0f || flSinceLastData < 8.0f;
+}
+
 void c_player_esp::on_paint() {
-	for (auto i = 1; i < interfaces::m_global_vars->m_max_clients; i++) {
+	if ( !globals::m_local )
+		return;
+
+	for (auto i = 1; i < interfaces::m_global_vars->m_max_clients; i++)
+	{
 		const auto player = static_cast<c_cs_player*>(interfaces::m_entity_list->get_client_entity(i));
 
 		if ( !player || !player->is_alive( ) || !player->is_player( ) )
@@ -77,6 +110,30 @@ void c_player_esp::on_paint() {
 
 			continue;
 		}
+
+		ESPPlayerData_t* m_Data = &m_PlayerData[ i ];
+		if ( !m_Data )
+			continue;
+
+		if ( player->is_dormant( ) )
+		{
+			m_Data->m_flPlayerPercentage = Interpolate( m_Data->m_flPlayerPercentage, 0.15f, interfaces::m_global_vars->m_frame_time * 3.0f );
+			if ( m_Data->m_flPlayerPercentage <= 0.15f )
+				m_Data->m_flPlayerPercentage = 0.15f;
+
+			if ( !force_dormant( player ) )
+				continue;
+		}
+		else
+		{
+			m_Data->m_flPlayerPercentage = Interpolate( m_Data->m_flPlayerPercentage, 1.01f, interfaces::m_global_vars->m_frame_time * 3.0f );
+			dormant->reset_player( player );
+		}
+
+		m_Data->m_flPlayerPercentage = fmin( m_Data->m_flPlayerPercentage, 1.00f );
+
+		if ( ( c_cs_player* ) globals::m_local == player )
+			continue;
 
 		int nItemID = 0;
 		if ( player->get_active_weapon( ) )
@@ -108,16 +165,6 @@ void c_player_esp::on_paint() {
 			if ( nDormantHealth != nHealth )
 				player->get_health( ) = nDormantHealth;
 		}
-
-		ESPPlayerData_t* m_Data = &m_PlayerData[ i ];
-		if ( !m_Data )
-			continue;
-
-		if (!globals::m_local)
-			continue;
-
-		if ((c_cs_player*)globals::m_local == player )
-			continue;
 
 		bool is_team = player->get_team() == globals::m_local->get_team();
 
@@ -187,8 +234,8 @@ void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImCo
 	if ( pos == TOP_COND )
 		Position = Position - ImVec2( ImTextSize.x / 2, ImTextSize.y );
 
-	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft12, FONT_DROP_SHADOW );
-
+	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255, color.Value.w * 255 * m_Data->m_flPlayerPercentage ), fonts::m_minecraft12, FONT_DROP_SHADOW );
+	
 	if ( pos == RIGHT_COND )
 		m_Data->m_iRightDownOffset = m_Data->m_iRightDownOffset + ImTextSize.y;
 	if ( pos == LEFT_COND )
@@ -236,7 +283,7 @@ void c_player_esp::add_bar( DraggableItemCondiction pos, float& percentage, floa
 			( int ) ( color2.Value.x * 255 ),
 			( int ) ( color2.Value.y * 255 ), 
 			( int ) ( color2.Value.z * 255 ),
-			255
+			( int ) ( color2.Value.w * 255 * m_Data->m_flPlayerPercentage )
 		), 0, 0
 	);
 
@@ -247,7 +294,7 @@ void c_player_esp::add_bar( DraggableItemCondiction pos, float& percentage, floa
 			( int ) ( color1.Value.x * 255 ),
 			( int ) ( color1.Value.y * 255 ),
 			( int ) ( color1.Value.z * 255 ),
-			255
+			( int ) ( color1.Value.w * 255 * m_Data->m_flPlayerPercentage )
 		)
 	);
 
@@ -258,7 +305,7 @@ void c_player_esp::add_bar( DraggableItemCondiction pos, float& percentage, floa
 			( int ) ( color.Value.x * 255 ),
 			( int ) ( color.Value.y * 255 ),
 			( int ) ( color.Value.z * 255 ),
-			255
+			( int ) ( color.Value.w * 255 * m_Data->m_flPlayerPercentage)
 		)
 	);
 
@@ -272,13 +319,16 @@ void c_player_esp::add_bar( DraggableItemCondiction pos, float& percentage, floa
 		m_Data->m_iUpOffset = m_Data->m_iUpOffset + 5;
 }
 
-void c_player_esp::add_box( ESPPlayerData_t* m_Data )
+void c_player_esp::add_box( ESPPlayerData_t* m_Data, ImColor outer, ImColor inner, ImColor out )
 {
 	render::rect_angle(
 		m_Data->m_aBBox.left, m_Data->m_aBBox.top,
 		m_Data->m_aBBox.right, m_Data->m_aBBox.bottom,
 		col_t(
-			64, 64, 64, 255
+			( int ) ( outer.Value.x * 255 ), 
+			( int ) ( outer.Value.y * 255 ),
+			( int ) ( outer.Value.z * 255 ),
+			( int ) ( outer.Value.w * 255 * m_Data->m_flPlayerPercentage )
 		), 1 , 0
 	);
 
@@ -286,7 +336,10 @@ void c_player_esp::add_box( ESPPlayerData_t* m_Data )
 		m_Data->m_aBBox.left + 1,  m_Data->m_aBBox.top + 1,
 		m_Data->m_aBBox.right - 1, m_Data->m_aBBox.bottom - 1,
 		col_t(
-			255, 255, 255, 255
+			( int ) ( inner.Value.x * 255 ),
+			( int ) ( inner.Value.y * 255 ),
+			( int ) ( inner.Value.z * 255 ),
+			( int ) ( inner.Value.w * 255 * m_Data->m_flPlayerPercentage )
 		), 1, 0
 	);
 
@@ -294,7 +347,10 @@ void c_player_esp::add_box( ESPPlayerData_t* m_Data )
 		m_Data->m_aBBox.left + 2, m_Data->m_aBBox.top + 2,
 		m_Data->m_aBBox.right - 2, m_Data->m_aBBox.bottom - 2,
 		col_t(
-			64, 64, 64, 255
+			( int ) ( out.Value.x * 255 ),
+			( int ) ( out.Value.y * 255 ),
+			( int ) ( out.Value.z * 255 ),
+			( int ) ( out.Value.w * 255 * m_Data->m_flPlayerPercentage )
 		), 1, 0
 	);
 }
@@ -382,7 +438,11 @@ void c_player_esp::render_enemy_draggable( c_esp_preview* preview, c_cs_player* 
 				}
 			}
 			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
-					add_box( m_Data );
+					add_box( m_Data, 
+						toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.border.outside.color" ) ) ),
+						toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.color" ) ) ),
+						toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.border.inside.color" ) ) )
+					);
 			}
 		}
 	}
@@ -471,7 +531,11 @@ void c_player_esp::render_team_draggable( c_esp_preview* preview, c_cs_player* p
 				}
 			}
 			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
-				add_box( m_Data );
+				add_box( m_Data,
+					toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.outside.color" ) ) ),
+					toColor( cfg::get<col_t>( FNV1A( "esp.team.box.color" ) ) ),
+					toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.inside.color" ) ) )
+				);
 			}
 		}
 	}

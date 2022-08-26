@@ -29,6 +29,14 @@ public:
 
 	std::array < dormant_player_t, 64 > m_dormant_players;
 
+	float get_last_active_time( int nPlayerIndex );
+	float get_last_dormant_time( int nPlayerIndex );
+	float get_time_in_dormant( int nPlayerIndex );
+	float get_time_since_last_data( int nPlayerIndex );
+	
+	vec3_t get_last_network_origin( int nPlayerIndex );
+	vec3_t get_last_dormant_origin( int nPlayerIndex );
+
 private:
 
 	bool is_valid_sound_data( sound_info_t sound );

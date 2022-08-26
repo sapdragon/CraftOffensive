@@ -28,6 +28,7 @@ struct ESPPlayerData_t
 
 class c_player_esp : public c_singleton<c_player_esp> {
 public:
+	bool force_dormant(c_base_player* pPlayer);
 	void on_paint();
 
 	ImVec2 get_position(DraggableItemCondiction pos, ESPPlayerData_t* m_Data);
@@ -38,7 +39,7 @@ public:
 
 	void add_bar( DraggableItemCondiction pos, float& percentage, float max, ImColor color, ImColor color1, ImColor color2, ESPPlayerData_t* m_Data );
 	void add_text( std::string text, DraggableItemCondiction pos, ImColor color, ESPPlayerData_t* m_Data );
-	void add_box( ESPPlayerData_t* m_Data );
+	void add_box( ESPPlayerData_t* m_Data, ImColor outer, ImColor inner, ImColor out );
 
 	std::array < ESPPlayerData_t, 64 > m_PlayerData;
 };
