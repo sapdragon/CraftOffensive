@@ -346,6 +346,7 @@ public:
 	NETVAR(is_ghost(), bool, "CCSPlayer->m_bIsPlayerGhost")
 	NETVAR(get_health_boost_time(), float, "CCSPlayer->m_flHealthShotBoostExpirationTime")
 	NETVAR(get_lby(), float, "CCSPlayer->m_flLowerBodyYawTarget")
+	NETVAR( get_shots_fired( ), int, "CCSPlayer->m_iShotsFired" )
 	NETVAR_OFFSET(get_flash_alpha(), float, "CCSPlayer->m_flFlashMaxAlpha", -0x8)
 	NETVAR_OFFSET(get_anim_state(), c_anim_state*, "CCSPlayer->m_bIsScoped", -0x14)
 
