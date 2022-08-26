@@ -244,6 +244,16 @@ void c_menu::on_paint() {
 							notifies::push( "CraftOffensive.pw", "Coming soon..." );
 						}*/
 					} );
+
+					elements::child( _( "Recoil Control system" ), { 220, 500 }, [ ] ( ) {
+						elements::slider_int( _( "Start after x shots" ), FNV1A( "legitbot.aimbot.rcs.start_after" ), 1, 30, "Start after %i shots" );
+						elements::slider_float( _( "RCS FOV" ), FNV1A( "legitbot.aimbot.rcs.fov" ), 1.f, 50, "FOV: %0.1f" );
+						elements::slider_float( _( "RCS Smooth" ), FNV1A( "legitbot.aimbot.rcs.smooth" ), 1.f, 50, "Smooth: %0.1f" );
+						elements::slider_float( _( "RCS Pitch" ), FNV1A( "legitbot.aimbot.rcs.pitch" ), 0.f, 1.f, "Pitch: %0.1f" );
+						elements::slider_float( _( "RCS Yaw" ), FNV1A( "legitbot.aimbot.rcs.yaw" ), 0.f, 1.f, "Yaw: %0.1f" );
+
+
+					} );
 				}
 
 				if ( m_selected_tab == 1 ) 

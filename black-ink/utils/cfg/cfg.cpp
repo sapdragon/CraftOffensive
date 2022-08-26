@@ -233,6 +233,18 @@ namespace cfg {
 		set < bool >( FNV1A( "legitbot.aimbot.jump_check" ), true );
 		set < bool >( FNV1A( "legitbot.aimbot.smoke_check" ), true );
 
+		set < int >( FNV1A( "legitbot.aimbot.rcs.start_after" ), 1 );
+		set < float >( FNV1A( "legitbot.aimbot.rcs.fov" ), 25.f );
+		set < float >( FNV1A( "legitbot.aimbot.rcs.smooth" ), 5.f );
+		set < float >( FNV1A( "legitbot.aimbot.rcs.pitch" ), 0.f);
+		set < float >( FNV1A( "legitbot.aimbot.rcs.yaw" ), 0.f );
+
+
+
+		set < bool >( FNV1A( "legitbot.rcs.enable" ), true );
+		set < bool >( FNV1A( "legitbot.rcs.jump_check" ), true );
+		set < bool >( FNV1A( "legitbot.rcs.smoke_check" ), true );
+
 		set<bool>( FNV1A( "visuals_enable" ), false );
 		set<bool>( FNV1A( "box_esp" ), false );
 		set<bool>( FNV1A( "name_esp" ), false );
