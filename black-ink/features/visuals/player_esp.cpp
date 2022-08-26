@@ -70,11 +70,47 @@ void c_player_esp::on_paint() {
 	for (auto i = 1; i < interfaces::m_global_vars->m_max_clients; i++) {
 		const auto player = static_cast<c_cs_player*>(interfaces::m_entity_list->get_client_entity(i));
 
+		if ( !player || !player->is_alive( ) || !player->is_player( ) )
+		{
+			if ( player && player->is_player( ) )
+				dormant->reset_player( player );
+
+			continue;
+		}
+
+		int nItemID = 0;
+		if ( player->get_active_weapon( ) )
+			nItemID = player->get_active_weapon( )->get_item_definition_index( );
+
+		int nWeaponType = 0;
+		if ( player->get_active_weapon( ) )
+			if ( player->get_active_weapon( )->get_cs_weapon_data( ) )
+				nWeaponType = player->get_active_weapon( )->get_cs_weapon_data( )->m_weapon_type;
+
+		int nHealth = player->get_health( );
+
+		if ( player->is_dormant( ) )
+		{
+			int nLastWeaponID = dormant->m_dormant_players.at(i ).m_last_weapon_id;
+
+			if ( player->get_active_weapon( ) )
+			{
+				if ( nLastWeaponID > 0 )
+					player->get_active_weapon( )->get_item_definition_index( ) = nLastWeaponID;
+
+				int nLastWeaponType = dormant->m_dormant_players.at( i ).m_last_weapon_type;
+				if ( player->get_active_weapon( )->get_cs_weapon_data( ) )
+					if ( nLastWeaponType > -1 )
+						player->get_active_weapon( )->get_cs_weapon_data( )->m_weapon_type = nLastWeaponType;
+			}
+
+			int nDormantHealth = dormant->m_dormant_players.at( i ).m_last_dormant_health;
+			if ( nDormantHealth != nHealth )
+				player->get_health( ) = nDormantHealth;
+		}
+
 		ESPPlayerData_t* m_Data = &m_PlayerData[ i ];
 		if ( !m_Data )
-			continue;
-
-		if (!player || !player->is_alive())
 			continue;
 
 		if (!globals::m_local)
@@ -96,6 +132,18 @@ void c_player_esp::on_paint() {
 			render_enemy_draggable( player_esp_preview, player, m_Data ); 
 		else 
 			render_team_draggable( player_team_esp_preview, player, m_Data );
+
+		if ( player->is_dormant( ) )
+		{
+			if ( player->get_active_weapon( ) )
+			{
+				player->get_active_weapon( )->get_item_definition_index( ) = nItemID;
+				if ( player->get_active_weapon( )->get_cs_weapon_data( ) )
+					player->get_active_weapon( )->get_cs_weapon_data( )->m_weapon_type = nWeaponType;
+			}
+
+			player->get_health( ) = nHealth;
+		}
 	}
 }
 
@@ -139,7 +187,7 @@ void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImCo
 	if ( pos == TOP_COND )
 		Position = Position - ImVec2( ImTextSize.x / 2, ImTextSize.y );
 
-	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft12, FONT_OUTLINE );
+	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft12, FONT_DROP_SHADOW );
 
 	if ( pos == RIGHT_COND )
 		m_Data->m_iRightDownOffset = m_Data->m_iRightDownOffset + ImTextSize.y;

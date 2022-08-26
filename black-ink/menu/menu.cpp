@@ -114,7 +114,7 @@ bool array_have_that_name( std::vector < chams_layer > materials, std::string na
 void c_menu::on_paint() {
 	notifies::handle( ImGui::GetForegroundDrawList( ) );
 
-	if (!(input::m_blocked = input::get_key<TOGGLE>(VK_INSERT)))
+	if ( !( input::m_blocked = input::get_key<TOGGLE>( VK_INSERT ) ) )
 		return;
 
 	ImGui::Begin( _( "Back" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus );
@@ -161,11 +161,11 @@ void c_menu::on_paint() {
 					elements::subtab( _( "Triggerbot" ), { 330, 30 }, m_selected_subtab[ 0 ], 1 );
 				}
 				if ( m_selected_tab == 1 ) {
-					elements::subtab( _( "ESP" ), { 220, 30 }, m_selected_subtab[ 1 ], 0 );
+					elements::subtab( _( "ESP" ), { 330, 30 }, m_selected_subtab[ 1 ], 0 );
 					ImGui::SameLine( );
-					elements::subtab( _( "Chams" ), { 220, 30 }, m_selected_subtab[ 1 ], 1 );
-					ImGui::SameLine( );
-					elements::subtab( _( "Glow" ), { 220, 30 }, m_selected_subtab[ 1 ], 2 );
+					elements::subtab( _( "Chams" ), { 330, 30 }, m_selected_subtab[ 1 ], 1 );
+					//ImGui::SameLine( );
+					//elements::subtab( _( "Glow" ), { 220, 30 }, m_selected_subtab[ 1 ], 2 );
 				}
 				if ( m_selected_tab == 4 ) {
 					elements::subtab( _( "Configurations" ), { 330, 30 }, m_selected_subtab[ 4 ], 0 ); 
@@ -182,13 +182,13 @@ void c_menu::on_paint() {
 				ImGui::BeginGroup( );
 				{
 					if ( m_selected_subtab[ 1 ] == 0 ) {
-						elements::subtab( _( "Enemy" ), { 165, 30 }, selected_esp_tab, 0 );
+						elements::subtab( _( "Enemy" ), { 330, 30 }, selected_esp_tab, 0 );
 						ImGui::SameLine( );
-						elements::subtab( _( "Teammates" ), { 165, 30 }, selected_esp_tab, 1 );
-						ImGui::SameLine( );
-						elements::subtab( _( "Weapons" ), { 165, 30 }, selected_esp_tab, 2 );
-						ImGui::SameLine( );
-						elements::subtab( _( "World" ), { 165, 30 }, selected_esp_tab, 3 );
+						elements::subtab( _( "Teammates" ), { 330, 30 }, selected_esp_tab, 1 );
+						//ImGui::SameLine( );
+						//elements::subtab( _( "Weapons" ), { 165, 30 }, selected_esp_tab, 2 );
+						//ImGui::SameLine( );
+						//elements::subtab( _( "World" ), { 165, 30 }, selected_esp_tab, 3 );
 					}
 					if ( m_selected_subtab[ 1 ] == 1 ) {
 						elements::subtab( _( "Local Visible" ), { 110, 30 }, selected_chams_tab, 0 ); if ( ImGui::IsItemClicked( 0 ) ) selected_material = 0;

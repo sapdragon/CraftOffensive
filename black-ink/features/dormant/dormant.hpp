@@ -27,6 +27,7 @@ public:
 	void reset_player( c_cs_player* player );
 	void reset_data( ) { m_dormant_players.fill( dormant_player_t( ) ); }
 
+	std::array < dormant_player_t, 64 > m_dormant_players;
 
 private:
 
@@ -37,8 +38,6 @@ private:
 		c_utl_vector < sound_info_t > m_current_sound_data;
 		c_utl_vector < sound_info_t > m_cached_sound_data;
 	} m_sound_data;
-
-	std::array < dormant_player_t, 64 > m_dormant_players;
 
 };
 #define dormant c_dormant_system::instance()

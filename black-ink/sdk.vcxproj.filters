@@ -58,6 +58,7 @@
     <ClCompile Include="features\visuals\model\model.cpp" />
     <ClCompile Include="utils\imgui\TextEditor.cpp" />
     <ClCompile Include="features\visuals\preview\preview.cpp" />
+    <ClCompile Include="utils\keybinds\keybinds.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\api.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="sdk\interfaces\i_studio_render.h" />
     <ClInclude Include="utils\imgui\TextEditor.h" />
     <ClInclude Include="features\visuals\preview\preview.hpp" />
+    <ClInclude Include="utils\keybinds\keybinds.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="api\LibCurl.lib" />
