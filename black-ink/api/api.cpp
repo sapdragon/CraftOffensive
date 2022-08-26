@@ -1,6 +1,7 @@
 #include "api.h"
 
 #include "../menu/notifies.h"
+#include "HardwareID.hpp"
 
 static int writer( char* data, size_t size, size_t nmemb, std::string* buffer )
 {
@@ -12,7 +13,7 @@ static int writer( char* data, size_t size, size_t nmemb, std::string* buffer )
 void get_configs_internal( )
 {
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/getConfigs" );
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid;
+	std::string request_body = "hwid=" + HWID::HardwareID();
 	std::string szResponse;
 
 	curl_global_init( CURL_GLOBAL_ALL );
@@ -73,7 +74,7 @@ void get_configs_internal( )
 
 void save_config_internal( std::string secure_id )
 {
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&secureid=" + secure_id + "&content=" + cfg::json_action( false );
+	std::string request_body = "hwid=" + HWID::HardwareID( ) + "&secureid=" + secure_id + "&content=" + cfg::json_action( false );
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/saveConfig" );
 	std::string szResponse;
 
@@ -116,7 +117,7 @@ void save_config_internal( std::string secure_id )
 
 void create_config_internal( std::string name )
 {
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&name=" + name + "&content=" + cfg::json_action( false );
+	std::string request_body = "hwid=" + HWID::HardwareID( ) + "&name=" + name + "&content=" + cfg::json_action( false );
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/createConfig" );
 	std::string szResponse;
 
@@ -159,7 +160,7 @@ void create_config_internal( std::string name )
 
 void delete_config_internal( std::string secure_id )
 {
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&secureid=" + secure_id;
+	std::string request_body = "hwid=" + HWID::HardwareID( ) + "&secureid=" + secure_id;
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/deleteConfig" );
 	std::string szResponse;
 
@@ -200,115 +201,6 @@ void delete_config_internal( std::string secure_id )
 	get_configs_internal( );
 }
 
-void sigin_internal( std::string login, std::string password )
-{
-	std::string request_body = "hwid=" + cloud->user_profile.m_hwid + "&login=" + login + "&password=" + password;
-	std::string szRequest = _( "https://craftoffensive.pw/v1/auth/login" );
-	std::string szResponse;
-
-	curl_global_init( CURL_GLOBAL_ALL );
-	auto inited_curl = curl_easy_init( );
-
-	auto headers = curl_slist_append( NULL, _( "Expect:" ) );
-	curl_easy_setopt( inited_curl, CURLOPT_HTTPHEADER, headers );
-	curl_easy_setopt( inited_curl, CURLOPT_URL, szRequest.c_str( ) );
-	curl_easy_setopt( inited_curl, CURLOPT_POST, 1 );
-	curl_easy_setopt( inited_curl, CURLOPT_POSTFIELDS, request_body.c_str( ) );
-	curl_easy_setopt( inited_curl, CURLOPT_WRITEFUNCTION, writer );
-	curl_easy_setopt( inited_curl, CURLOPT_WRITEDATA, &szResponse );
-	curl_easy_setopt( inited_curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
-
-	curl_easy_perform( inited_curl );
-
-	if ( szResponse.empty( ) )
-		return;
-
-	if ( !nlohmann::json::accept( szResponse ) )
-		return;
-
-	auto json_resp = nlohmann::json::parse( szResponse );
-
-	if ( json_resp[ _( "Status" ) ] == _( "Empty fields" ) )
-	{
-		notifies::push(  "Authorization" ,  "Error"  );
-	}
-	else if ( json_resp[ _( "Status" ) ] == _( "OK" ) )
-	{
-		cloud->user_profile.m_authorized = true;
-		cloud->user_profile.m_username = login;
-		cloud->user_profile.m_password = password;
-
-		get_configs_internal( );
-	}
-	else if ( json_resp[ _( "Status" ) ] == _( "User not found" ) )
-	{
-		notifies::push(  "Authorization" ,  "User not found"  );
-	}
-	else if ( json_resp[ _( "Status" ) ] == _( "Wrong password" ) )
-	{
-		notifies::push(  "Authorization" ,  "Wrong password"  );
-	}
-
-	curl_easy_cleanup( inited_curl );
-	curl_slist_free_all( headers );
-}
-
-void signup_internal( std::string login, std::string password, std::string email ) {
-	std::string request_body = "email=" + email + "&hwid=" + cloud->user_profile.m_hwid + "&login=" + login + "&password=" + password;
-	std::string szRequest = _( "https://craftoffensive.pw/v1/auth/register" );
-	std::string szResponse;
-
-	curl_global_init( CURL_GLOBAL_ALL );
-	auto inited_curl = curl_easy_init( );
-
-	auto headers = curl_slist_append( NULL, _( "Expect:" ) );
-	curl_easy_setopt( inited_curl, CURLOPT_HTTPHEADER, headers );
-	curl_easy_setopt( inited_curl, CURLOPT_URL, szRequest.c_str( ) );
-	curl_easy_setopt( inited_curl, CURLOPT_POST, 1 );
-	curl_easy_setopt( inited_curl, CURLOPT_POSTFIELDS, request_body.c_str( ) );
-	curl_easy_setopt( inited_curl, CURLOPT_WRITEFUNCTION, writer );
-	curl_easy_setopt( inited_curl, CURLOPT_WRITEDATA, &szResponse );
-	curl_easy_setopt( inited_curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
-
-	curl_easy_perform( inited_curl );
-
-	if ( szResponse.empty( ) )
-		return;
-
-	if ( !nlohmann::json::accept( szResponse ) )
-		return;
-
-	auto json_resp = nlohmann::json::parse( szResponse );
-
-	if ( json_resp[ _( "Status" ) ] == _( "Empty fields" ) )
-	{
-		notifies::push( "Authorization", "Error" );
-	}
-	else if ( json_resp[ _( "Status" ) ] == _( "Wrong email" ) )
-	{
-		notifies::push( "Authorization", "Wrong email" );
-	}
-	else if ( json_resp[ _( "Status" ) ] == _( "OK" ) )
-	{
-		cloud->user_profile.m_authorized = true;
-		cloud->user_profile.m_username = login;
-		cloud->user_profile.m_password = password;
-
-		get_configs_internal( );
-	}
-	else if ( json_resp[ _( "Status" ) ] ==  "User not found" )
-	{
-		notifies::push( "Authorization",   "User not found"  );
-	}
-	else if ( json_resp[ _( "Status" ) ] ==  "Wrong password"  )
-	{
-		notifies::push(  "Authorization",  "Wrong password" );
-	}
-
-	curl_easy_cleanup( inited_curl );
-	curl_slist_free_all( headers );
-}
-
 void c_cloud_api::get_configs( )
 {
 	std::thread( get_configs_internal ).detach( );
@@ -327,16 +219,6 @@ void c_cloud_api::create_config( std::string name )
 void c_cloud_api::delete_config( std::string secure_id )
 {
 	std::thread( delete_config_internal, secure_id ).detach( );
-}
-
-void c_cloud_api::sigin( std::string login, std::string password )
-{
-	std::thread( sigin_internal, login, password ).detach( );
-}
-
-void c_cloud_api::signup( std::string login, std::string password, std::string email )
-{
-	std::thread( signup_internal, login, password, email ).detach( );
 }
 
 void c_cloud_api::load_config( std::string secure_id )

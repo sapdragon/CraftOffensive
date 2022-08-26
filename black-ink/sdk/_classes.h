@@ -405,6 +405,12 @@ public:
 
 	bool is_gun( );
 
+	bool is_pistol();
+	bool is_smg();
+	bool is_rifle();
+	bool is_sniper();
+	bool is_shotgun();
+	bool is_heavy();
 
 	c_cs_weapon_data* get_cs_weapon_data();
 };

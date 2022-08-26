@@ -169,6 +169,7 @@
     <ClInclude Include="api\curl\stdcheaders.h" />
     <ClInclude Include="api\curl\system.h" />
     <ClInclude Include="api\curl\typecheck-gcc.h" />
+    <ClInclude Include="api\HardwareID.hpp" />
     <ClInclude Include="api\MD5\MD5.hpp" />
     <ClInclude Include="common_includes.h" />
     <ClInclude Include="events\events.h" />

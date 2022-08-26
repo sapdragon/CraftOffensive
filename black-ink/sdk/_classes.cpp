@@ -25,6 +25,71 @@ bool c_base_combat_weapon::is_gun()
 	}
 }
 
+bool c_base_combat_weapon::is_pistol( )
+{
+	switch ( get_cs_weapon_data( )->m_weapon_type )
+	{
+	case WEAPON_TYPE_PISTOL:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool c_base_combat_weapon::is_smg( )
+{
+	switch ( get_cs_weapon_data( )->m_weapon_type )
+	{
+	case WEAPON_TYPE_SMG:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool c_base_combat_weapon::is_rifle( )
+{
+	switch ( get_cs_weapon_data( )->m_weapon_type )
+	{
+	case WEAPON_TYPE_RIFLE:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool c_base_combat_weapon::is_sniper( )
+{
+	switch ( get_cs_weapon_data( )->m_weapon_type )
+	{
+	case WEAPON_TYPE_SNIPER:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool c_base_combat_weapon::is_shotgun( )
+{
+	switch ( get_cs_weapon_data( )->m_weapon_type )
+	{
+	case WEAPON_TYPE_SHOTGUN:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool c_base_combat_weapon::is_heavy( )
+{
+	switch ( get_cs_weapon_data( )->m_weapon_type )
+	{
+	case WEAPON_TYPE_MACHINE_GUN:
+		return true;
+	default:
+		return false;
+	}
+}
 
 c_cs_weapon_data* c_base_combat_weapon::get_cs_weapon_data() { return interfaces::m_weapon_system->get_cs_weapon_data(get_item_definition_index()); }
 

@@ -1,18 +1,20 @@
 #pragma once
 #include "../../globals.h"
 
-class c_aimbot : public c_singleton<c_aimbot> {
+class c_aimbot {
 private:
 	float m_best_fov = 0.f;
 	float m_best_distance = 0.f;
 	vec3_t m_best_position = vec3_t( );
-
 	qangle_t m_old_punch = qangle_t( );
 
+private:
+	aimbot_group_settings current_settings;
+
 public:
-
-	void recoil_control_system( qangle_t& view_angle);
-
+	void setup_config( c_base_combat_weapon* weapon );
 	void on_create_move( );
+	void render_fov( );
 };
-#define aimbot c_aimbot::instance()
+
+inline c_aimbot* aimbot = new c_aimbot( );

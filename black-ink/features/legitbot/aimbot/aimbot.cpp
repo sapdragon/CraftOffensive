@@ -1,20 +1,41 @@
 #include "aimbot.hpp"
 
-void c_aimbot::recoil_control_system( qangle_t& view_angle )
-{
-	
-}
-
 bool CanSeePlayer( c_base_player* player, const vec3_t& pos )
 {
 	c_game_trace tr;
-	ray_t ray( globals::m_local->get_eye_pos(), pos );
+	ray_t ray( globals::m_local->get_eye_pos( ), pos );
 	c_trace_filter filter;
 	filter.m_skip = globals::m_local;
 
 	interfaces::m_trace_system->trace_ray( ray, MASK_SHOT | CONTENTS_GRATE, &filter, &tr );
 
 	return tr.m_hit_entity == player || tr.m_fraction > 0.97f;
+}
+
+void c_aimbot::setup_config( c_base_combat_weapon* weapon )
+{
+	if ( weapon->is_pistol( ) ) {
+		current_settings = cfg::aimbot_pistol;
+	}
+	else if ( weapon->is_smg( ) ) {
+		current_settings = cfg::aimbot_smg;
+	}
+	else if ( weapon->is_rifle( ) ) {
+		current_settings = cfg::aimbot_rifle;
+	}
+	else if ( weapon->is_sniper( ) ) {
+		current_settings = cfg::aimbot_sniper;
+	}
+	else if ( weapon->is_shotgun( ) ) {
+		current_settings = cfg::aimbot_shotgun;
+	}
+	else if ( weapon->is_heavy( ) ) {
+		current_settings = cfg::aimbot_heavy;
+	}
+}
+
+void c_aimbot::render_fov( ) {
+	render::circle( vec2_t(ImGui::GetIO().DisplaySize.x/2, ImGui::GetIO( ).DisplaySize.y / 2 ), current_settings.fov * 5.f, col_t(255, 0, 0));
 }
 
 void c_aimbot::on_create_move( )
@@ -26,18 +47,25 @@ void c_aimbot::on_create_move( )
 	if ( !globals::m_local || !globals::m_local->is_alive( ) )
 		return;
 
-	if ( !cfg::get( FNV1A( "legitbot.aimbot.enable" ) ) )
-		return;
+	render_fov( );
 
-	if ( cfg::get( FNV1A( "legitbot.aimbot.flash_check" ) ) && globals::m_local->get_flash_alpha( ) > 0.f )
-		return;
-
-	if ( cfg::get( FNV1A( "legitbot.aimbot.jump_check" ) ) && !globals::m_local->get_flags().has( FL_ONGROUND )  )
+	if ( !(globals::m_cur_cmd->m_buttons & IN_ATTACK) )
 		return;
 
 	auto local_weapon = globals::m_local->get_active_weapon( );
 
 	if ( !local_weapon || !local_weapon->is_gun( ) )
+		return;
+
+	setup_config( local_weapon );
+
+	if ( !current_settings.enable )
+		return;
+
+	if ( current_settings.flash_check && globals::m_local->get_flash_alpha( ) > 0.f )
+		return;
+
+	if ( current_settings.jump_check && !globals::m_local->get_flags( ).has( FL_ONGROUND ) )
 		return;
 
 	auto local_eye_pos = globals::m_local->get_eye_pos( );
@@ -49,14 +77,14 @@ void c_aimbot::on_create_move( )
 
 	interfaces::m_engine->get_view_angles( view_angle );
 
-	float aimbot_fov_settings =  cfg::get < float >( FNV1A( "legitbot.aimbot.fov" ) )  * 5.f;
-	float rcs_fov_settings = cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.fov" ) ) * 5.f;
+	float aimbot_fov_settings = current_settings.fov * 5.f;
+	float rcs_fov_settings = current_settings.rcs.fov * 5.f;
 
 	for ( int i = 0; i < interfaces::m_global_vars->m_max_clients; i++ )
-	{ 
+	{
 		auto player = reinterpret_cast< c_cs_player* > ( interfaces::m_entity_list->get_client_entity( i ) );
 
-		if ( !player || player == (c_cs_player*) globals::m_local ||  !player->is_player( ) || !player->is_alive( ) || player->is_dormant( ) || !player->is_enemy( globals::m_local ) )
+		if ( !player || player == ( c_cs_player* ) globals::m_local || !player->is_player( ) || !player->is_alive( ) || player->is_dormant( ) || !player->is_enemy( globals::m_local ) )
 			continue;
 
 		auto hdr = interfaces::m_model_info->get_studio_model( player->get_model( ) );
@@ -79,7 +107,7 @@ void c_aimbot::on_create_move( )
 
 		for ( int hitbox_id = 0; hitbox_id < HITBOX_LEFT_FOREARM; hitbox_id++ )
 		{
-			if ( !cfg::get <std::array<bool, 18> >( FNV1A( "legitbot.aimbot.hitboxes" ) ).at( hitbox_id ) )
+			if ( !current_settings.hitboxes.at( hitbox_id ) )
 				continue;
 
 			auto hitbox = hitbox_set->get_hitbox( hitbox_id );
@@ -97,11 +125,11 @@ void c_aimbot::on_create_move( )
 
 			vec3_t hitbox_on_screen = vec3_t( );
 
-			if ( !render::world_to_screen(hitbox_position, hitbox_on_screen ) )
-					continue;
+			if ( !render::world_to_screen( hitbox_position, hitbox_on_screen ) )
+				continue;
 
 			float distance = local_eye_pos.dist_to( hitbox_position );
-	
+
 			float fov = vec3_t( ImGui::GetIO( ).DisplaySize.x / 2, ImGui::GetIO( ).DisplaySize.y / 2, 0 ).dist_to( hitbox_on_screen );
 
 			if ( fov > aimbot_fov_settings && fov > rcs_fov_settings )
@@ -125,26 +153,22 @@ void c_aimbot::on_create_move( )
 
 	auto punch_angle = qangle_t( 0, 0, 0 );
 
-	if ( globals::m_local->get_shots_fired( ) >= cfg::get < int >( FNV1A( "legitbot.aimbot.rcs.start_after" ) ) )
+	if ( m_best_fov <= rcs_fov_settings && globals::m_local->get_shots_fired( ) >= current_settings.rcs.after )
 	{
-		qangle_t punch = globals::m_local->get_aim_punch_angle( );
-		punch_angle.x -= punch.x * ( cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.pitch" ) ) );
-		punch_angle.y -= punch.y * ( cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.yaw" ) ) );
+		static auto recoil_scale = interfaces::m_cvar_system->find_var( FNV1A( "weapon_recoil_scale" ) )->get_float( );
+
+		punch_angle = globals::m_local->get_aim_punch_angle( ) * recoil_scale;
+
+		punch_angle.x *= current_settings.rcs.pitch;
+		punch_angle.y *= current_settings.rcs.yaw;
 	}
 
-	auto final_angle = view_angle;
+	auto delta = aim_angle - ( view_angle + punch_angle );
+	auto final_angle = view_angle + ( delta / ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick ) ) * current_settings.smooth ));
 
-	if ( m_best_fov <= aimbot_fov_settings )
-	{
-		auto delta = aim_angle - ( view_angle + ( m_old_punch -  punch_angle )  );
-		final_angle += ( delta / ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick ) ) * cfg::get < float >( FNV1A( "legitbot.aimbot.smooth" ) ) ) );
-	}
-	else
-		final_angle += ( m_old_punch - punch_angle ) ;
-	
 	m_old_punch = punch_angle;
 
-	if(!cfg::get(FNV1A("legitbot.aimbot.silent") ) )
+	if ( !current_settings.silent )
 		interfaces::m_engine->set_view_angles( final_angle );
 	else
 		globals::m_cur_cmd->m_view_angles = final_angle;

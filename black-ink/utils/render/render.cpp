@@ -107,6 +107,10 @@ namespace render {
 		m_draw_list->AddLine(*reinterpret_cast<const ImVec2*>(&from), *reinterpret_cast<const ImVec2*>(&to), clr.hex());
 	}
 
+	void circle( const vec2_t& from, float size, const col_t& clr ) {
+		m_draw_list->AddCircle( *reinterpret_cast< const ImVec2* >( &from ), size, clr.hex( ), 32, 1.f );
+	}
+
 	void rect(const vec2_t& pos, const vec2_t& size, const col_t& clr, float rounding) {
 		m_draw_list->AddRect(*reinterpret_cast<const ImVec2*>(&pos), *reinterpret_cast< const ImVec2* >( &size ), clr.hex(), rounding);
 	}

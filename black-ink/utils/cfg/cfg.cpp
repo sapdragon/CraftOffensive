@@ -78,6 +78,7 @@ namespace cfg_internal {
 		else
 			cfg::set<T>( key, j.get<T>( ) );
 	}
+
 	void jsonify_basic( nlohmann::json& j, bool load, bool& key )
 	{
 		if ( j.is_null( ) && load )
@@ -86,7 +87,7 @@ namespace cfg_internal {
 		if ( !load )
 			j = key;
 		else
-			key = j.get<bool>();
+			key = j.get<bool>( );
 	}
 	void jsonify_basic( nlohmann::json& j, bool load, int& key )
 	{
@@ -120,7 +121,7 @@ namespace cfg_internal {
 			j[ 3 ] = key.a( );
 		}
 		else
-			key = col_t(j[0].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ));
+			key = col_t( j[ 0 ].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ) );
 	}
 	void jsonify_basic( nlohmann::json& j, bool load, std::string& key )
 	{
@@ -132,13 +133,14 @@ namespace cfg_internal {
 		else
 			key = j.get<std::string>( );
 	}
+
 	void jsonify_chams( nlohmann::json& j, bool load, std::vector < chams_material_settings_t>& hash, std::string prefix )
 	{
 		if ( !load ) {
 			for ( auto a = 0; a < hash.size( ); a++ ) {
 				j[ "chams" ][ prefix ][ a ][ "m_enable" ] = hash[ a ].m_enable;
 
-				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 0 ] = hash[a].m_color.r();
+				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 0 ] = hash[ a ].m_color.r( );
 				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 1 ] = hash[ a ].m_color.g( );
 				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 2 ] = hash[ a ].m_color.b( );
 				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 3 ] = hash[ a ].m_color.a( );
@@ -193,19 +195,19 @@ namespace cfg_internal {
 				hash.erase( hash.begin( ) + a );
 			}
 
-			auto size = j[ "custom_materials" ].size();
+			auto size = j[ "custom_materials" ].size( );
 
 			for ( auto a = 0; a < size; a++ )
 			{
-				if ( j[ "custom_materials" ][a].is_null( ) )
+				if ( j[ "custom_materials" ][ a ].is_null( ) )
 					continue;
 
 				chams_layer data;
 
-				data.material_data = unescapeJSON(j[ "custom_materials" ][ a ][ "material_data" ].get<std::string>());
+				data.material_data = unescapeJSON( j[ "custom_materials" ][ a ][ "material_data" ].get<std::string>( ) );
 				data.shader_type = unescapeJSON( j[ "custom_materials" ][ a ][ "shader_type" ].get<std::string>( ) );
 				data.label = unescapeJSON( j[ "custom_materials" ][ a ][ "label" ].get<std::string>( ) );
-				data.file_name = unescapeJSON( j[ "custom_materials" ][ a ][ "file_name" ].get<std::string>( ));
+				data.file_name = unescapeJSON( j[ "custom_materials" ][ a ][ "file_name" ].get<std::string>( ) );
 
 				data.buildin = false;
 
@@ -215,41 +217,58 @@ namespace cfg_internal {
 			menu->selected_material = 0;
 		}
 	}
+	void jsonify_legitbot( nlohmann::json& j, bool load, aimbot_group_settings& hash )
+	{
+		if ( !load ) {
+			j[ "enable" ] = hash.enable;
+			j[ "silent" ] = hash.silent;
+
+			j[ "fov" ] = hash.fov;
+			j[ "smooth" ] = hash.smooth;
+
+			for ( auto a = 0; a < 18; a++ )
+				j[ "hitboxes" ][ a ] = hash.hitboxes[ a ];
+
+			j[ "flash_check" ] = hash.flash_check;
+			j[ "jump_check" ] = hash.jump_check;
+			j[ "smoke_check" ] = hash.smoke_check;
+
+			j[ "rcs.enable" ] = hash.rcs.enable;
+			j[ "rcs.after" ] = hash.rcs.after;
+			j[ "rcs.fov" ] = hash.rcs.fov;
+			j[ "rcs.smooth" ] = hash.rcs.smooth;
+			j[ "rcs.pitch" ] = hash.rcs.pitch;
+			j[ "rcs.yaw" ] = hash.rcs.yaw;
+		}
+		else {
+			if ( j.is_null( ) )
+				return;
+
+			hash.enable = j[ "enable" ].get<bool>( );
+			hash.silent = j[ "silent" ].get<bool>( );
+
+			hash.fov = j[ "fov" ].get<float>( );
+			hash.smooth = j[ "smooth" ].get<float>( );
+
+			for ( auto a = 0; a < 18; a++ )
+				hash.hitboxes[ a ] = j[ "hitboxes" ][ a ].get<bool>( );
+
+			hash.flash_check = j[ "flash_check" ].get<bool>( );
+			hash.jump_check = j[ "jump_check" ].get<bool>( );
+			hash.smoke_check = j[ "smoke_check" ].get<bool>( );
+
+			hash.rcs.enable = j[ "rcs.enable" ].get<bool>( );
+			hash.rcs.after = j[ "rcs.after" ].get<int>( );
+			hash.rcs.fov = j[ "rcs.fov" ].get < float >( );
+			hash.rcs.smooth = j[ "rcs.smooth" ].get<float>( );
+			hash.rcs.pitch = j[ "rcs.pitch" ].get<float>( );
+			hash.rcs.yaw = j[ "rcs.yaw" ].get<float>( );
+		}
+	}
 }
 
 namespace cfg {
-
 	void init( ) {
-
-		set < bool >( FNV1A( "legitbot.aimbot.enable" ), false );
-		set < bool >( FNV1A( "legitbot.aimbot.silent" ), false );
-
-		set < std::array <bool, 18 > >( FNV1A( "legitbot.aimbot.hitboxes" ), { true, false,  false, false, false, false,  false, false, false, false,  false, false, false, false,  false, false, false, false } );
-
-		set < float >( FNV1A( "legitbot.aimbot.fov" ), 25.f );
-		set < float >( FNV1A( "legitbot.aimbot.smooth" ), 15.f );
-
-		set < bool >( FNV1A( "legitbot.aimbot.flash_check" ), true );
-		set < bool >( FNV1A( "legitbot.aimbot.jump_check" ), true );
-		set < bool >( FNV1A( "legitbot.aimbot.smoke_check" ), true );
-
-		set < int >( FNV1A( "legitbot.aimbot.rcs.start_after" ), 1 );
-		set < float >( FNV1A( "legitbot.aimbot.rcs.fov" ), 25.f );
-		set < float >( FNV1A( "legitbot.aimbot.rcs.smooth" ), 5.f );
-		set < float >( FNV1A( "legitbot.aimbot.rcs.pitch" ), 0.f);
-		set < float >( FNV1A( "legitbot.aimbot.rcs.yaw" ), 0.f );
-
-
-
-		set < bool >( FNV1A( "legitbot.rcs.enable" ), true );
-		set < bool >( FNV1A( "legitbot.rcs.jump_check" ), true );
-		set < bool >( FNV1A( "legitbot.rcs.smoke_check" ), true );
-
-		set<bool>( FNV1A( "visuals_enable" ), false );
-		set<bool>( FNV1A( "box_esp" ), false );
-		set<bool>( FNV1A( "name_esp" ), false );
-		set<bool>( FNV1A( "health_esp" ), false );
-
 		set<bool>( FNV1A( "fakelags.enable" ), false );
 		set<int>( FNV1A( "fakelags.amount" ), 1 );
 
@@ -289,22 +308,28 @@ namespace cfg {
 		set<col_t>( FNV1A( "esp.enemies.box.border.outside.color" ), col_t( 55, 55, 55 ) );
 	}
 
-	std::string json_action( bool load ) 
+	std::string json_action( bool load )
 	{
-		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.enable"  ], load, FNV1A( "misc.view_model.enable"  ) );
+		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "pistol" ], load, aimbot_pistol );
+		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "smg" ], load, aimbot_smg );
+		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "rifle" ], load, aimbot_rifle );
+		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "shotgun" ], load, aimbot_shotgun );
+		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "heavy" ], load, aimbot_heavy );
+		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "sniper" ], load, aimbot_sniper );
+
+		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.enable" ], load, FNV1A( "misc.view_model.enable" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
-		cfg_internal::jsonify<int>( jsonk[  "misc.view_model.fov" ], load, FNV1A(  "misc.view_model.fov" ) );
-		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
-		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
-		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.z"  ], load, FNV1A( "misc.view_model.z"  ) );
-		cfg_internal::jsonify<bool>( jsonk[ "visuals_enable" ], load, FNV1A( "visuals_enable" ) );
-		cfg_internal::jsonify<bool>( jsonk[ "box_esp" ], load, FNV1A( "box_esp" ) );
-		cfg_internal::jsonify<bool>( jsonk[ "name_esp" ], load, FNV1A( "name_esp" ) );
-		cfg_internal::jsonify<bool>( jsonk[ "health_esp" ], load, FNV1A( "health_esp" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
 		cfg_internal::jsonify<bool>( jsonk[ "auto_strafe" ], load, FNV1A( "auto_strafe" ) );
+
+		cfg_internal::jsonify<int>( jsonk[ "misc.view_model.fov" ], load, FNV1A( "misc.view_model.fov" ) );
+		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
+		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
+		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.z" ], load, FNV1A( "misc.view_model.z" ) );
+
 		cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
 		cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
+
 		cfg_internal::jsonify_chams( jsonk, load, local_player_visible, "local_player_visible" );
 		cfg_internal::jsonify_chams( jsonk, load, enemy_visible, "enemy_visible" );
 		cfg_internal::jsonify_chams( jsonk, load, teammates_visible, "teammates_visible" );
