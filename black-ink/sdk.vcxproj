@@ -146,6 +146,7 @@
     <ClCompile Include="utils\imgui\imgui_widgets.cpp" />
     <ClCompile Include="utils\imgui\TextEditor.cpp" />
     <ClCompile Include="utils\input\input.cpp" />
+    <ClCompile Include="utils\keybinds\keybinds.cpp" />
     <ClCompile Include="utils\math\datatypes.cpp" />
     <ClCompile Include="utils\math\math.cpp" />
     <ClCompile Include="utils\memory\memory.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="utils\imgui\TextEditor.h" />
     <ClInclude Include="utils\input\input.h" />
     <ClInclude Include="utils\json.hpp" />
+    <ClInclude Include="utils\keybinds\keybinds.hpp" />
     <ClInclude Include="utils\math\datatypes.h" />
     <ClInclude Include="utils\math\math.h" />
     <ClInclude Include="utils\memory\memory.h" />

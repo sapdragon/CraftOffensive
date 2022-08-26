@@ -139,7 +139,7 @@ void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImCo
 	if ( pos == TOP_COND )
 		Position = Position - ImVec2( ImTextSize.x / 2, ImTextSize.y );
 
-	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft12, FONT_OUTLINE );
+	render::text( text, vec2_t(Position.x, Position.y), col_t( color.Value.x * 255, color.Value.y * 255, color.Value.z * 255 ), fonts::m_minecraft12, FONT_DROP_SHADOW );
 
 	if ( pos == RIGHT_COND )
 		m_Data->m_iRightDownOffset = m_Data->m_iRightDownOffset + ImTextSize.y;

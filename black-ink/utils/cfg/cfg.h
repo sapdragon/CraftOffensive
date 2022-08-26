@@ -1,5 +1,6 @@
 #pragma once
 #include "json/json.hpp"
+
 struct chams_material_settings_t
 {
 	bool m_enable = true;

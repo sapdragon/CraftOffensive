@@ -114,7 +114,7 @@ bool array_have_that_name( std::vector < chams_layer > materials, std::string na
 void c_menu::on_paint() {
 	notifies::handle( ImGui::GetForegroundDrawList( ) );
 
-	if (!(input::m_blocked = input::get_key<TOGGLE>(VK_INSERT)))
+	if ( !( input::m_blocked = input::get_key<TOGGLE>( VK_INSERT ) ) )
 		return;
 
 	ImGui::Begin( _( "Back" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus );
