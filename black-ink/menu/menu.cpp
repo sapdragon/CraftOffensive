@@ -211,7 +211,7 @@ void c_menu::on_paint() {
 			ImGui::BeginGroup( );
 			{
 				if ( m_selected_tab == 0 ) {
-					elements::child( _( "General" ), {220, 500}, [ ] ( ) {
+					elements::child( _( "General" ), {220, 300 }, [ ] ( ) {
 						
 						elements::checkbox( _( "Enable" ), FNV1A( "legitbot.aimbot.enable" ) );
 						elements::checkbox( _( "Silent" ), FNV1A( "legitbot.aimbot.silent" ) );
@@ -220,32 +220,11 @@ void c_menu::on_paint() {
 						elements::checkbox( _( "Smoke check" ), FNV1A( "legitbot.aimbot.smoke_check" ) );
 						elements::slider_float( _( "FOV" ), FNV1A( "legitbot.aimbot.fov" ), 1.f, 50, "FOV: %0.1f" );
 						elements::slider_float( _( "Smooth" ), FNV1A( "legitbot.aimbot.smooth" ), 1.f, 50, "Smooth: %0.1f" );
-
-						/*
-						elements::checkbox( _( "auto_jump" ), FNV1A( "auto_jump" ) );
-
-						elements::checkbox( _( "fake_lags enable" ), FNV1A( "fakelags.enable" ) );
-						elements::slider_int( _( "fake lags amount" ), FNV1A( "fakelags.amount" ), 0, 14, "Slider Value: %i" );
-
-						elements::checkbox( _( "viewmodel enable" ), FNV1A( "misc.view_model.enable" ) );
-						elements::slider_float( _( "viewmodel x" ), FNV1A( "misc.view_model.x" ), -50, 50, "viewmodel x: %0.1f" );
-						elements::slider_float( _( "viewmodel y" ), FNV1A( "misc.view_model.y" ), -50, 50, "viewmodel y: %0.1f" );
-						elements::slider_float( _( "viewmodel z" ), FNV1A( "misc.view_model.z" ), -50, 50, "viewmodel z: %0.1f" );
-
-
-						elements::checkbox( _( "override view model fov  when scoped" ), FNV1A( "misc.view_model.override_while_scoped" ) );
-						elements::slider_int( _( "viewmodel fov" ), FNV1A( "misc.view_model.fov" ), 60, 120, "viewmodel fov: %i" );
-
-						
-
-						if ( elements::button( _( "Button" ), ImVec2( 200, 30 ) ) )
-						{
-							cloud->get_configs( );
-							notifies::push( "CraftOffensive.pw", "Coming soon..." );
-						}*/
 					} );
 
-					elements::child( _( "Recoil Control system" ), { 220, 500 }, [ ] ( ) {
+					ImGui::SameLine( );
+
+					elements::child( _( "Recoil Control system" ), { 220, 300 }, [ ] ( ) {
 						elements::slider_int( _( "Start after x shots" ), FNV1A( "legitbot.aimbot.rcs.start_after" ), 1, 30, "Start after %i shots" );
 						elements::slider_float( _( "RCS FOV" ), FNV1A( "legitbot.aimbot.rcs.fov" ), 1.f, 50, "FOV: %0.1f" );
 						elements::slider_float( _( "RCS Smooth" ), FNV1A( "legitbot.aimbot.rcs.smooth" ), 1.f, 50, "Smooth: %0.1f" );

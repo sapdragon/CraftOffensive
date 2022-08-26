@@ -5,14 +5,26 @@ void c_aimbot::recoil_control_system( qangle_t& view_angle )
 	
 }
 
+bool CanSeePlayer( c_base_player* player, const vec3_t& pos )
+{
+	c_game_trace tr;
+	ray_t ray( globals::m_local->get_eye_pos(), pos );
+	c_trace_filter filter;
+	filter.m_skip = globals::m_local;
+
+	interfaces::m_trace_system->trace_ray( ray, MASK_SHOT | CONTENTS_GRATE, &filter, &tr );
+
+	return tr.m_hit_entity == player || tr.m_fraction > 0.97f;
+}
+
 void c_aimbot::on_create_move( )
 {
 	m_best_fov = 10000000;
 	m_best_distance = 10000000;
 	m_best_position = vec3_t( 0, 0, 0 );
+
 	if ( !globals::m_local || !globals::m_local->is_alive( ) )
 		return;
-
 
 	if ( !cfg::get( FNV1A( "legitbot.aimbot.enable" ) ) )
 		return;
@@ -38,9 +50,7 @@ void c_aimbot::on_create_move( )
 	interfaces::m_engine->get_view_angles( view_angle );
 
 	float aimbot_fov_settings =  cfg::get < float >( FNV1A( "legitbot.aimbot.fov" ) )  * 5.f;
-
 	float rcs_fov_settings = cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.fov" ) ) * 5.f;
-
 
 	for ( int i = 0; i < interfaces::m_global_vars->m_max_clients; i++ )
 	{ 
@@ -82,6 +92,9 @@ void c_aimbot::on_create_move( )
 			if ( !hitbox_position.is_valid( ) )
 				continue;
 
+			if ( !CanSeePlayer( player, hitbox_position ) )
+				continue;
+
 			vec3_t hitbox_on_screen = vec3_t( );
 
 			if ( !render::world_to_screen(hitbox_position, hitbox_on_screen ) )
@@ -100,11 +113,8 @@ void c_aimbot::on_create_move( )
 				m_best_distance = distance;
 				m_best_fov = fov;
 			}
-
 		}
 	}
-
-
 
 	if ( m_best_position.empty( ) )
 		return;
@@ -115,17 +125,11 @@ void c_aimbot::on_create_move( )
 
 	auto punch_angle = qangle_t( 0, 0, 0 );
 
-	if ( m_best_fov <= rcs_fov_settings  && globals::m_local->get_shots_fired( ) >= cfg::get < int >( FNV1A( "legitbot.aimbot.rcs.start_after" ) ) )
+	if ( globals::m_local->get_shots_fired( ) >= cfg::get < int >( FNV1A( "legitbot.aimbot.rcs.start_after" ) ) )
 	{
-		static auto recoil_scale = interfaces::m_cvar_system->find_var( FNV1A( "weapon_recoil_scale" ) )->get_float( );
-
-		punch_angle = globals::m_local->get_aim_punch_angle( ) * recoil_scale;
-		
-		punch_angle.x *= cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.pitch" ) );
-		punch_angle.y *= cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.yaw" ) );
-
-
-	//	punch_angle /= ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick ) ) * cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.smooth" ) ) );
+		qangle_t punch = globals::m_local->get_aim_punch_angle( );
+		punch_angle.x -= punch.x * ( cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.pitch" ) ) );
+		punch_angle.y -= punch.y * ( cfg::get < float >( FNV1A( "legitbot.aimbot.rcs.yaw" ) ) );
 	}
 
 	auto final_angle = view_angle;
@@ -133,13 +137,11 @@ void c_aimbot::on_create_move( )
 	if ( m_best_fov <= aimbot_fov_settings )
 	{
 		auto delta = aim_angle - ( view_angle + ( m_old_punch -  punch_angle )  );
-
 		final_angle += ( delta / ( ( interfaces::m_global_vars->m_interval_per_tick * ( 1.0 / interfaces::m_global_vars->m_interval_per_tick ) ) * cfg::get < float >( FNV1A( "legitbot.aimbot.smooth" ) ) ) );
 	}
 	else
 		final_angle += ( m_old_punch - punch_angle ) ;
 	
-
 	m_old_punch = punch_angle;
 
 	if(!cfg::get(FNV1A("legitbot.aimbot.silent") ) )
