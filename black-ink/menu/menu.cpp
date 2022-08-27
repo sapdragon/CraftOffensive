@@ -70,30 +70,68 @@ bool array_have_that_name( std::vector < chams_layer > materials, std::string na
 	return false;
 }
 
-void pistol_page(  )
-{
-	elements::child_internal( _( "General" ), { 220, 300 } );
-	{
-		elements::checkbox_bool( _( "Enable" ), cfg::aimbot_pistol.enable );
-		elements::checkbox_bool( _( "Silent" ), cfg::aimbot_pistol.silent );
-		elements::checkbox_bool( _( "Flash check" ), cfg::aimbot_pistol.flash_check );
-		elements::checkbox_bool( _( "Jump check" ), cfg::aimbot_pistol.jump_check );
-		elements::checkbox_bool( _( "Smoke check" ), cfg::aimbot_pistol.smoke_check );
+std::vector<std::string> hitboxes = {
+			  "Head",
+			  "Neck",
+			  "Pelvis",
+			  "Stomach",
+			  "Lower Chest",
+			  "Chest",
+			  "Upper Chest",
+			  "Right thigh",
+			  "Left thigh",
+			  "Right Calf",
+			  "Left Calf",
+			  "Right Foot",
+			  "Left Foot",
+			  "Right Hand",
+			  "Left Hand",
+			  "Right Upper Arm",
+			  "Right Forearm",
+			  "Left Upper Arm",
+			  "Left Forearm"
+};
 
-		elements::slider_floats( _( "FOV" ), cfg::aimbot_pistol.fov, 1.f, 50, "FOV: %0.1f" );
-		elements::slider_floats( _( "Smooth" ), cfg::aimbot_pistol.smooth, 1.f, 50, "Smooth: %0.1f" );
+void legit_page( aimbot_group_settings& settings )
+{
+	ImGui::BeginGroup( ); 
+	{
+		elements::child_internal( _( "General" ), { 200, 100 } );
+		{
+			elements::checkbox_bool( _( "Enable" ), settings.enable );
+			elements::checkbox_bool( _( "Silent" ), settings.silent );
+		}
+		elements::child_end_internal( );
+		ImGui::NewLine( );
+		elements::child_internal( _( "Checks" ), { 200, 125 } );
+		{
+			elements::checkbox_bool( _( "Flash check" ), settings.flash_check );
+			elements::checkbox_bool( _( "Jump check" ), settings.jump_check );
+			elements::checkbox_bool( _( "Smoke check" ), settings.smoke_check );
+		}
+		elements::child_end_internal( );
+	}
+	ImGui::EndGroup( );
+
+	ImGui::SameLine( 215 );
+
+	elements::child_internal( _( "Main" ), { 200, 155 } );
+	{
+		elements::slider_floats( _( "FOV" ), settings.fov, 1.f, 50, "FOV: %0.1f" );
+		elements::slider_floats( _( "Smooth" ), settings.smooth, 1.f, 50, "Smooth: %0.1f" );
+		elements::combo( "Hitboxes", "Select hitboxes", hitboxes, settings.hitboxes );
 	}
 	elements::child_end_internal( );
 
-	ImGui::SameLine( );
+	ImGui::SameLine( 430 );
 
-	elements::child_internal( _( "RCS" ), { 220, 300 } );
+	elements::child_internal( _( "RCS" ), { 200, 200 } );
 	{
-		elements::slider_ints( _( "Start after x shots" ), cfg::aimbot_pistol.rcs.after, 1, 30, "Start after %i shots" );
-		elements::slider_floats( _( "RCS FOV" ), cfg::aimbot_pistol.rcs.fov, 1.f, 50, "FOV: %0.1f" );
-		elements::slider_floats( _( "RCS Smooth" ), cfg::aimbot_pistol.rcs.smooth, 1.f, 50, "Smooth: %0.1f" );
-		elements::slider_floats( _( "RCS Pitch" ), cfg::aimbot_pistol.rcs.pitch, 0.f, 1.f, "Pitch: %0.1f" );
-		elements::slider_floats( _( "RCS Yaw" ), cfg::aimbot_pistol.rcs.yaw, 0.f, 1.f, "Yaw: %0.1f" );
+		elements::slider_ints( _( "Start after x shots" ), settings.rcs.after, 1, 30, "Start after %i shots" );
+		elements::slider_floats( _( "RCS FOV" ), settings.rcs.fov, 1.f, 50, "FOV: %0.1f" );
+		elements::slider_floats( _( "RCS Smooth" ), settings.rcs.smooth, 1.f, 50, "Smooth: %0.1f" );
+		elements::slider_floats( _( "RCS Pitch" ), settings.rcs.pitch, 0.f, 1.f, "Pitch: %0.1f" );
+		elements::slider_floats( _( "RCS Yaw" ), settings.rcs.yaw, 0.f, 1.f, "Yaw: %0.1f" );
 	}
 	elements::child_end_internal( );
 }
@@ -158,6 +196,11 @@ void c_menu::on_paint( ) {
 				//ImGui::SameLine( );
 				//elements::subtab( _( "Glow" ), { 220, 30 }, m_selected_subtab[ 1 ], 2 );
 			}
+			if ( m_selected_tab == 2 ) {
+				elements::subtab( _( "Movement" ), { 330, 30 }, m_selected_subtab[ 2 ], 0 );
+				ImGui::SameLine( );
+				elements::subtab( _( "Visual" ), { 330, 30 }, m_selected_subtab[ 2 ], 1 );
+			}
 			if ( m_selected_tab == 4 ) {
 				elements::subtab( _( "Configurations" ), { 330, 30 }, m_selected_subtab[ 4 ], 0 );
 				ImGui::SameLine( );
@@ -202,12 +245,45 @@ void c_menu::on_paint( ) {
 		ImGui::BeginGroup( );
 		{
 			if ( m_selected_tab == 0 ) {
-				if ( m_selected_subtab[ 0 ] == 0 ) pistol_page( );
-				//if ( m_selected_subtab[ 0 ] == 1 ) legit_page( cfg::aimbot_smg );
-				//if ( m_selected_subtab[ 0 ] == 2 ) legit_page( cfg::aimbot_rifle );
-				//if ( m_selected_subtab[ 0 ] == 3 ) legit_page( cfg::aimbot_sniper );
-				//if ( m_selected_subtab[ 0 ] == 4 ) legit_page( cfg::aimbot_shotgun );
-				//if ( m_selected_subtab[ 0 ] == 5 ) legit_page( cfg::aimbot_heavy );
+				if ( m_selected_subtab[ 0 ] == 0 ) legit_page( cfg::aimbot_pistol);
+				if ( m_selected_subtab[ 0 ] == 1 ) legit_page( cfg::aimbot_smg );
+				if ( m_selected_subtab[ 0 ] == 2 ) legit_page( cfg::aimbot_rifle );
+				if ( m_selected_subtab[ 0 ] == 3 ) legit_page( cfg::aimbot_sniper );
+				if ( m_selected_subtab[ 0 ] == 4 ) legit_page( cfg::aimbot_shotgun );
+				if ( m_selected_subtab[ 0 ] == 5 ) legit_page( cfg::aimbot_heavy );
+			}
+
+			if ( m_selected_tab == 2 ) {
+				if ( m_selected_subtab[ 2 ] == 0 ) {
+					elements::child_internal( _( "Jumps" ), { 200, 100 } );
+					{
+						elements::checkbox( _( "Bunnyhop" ), FNV1A( "auto_jump" ) );
+						elements::checkbox( _( "Auto-Strafer" ), FNV1A( "autotrafe" ) );
+					}
+					elements::child_end_internal( );
+	
+					ImGui::SameLine( 215 );
+
+					elements::child_internal( _( "Fake Lags" ), { 200, 103 } );
+					{
+						elements::checkbox( _( "Enable" ), FNV1A( "fakelags.enable" ) );
+						elements::slider_int( _( "Amount" ), FNV1A( "fakelags.amount" ), 0, 14, "Fake Lag Amount: %i" );
+					}
+					elements::child_end_internal( );
+				}
+				if ( m_selected_subtab[ 2 ] == 1 ) {
+					elements::child_internal( _( "View Model" ), { 200, 250 } );
+					{
+						elements::checkbox( _( "Enable" ), FNV1A("misc.view_model.enable" ) );
+						elements::checkbox( _( "Override in scope" ), FNV1A( "misc.view_model.override_while_scoped" ) );
+						elements::slider_int( _( "FOV" ), FNV1A( "misc.view_model.fov" ), 60, 130, "FOV: %i" );
+
+						elements::slider_float( _( "X" ), FNV1A( "misc.view_model.x" ), -3, 3, "X: %0.1f" );
+						elements::slider_float( _( "Y" ), FNV1A( "misc.view_model.y" ), -3, 3, "Y: %0.1f" );
+						elements::slider_float( _( "Z" ), FNV1A( "misc.view_model.z" ), -3, 3, "Z: %0.1f" );
+					}
+					elements::child_end_internal( );
+				}
 			}
 
 			if ( m_selected_tab == 1 )

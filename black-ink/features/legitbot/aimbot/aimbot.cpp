@@ -47,17 +47,15 @@ void c_aimbot::on_create_move( )
 	if ( !globals::m_local || !globals::m_local->is_alive( ) )
 		return;
 
-	render_fov( );
-
-	if ( !(globals::m_cur_cmd->m_buttons & IN_ATTACK) )
-		return;
-
 	auto local_weapon = globals::m_local->get_active_weapon( );
 
 	if ( !local_weapon || !local_weapon->is_gun( ) )
 		return;
 
 	setup_config( local_weapon );
+
+	if ( !( globals::m_cur_cmd->m_buttons & IN_ATTACK ) )
+		return;
 
 	if ( !current_settings.enable )
 		return;
@@ -74,6 +72,8 @@ void c_aimbot::on_create_move( )
 		return;
 
 	qangle_t view_angle;
+
+	bool use_silent = false;
 
 	interfaces::m_engine->get_view_angles( view_angle );
 

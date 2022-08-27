@@ -583,4 +583,16 @@ namespace elements {
 		if ( ImGui::Combo( label, &val, items, items_count ) )
 			cfg::set<int>( hash, val );
 	}
+
+	inline void combo( const char* label, const char* desc, std::vector<std::string> titels, std::array<bool, 18>& vals ) {
+		if(ImGui::BeginCombo( label,  desc ))
+		{
+			for ( auto title = 0; title < titels.size( ); title++ ) {
+				if ( ImGui::Selectable( titels[ title ].c_str( ), vals[ title ], ImGuiSelectableFlags_DontClosePopups ))
+					vals[ title ] = !vals[ title ];
+			}
+
+			ImGui::EndCombo( );
+		}
+	}
 }

@@ -31,6 +31,8 @@ unsigned long __stdcall init(LPVOID module) {
 		shared->init( );
 		hooks::init();
 		events::init();
+
+		cloud->get_configs( );
 	}
 	catch (const std::runtime_error& error) {
 		MessageBoxA(nullptr, error.what(), "craftoffensive | fatal error!", MB_OK | MB_ICONERROR);

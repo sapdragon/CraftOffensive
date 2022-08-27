@@ -1,5 +1,6 @@
 #include "../utils.h"
 #include "../../features/visuals/chams.h"
+#include "../../features/visuals/preview/preview.hpp"
 
 namespace cfg_internal {
 	enum State { ESCAPED, UNESCAPED };
@@ -79,6 +80,22 @@ namespace cfg_internal {
 			cfg::set<T>( key, j.get<T>( ) );
 	}
 
+	void jsonify_color( nlohmann::json& j, bool load, uint32_t key )
+	{
+		if ( j.is_null( ) && load )
+			return;
+
+		if ( !load ) {
+			j[ 0 ] = cfg::get<col_t>( key ).r( );
+			j[ 1 ] = cfg::get<col_t>( key ).g( );
+			j[ 2 ] = cfg::get<col_t>( key ).b( );
+			j[ 3 ] = cfg::get<col_t>( key ).a( );
+		}
+		else {
+			cfg::set<col_t>( key, col_t( j[ 0 ].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ) ));
+		}
+	}
+
 	void jsonify_basic( nlohmann::json& j, bool load, bool& key )
 	{
 		if ( j.is_null( ) && load )
@@ -152,6 +169,8 @@ namespace cfg_internal {
 		else {
 			if ( j[ "chams" ][ prefix ].is_null( ) )
 				return;
+
+			hash.clear( );
 
 			auto size = j[ "chams" ][ prefix ].size( );
 
@@ -265,6 +284,145 @@ namespace cfg_internal {
 			hash.rcs.yaw = j[ "rcs.yaw" ].get<float>( );
 		}
 	}
+	void jsonify_esp( nlohmann::json& j, bool load, std::vector<std::vector<MovableItems>>& draggable_items )
+	{
+		if ( j.is_null( ) && load )
+			return;
+
+		if ( !load )
+		{
+			for ( auto a = 0; a <= IN_MOVE_COND; a++ )
+			{
+				for ( auto b = 0; b < draggable_items[ a ].size( ); b++ )
+				{
+					nlohmann::json tempJ;
+
+					tempJ[ ( "A" ) ] = a;
+					tempJ[ ( "B" ) ] = b;
+					tempJ[ ( "ItemName" ) ] = draggable_items[ a ][ b ].ItemName;
+					tempJ[ ( "VectorCond" ) ] = draggable_items[ a ][ b ].VectorCond;
+					tempJ[ ( "TemporaryPos" ) ][ ( "X" ) ] = draggable_items[ a ][ b ].TemporaryPos.x;
+					tempJ[ ( "TemporaryPos" ) ][ ( "Y" ) ] = draggable_items[ a ][ b ].TemporaryPos.y;
+					tempJ[ ( "BasicPositions" ) ][ ( "X" ) ] = draggable_items[ a ][ b ].BasicPositions.x;
+					tempJ[ ( "BasicPositions" ) ][ ( "Y" ) ] = draggable_items[ a ][ b ].BasicPositions.y;
+					tempJ[ ( "Var" ) ] = draggable_items[ a ][ b ].Draw;
+
+					j[ ( "DraggableESP" ) ].push_back( tempJ );
+				}
+			}
+		}
+		else
+		{
+			draggable_items.clear( );
+
+			std::vector<MovableItems> LEFT;
+			std::vector<MovableItems> RIGHT;
+			std::vector<MovableItems> TOP;
+			std::vector<MovableItems> BOT;
+			std::vector<MovableItems> CENTER;
+			std::vector<MovableItems> POOL;
+			std::vector<MovableItems> IN_MOVE;
+
+			for ( auto a = 0; a < j[ ( "DraggableESP" ) ].size( ); a++ )
+			{
+				auto DragA = j[ ( "DraggableESP" ) ][ a ][ ( "A" ) ].get<int>( );
+				auto DragB = j[ ( "DraggableESP" ) ][ a ][ ( "B" ) ].get<int>( );
+
+				if ( DragA == LEFT_COND ) {
+					LEFT.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+				if ( DragA == RIGHT_COND ) {
+					RIGHT.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+				if ( DragA == TOP_COND ) {
+					TOP.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+				if ( DragA == BOT_COND ) {
+					BOT.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+				if ( DragA == CENTER_COND ) {
+					CENTER.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+				if ( DragA == POOL_COND ) {
+					POOL.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+				if ( DragA == IN_MOVE_COND ) {
+					IN_MOVE.push_back( MovableItems(
+						j[ ( "DraggableESP" ) ][ a ][ ( "Var" ) ].get<int>( ), j[ ( "DraggableESP" ) ][ a ][ ( "ItemName" ) ].get<std::string>( ), j[ ( "DraggableESP" ) ][ a ][ ( "VectorCond" ) ].get<int>( ),
+						{
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "X" ) ].get<float>( ),
+							j[ ( "DraggableESP" ) ][ a ][ ( "TemporaryPos" ) ][ ( "Y" ) ].get<float>( )
+						},
+					{
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "X" ) ].get<float>( ),
+						j[ ( "DraggableESP" ) ][ a ][ ( "BasicPositions" ) ][ ( "Y" ) ].get<float>( )
+					} ) );
+				}
+			}
+
+			draggable_items.push_back( LEFT );
+			draggable_items.push_back( RIGHT );
+			draggable_items.push_back( TOP );
+			draggable_items.push_back( BOT );
+			draggable_items.push_back( CENTER );
+			draggable_items.push_back( POOL );
+			draggable_items.push_back( IN_MOVE );
+		}
+	}
 }
 
 namespace cfg {
@@ -273,7 +431,7 @@ namespace cfg {
 		set<int>( FNV1A( "fakelags.amount" ), 1 );
 
 		set<bool>( FNV1A( "auto_jump" ), false );
-		set<bool>( FNV1A( "auto_strafe" ), false );
+		set<bool>( FNV1A( "autotrafe" ), false );
 
 		set < bool >( FNV1A( "misc.view_model.enable" ), false );
 		set < float >( FNV1A( "misc.view_model.x" ), 1.f );
@@ -310,35 +468,72 @@ namespace cfg {
 
 	std::string json_action( bool load )
 	{
-		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "pistol" ], load, aimbot_pistol );
-		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "smg" ], load, aimbot_smg );
-		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "rifle" ], load, aimbot_rifle );
-		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "shotgun" ], load, aimbot_shotgun );
-		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "heavy" ], load, aimbot_heavy );
-		//cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "sniper" ], load, aimbot_sniper );
+		try {
+			cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.enable" ], load, FNV1A( "misc.view_model.enable" ) );
+			cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
+			cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
+			cfg_internal::jsonify<bool>( jsonk[ "autostrafe" ], load, FNV1A( "autotrafe" ) );
 
-		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.enable" ], load, FNV1A( "misc.view_model.enable" ) );
-		cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
-		cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
-		cfg_internal::jsonify<bool>( jsonk[ "auto_strafe" ], load, FNV1A( "auto_strafe" ) );
+			cfg_internal::jsonify<int>( jsonk[ "misc.view_model.fov" ], load, FNV1A( "misc.view_model.fov" ) );
+			cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
+			cfg_internal::jsonify<float>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
+			cfg_internal::jsonify<float>( jsonk[ "misc.view_model.z" ], load, FNV1A( "misc.view_model.z" ) );
 
-		cfg_internal::jsonify<int>( jsonk[ "misc.view_model.fov" ], load, FNV1A( "misc.view_model.fov" ) );
-		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
-		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.y" ], load, FNV1A( "misc.view_model.y" ) );
-		cfg_internal::jsonify<float>( jsonk[ "misc.view_model.z" ], load, FNV1A( "misc.view_model.z" ) );
+			cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
+			cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
 
-		cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
-		cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.health.color" ], load, FNV1A( "esp.team.health.color" ));
+			cfg_internal::jsonify_color( jsonk[ "esp.team.health.border.inside.color" ], load, FNV1A( "esp.team.health.border.inside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.health.border.outside.color" ], load, FNV1A( "esp.team.health.border.outside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.armor.color" ], load, FNV1A( "esp.team.armor.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.armor.border.inside.color" ], load, FNV1A( "esp.team.armor.border.inside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.armor.border.outside.color" ], load, FNV1A( "esp.team.armor.border.outside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.nickname.color" ], load, FNV1A( "esp.team.nickname.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.weapon.color" ], load, FNV1A( "esp.team.weapon.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.box.color" ], load, FNV1A( "esp.team.box.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.box.border.inside.color" ], load, FNV1A( "esp.team.box.border.inside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.team.box.border.outside.color" ], load, FNV1A( "esp.team.box.border.outside.color" ) );
 
-		cfg_internal::jsonify_chams( jsonk, load, local_player_visible, "local_player_visible" );
-		cfg_internal::jsonify_chams( jsonk, load, enemy_visible, "enemy_visible" );
-		cfg_internal::jsonify_chams( jsonk, load, teammates_visible, "teammates_visible" );
-		cfg_internal::jsonify_chams( jsonk, load, local_player_invisible, "local_player_invisible" );
-		cfg_internal::jsonify_chams( jsonk, load, enemy_invisible, "enemy_invisible" );
-		cfg_internal::jsonify_chams( jsonk, load, teammates_invisible, "teammates_invisible" );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.health.color" ], load, FNV1A( "esp.enemies.health.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.health.border.inside.color" ], load, FNV1A( "esp.enemies.health.border.inside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.health.border.outside.color" ], load, FNV1A( "esp.enemies.health.border.outside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.armor.color" ], load, FNV1A( "esp.enemies.armor.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.armor.border.inside.color" ], load, FNV1A( "esp.enemies.armor.border.inside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.armor.border.outside.color" ], load, FNV1A( "esp.enemies.armor.border.outside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.nickname.color" ], load, FNV1A( "esp.enemies.nickname.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.weapon.color" ], load, FNV1A( "esp.enemies.weapon.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.box.color" ], load, FNV1A( "esp.enemies.box.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.box.border.inside.color" ], load, FNV1A( "esp.enemies.box.border.inside.color" ) );
+			cfg_internal::jsonify_color( jsonk[ "esp.enemies.box.border.outside.color" ], load, FNV1A( "esp.enemies.box.border.outside.color" ) );
 
-		cfg_internal::jsonify_materials( jsonk, load, chams->materials );
+			if ( load ) {
+				player_team_esp_preview->draggable_items.clear( );
+				player_esp_preview->draggable_items.clear( );
+			}
 
-		return jsonk.dump( );
+			cfg_internal::jsonify_esp( jsonk[ "team" ], load, player_team_esp_preview->draggable_items);
+			cfg_internal::jsonify_esp( jsonk[ "enemy" ], load, player_esp_preview->draggable_items );
+
+			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "pistol" ], load, aimbot_pistol );
+			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "smg" ], load, aimbot_smg );
+			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "rifle" ], load, aimbot_rifle );
+			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "shotgun" ], load, aimbot_shotgun );
+			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "heavy" ], load, aimbot_heavy );
+			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "sniper" ], load, aimbot_sniper );
+
+			cfg_internal::jsonify_chams( jsonk, load, local_player_visible, "local_player_visible" );
+			cfg_internal::jsonify_chams( jsonk, load, enemy_visible, "enemy_visible" );
+			cfg_internal::jsonify_chams( jsonk, load, teammates_visible, "teammates_visible" );
+			cfg_internal::jsonify_chams( jsonk, load, local_player_invisible, "local_player_invisible" );
+			cfg_internal::jsonify_chams( jsonk, load, enemy_invisible, "enemy_invisible" );
+			cfg_internal::jsonify_chams( jsonk, load, teammates_invisible, "teammates_invisible" );
+
+			cfg_internal::jsonify_materials( jsonk, load, chams->materials );
+		}
+		catch ( const std::runtime_error& error ) {
+			MessageBoxA( nullptr, error.what( ), "craftoffensive | fatal error!", MB_OK | MB_ICONERROR );
+		}
+
+		return jsonk.dump();
 	}
 }

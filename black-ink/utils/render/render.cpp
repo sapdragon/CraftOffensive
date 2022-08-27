@@ -218,6 +218,8 @@ namespace render {
 		m_screen_size = *reinterpret_cast<vec2_t*>(&ImGui::GetIO().DisplaySize);
 
 		player_esp->on_paint();
+		aimbot->render_fov( );
+
 		{
 			const auto lock = std::unique_lock<std::mutex>(m_mutex);
 

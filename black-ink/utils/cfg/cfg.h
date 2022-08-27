@@ -13,11 +13,11 @@ struct aimbot_group_settings {
 	bool enable = false;
 	bool silent = false;
 
-	float fov = 0;
-	float smooth = 0;
+	float fov = 15;
+	float smooth = 25;
 
 	std::array<bool, 18> hitboxes = {
-		false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false
+		true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false
 	};
 
 	bool flash_check = false;
@@ -27,12 +27,12 @@ struct aimbot_group_settings {
 	struct {
 		bool enable = false;
 
-		int after = 0;
+		int after = 1;
 
-		float fov = 0;
-		float smooth = 0;
-		float pitch = 0;
-		float yaw = 0;
+		float fov = 1;
+		float smooth = 1;
+		float pitch = 1;
+		float yaw = 1;
 	} rcs;
 
 	aimbot_group_settings( ) = default;
@@ -61,7 +61,10 @@ namespace cfg {
 
 	template<class T = bool>
 	T get( uint32_t hash ) {
-		return std::any_cast<T>(m_items[hash]);
+		if ( m_items[ hash ].has_value( ) )
+			return std::any_cast< T >( m_items[ hash ] );
+		else
+			return T( );
 	}
 
 	template<class T = bool>

@@ -62,7 +62,7 @@ void c_movement::auto_jump() {
 }
 
 void c_movement::auto_strafe(qangle_t& original_angle) {
-	if (!cfg::get<bool>(FNV1A("auto_strafe")))
+	if (!cfg::get<bool>(FNV1A("autotrafe")))
 		return;
 
 	if (globals::m_cur_cmd->m_buttons.has(IN_SPEED) && globals::m_local->get_velocity().length_2d() < 1.f)

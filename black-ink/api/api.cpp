@@ -124,8 +124,6 @@ void create_config_internal( std::string name )
 	curl_global_init( CURL_GLOBAL_ALL );
 	auto inited_curl = curl_easy_init( );
 
-	auto headers = curl_slist_append( NULL, _( "Expect:" ) );
-	curl_easy_setopt( inited_curl, CURLOPT_HTTPHEADER, headers );
 	curl_easy_setopt( inited_curl, CURLOPT_URL, szRequest.c_str( ) );
 	curl_easy_setopt( inited_curl, CURLOPT_POST, 1 );
 	curl_easy_setopt( inited_curl, CURLOPT_POSTFIELDS, request_body.c_str( ) );
@@ -153,7 +151,6 @@ void create_config_internal( std::string name )
 	}
 
 	curl_easy_cleanup( inited_curl );
-	curl_slist_free_all( headers );
 
 	get_configs_internal( );
 }
