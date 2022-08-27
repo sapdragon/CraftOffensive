@@ -35,6 +35,12 @@ void c_aimbot::setup_config( c_base_combat_weapon* weapon )
 }
 
 void c_aimbot::render_fov( ) {
+	if ( !globals::m_local || !globals::m_local->is_alive( ) )
+		return;
+	
+	if ( !cfg::get<bool>( FNV1A( "aimbot.show_fov" ) ) )
+		return;
+
 	render::circle( vec2_t(ImGui::GetIO().DisplaySize.x/2, ImGui::GetIO( ).DisplaySize.y / 2 ), current_settings.fov * 5.f, col_t(255, 0, 0));
 }
 

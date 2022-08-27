@@ -110,6 +110,12 @@ void legit_page( aimbot_group_settings& settings )
 			elements::checkbox_bool( _( "Smoke check" ), settings.smoke_check );
 		}
 		elements::child_end_internal( );
+		ImGui::NewLine( );
+		elements::child_internal( _( "Visual" ), { 200, 70 } );
+		{
+			elements::checkbox( _( "Show FOV" ), FNV1A( "aimbot.show_fov" ) );
+		}
+		elements::child_end_internal( );
 	}
 	ImGui::EndGroup( );
 

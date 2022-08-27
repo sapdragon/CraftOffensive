@@ -432,6 +432,7 @@ namespace cfg {
 
 		set<bool>( FNV1A( "auto_jump" ), false );
 		set<bool>( FNV1A( "autotrafe" ), false );
+		set<bool>( FNV1A( "aimbot.show_fov" ), false );
 
 		set < bool >( FNV1A( "misc.view_model.enable" ), false );
 		set < float >( FNV1A( "misc.view_model.x" ), 1.f );
@@ -473,6 +474,7 @@ namespace cfg {
 			cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
 			cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
 			cfg_internal::jsonify<bool>( jsonk[ "autostrafe" ], load, FNV1A( "autotrafe" ) );
+			cfg_internal::jsonify<bool>( jsonk[ "aimbot.show_fov"  ], load, FNV1A( "aimbot.show_fov"  ) );
 
 			cfg_internal::jsonify<int>( jsonk[ "misc.view_model.fov" ], load, FNV1A( "misc.view_model.fov" ) );
 			cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
