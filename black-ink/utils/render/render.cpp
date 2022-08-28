@@ -21,17 +21,21 @@ namespace render {
 		auto& style = ImGui::GetStyle();
 
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &LogotypeRaw, sizeof( LogotypeRaw ), &assets::logotype );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &LogotypeMiniRow, sizeof( LogotypeMiniRow ), &assets::logo_mini );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &BackgroundRaw, sizeof( BackgroundRaw ), &assets::background );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DirtRaw, sizeof( DirtRaw ), &assets::dirt );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DirtWideRaw, sizeof( DirtWideRaw ), &assets::dirt_wide );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &DiamondRaw, sizeof( DiamondRaw ), &assets::diamond );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &CreeperRaw, sizeof( CreeperRaw ), &assets::creeper );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Book, sizeof( Book ), &assets::book );
 
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Aimbot, sizeof( Aimbot ), &assets::icons[ 0 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 1 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Misc, sizeof( Misc ), &assets::icons[ 2 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Skins, sizeof( Skins ), &assets::icons[ 3 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Files, sizeof( Files ), &assets::icons[ 4 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Dashboard, sizeof( Dashboard ), &assets::icons[ 5 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &ESP, sizeof( ESP ), &assets::icons[ 1 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Chams, sizeof( Chams ), &assets::icons[ 2 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Movement, sizeof( Movement ), &assets::icons[ 3 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 4 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Configuration, sizeof( Configuration ), &assets::icons[ 5 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &ChamsMat, sizeof( ChamsMat ), &assets::icons[ 6 ] );
 
 		ImFontConfig minecraft12;
 		minecraft12.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
@@ -48,8 +52,13 @@ namespace render {
 
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};
+		style.WindowRounding = 8;
 		style.ItemSpacing = {};
 		style.ScrollbarSize = 2.f;
+
+		style.Colors[ ImGuiCol_Header ] = ImColor( 40, 40, 40);
+		style.Colors[ ImGuiCol_HeaderActive ] = ImColor( 55, 55, 55 );
+		style.Colors[ ImGuiCol_HeaderHovered ] = ImColor( 50, 50, 50 );
 
 		ImGuiFreeType::BuildFontAtlas(io.Fonts);
 	}

@@ -39,12 +39,15 @@ namespace render {
 
 namespace assets {
 	inline IDirect3DTexture9* logotype;
+	inline IDirect3DTexture9* logo_mini;
 	inline IDirect3DTexture9* background;
 	inline IDirect3DTexture9* dirt;
+	inline IDirect3DTexture9* dirt_wide;
 	inline IDirect3DTexture9* diamond;
 	inline IDirect3DTexture9* creeper;
+	inline IDirect3DTexture9* book;
 	
-	inline IDirect3DTexture9* icons[6];
+	inline IDirect3DTexture9* icons[7];
 }
 
 namespace fonts {

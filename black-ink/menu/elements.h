@@ -44,7 +44,7 @@ namespace elements {
 		const ImVec2 label_size = CalcTextSize( label.c_str( ), NULL, true );
 
 		ImVec2 pos = window->DC.CursorPos;
-		ImVec2 size = CalcItemSize( { 110, 50 }, 100, 50 );
+		ImVec2 size = CalcItemSize( { 160, 30 }, 100, 50 );
 
 		const ImRect bb( pos, pos + size );
 		ItemSize( size, style.FramePadding.y );
@@ -61,9 +61,9 @@ namespace elements {
 
 		ImColor selectedRect = ImAnimations::LerpColor( ImColor( 51, 51, 51, 0 ), ImColor( 51, 51, 51 ), selectedAnimate );
 
-		window->DrawList->AddRectFilled( bb.Min, bb.Max, selectedRect );
-		window->DrawList->AddImage( texture, bb.Min + ImVec2( 47, 8 ), bb.Min + ImVec2( 63, 24 ) );
-		window->DrawList->AddText( bb.Min + ImVec2( 55 - label_size.x / 2, 30 ), ImColor( 220, 220, 220 ), label.c_str( ) );
+		window->DrawList->AddRectFilled( bb.Min, bb.Max, selectedRect);
+		window->DrawList->AddImage( texture, bb.Min + ImVec2( 16, 7 ), bb.Min + ImVec2( 32, 23 ) );
+		window->DrawList->AddText( bb.Min + ImVec2( 42, 14 - label_size.y/2 ), ImColor( 220, 220, 220 ), label.c_str( ) );
 	}
 
 	inline void subtab( std::string label, ImVec2 size_arg, int& selected, int index ) {
@@ -105,11 +105,11 @@ namespace elements {
 		{
 			auto pos = ImGui::GetWindowPos( );
 
-			ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ) );
+			ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ), 6 );
 
 			ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), false );
-			ImGui::GetWindowDrawList( )->AddImage( assets::dirt, pos, pos + ImVec2{ 600, 51 } );
-			ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + ImVec2( size_arg.x, 30 ), ImColor( 33, 33, 33, 110 ) );
+			ImGui::GetWindowDrawList( )->AddImageRounded( assets::dirt, pos, pos + ImVec2{ size_arg.x, 30 }, {}, {1, 1}, ImColor(255, 255, 255), 6, ImDrawCornerFlags_Top );
+			ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + ImVec2( size_arg.x, 30 ), ImColor( 33, 33, 33, 50 ), 6, ImDrawCornerFlags_Top );
 			ImGui::GetWindowDrawList( )->PopClipRect( );
 
 			ImGui::GetWindowDrawList( )->AddText( pos + ImVec2( 10, 7 ), ImColor( 220, 220, 220 ), label.c_str( ) );
@@ -122,6 +122,8 @@ namespace elements {
 			}
 			ImGui::EndChild( );
 			ImGui::PopStyleVar( );
+
+			ImGui::GetWindowDrawList( )->AddRect( pos, pos + size_arg, ImColor( 0, 0, 0, 255 ), 6 );
 		}
 		ImGui::EndChild( );
 	}
@@ -131,11 +133,11 @@ namespace elements {
 
 		auto pos = ImGui::GetWindowPos( );
 
-		ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ) );
+		ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ), 6 );
 
 		ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), false );
-		ImGui::GetWindowDrawList( )->AddImage( assets::dirt, pos, pos + ImVec2{ 600, 51 } );
-		ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + ImVec2( size_arg.x, 30 ), ImColor( 33, 33, 33, 110 ) );
+		ImGui::GetWindowDrawList( )->AddImageRounded( assets::dirt, pos, pos + ImVec2{ size_arg.x, 30 }, {}, { 1, 1 }, ImColor( 255, 255, 255 ), 6, ImDrawCornerFlags_Top );
+		ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + ImVec2( size_arg.x, 30 ), ImColor( 33, 33, 33, 50 ), 6, ImDrawCornerFlags_Top );
 		ImGui::GetWindowDrawList( )->PopClipRect( );
 
 		ImGui::GetWindowDrawList( )->AddText( pos + ImVec2( 10, 7 ), ImColor( 220, 220, 220 ), label.c_str( ) );
@@ -146,11 +148,14 @@ namespace elements {
 	}
 
 	inline void child_end_internal( ) {
+
 		ImGui::EndChild( );
 		ImGui::PopStyleVar( );
+		auto pos = ImGui::GetWindowPos( );
+		auto size_arg = ImGui::GetWindowSize( );
+		ImGui::GetWindowDrawList( )->AddRect( pos, pos + size_arg, ImColor( 0, 0, 0, 255 ), 6 );
 		ImGui::EndChild( );
 	}
-
 
 	inline void checkbox( std::string label, uint32_t hash ) {
 		using namespace ImGui;
@@ -183,15 +188,15 @@ namespace elements {
 
 		ImColor selectedCheck = ImAnimations::LerpColor( ImColor( 151, 151, 151, 0 ), ImColor( 151, 151, 151 ), selectedAnimate );
 
-		window->DrawList->AddRectFilled( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 28, 28, 27 ) );
+		window->DrawList->AddRectFilled( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 28, 28, 27 ), 4 );
 
 		window->DrawList->PushClipRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), false );
-		window->DrawList->AddImage( assets::dirt, bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+		window->DrawList->AddImageRounded( assets::dirt, bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 4 );
 		window->DrawList->PopClipRect( );
 
-		window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 1, 3 ), bb.Min + ImVec2{ 19, 21 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
+		window->DrawList->AddImageRounded( assets::diamond, bb.Min + ImVec2( 1, 3 ), bb.Min + ImVec2{ 19, 21 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ), 4 );
 
-		window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ) );
+		window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ), 4 );
 
 		window->DrawList->AddText( bb.Min + ImVec2( 27, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
 	}
@@ -227,15 +232,15 @@ namespace elements {
 
 		ImColor selectedCheck = ImAnimations::LerpColor( ImColor( 151, 151, 151, 0 ), ImColor( 151, 151, 151 ), selectedAnimate );
 
-		window->DrawList->AddRectFilled( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 28, 28, 27 ) );
+		window->DrawList->AddRectFilled( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 28, 28, 27 ), 4);
 
 		window->DrawList->PushClipRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), false );
-		window->DrawList->AddImage( assets::dirt, bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+		window->DrawList->AddImageRounded( assets::dirt, bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 4 );
 		window->DrawList->PopClipRect( );
 
-		window->DrawList->AddImage( assets::diamond, bb.Min + ImVec2( 1, 3 ), bb.Min + ImVec2{ 19, 21 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ) );
+		window->DrawList->AddImageRounded( assets::diamond, bb.Min + ImVec2( 1, 3 ), bb.Min + ImVec2{ 19, 21 }, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 255 * selectedAnimate ) ), 4 );
 
-		window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ) );
+		window->DrawList->AddRect( bb.Min + ImVec2( 0, 2 ), bb.Min + ImVec2( 20, 22 ), ImColor( 0, 0, 0 ), 4 );
 
 		window->DrawList->AddText( bb.Min + ImVec2( 27, 5 ), ImColor( 220, 220, 220 ), label.c_str( ) );
 	}
@@ -307,13 +312,13 @@ namespace elements {
 		}
 
 		window->DrawList->PushClipRect( frame_bb.Min, frame_bb.Max, false );
-		window->DrawList->AddImage( assets::background, frame_bb.Min, frame_bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+		window->DrawList->AddImageRounded( assets::background, frame_bb.Min, frame_bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 4 );
 		window->DrawList->PopClipRect( );
 
-		window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 47, 47, 47, 90 ), 0, 0 );
+		window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 47, 47, 47, 90 ), 4 );
 
 		auto hoveredAnimate = animationsHovered.ValueInSine( label, hovered, 0.f, 1.f, 0.05f );
-		window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ) );
+		window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ), 4 );
 
 
 		ImRect grab_bb;
@@ -322,13 +327,13 @@ namespace elements {
 		if ( grab_bb.Max.x > grab_bb.Min.x )
 		{
 			window->DrawList->AddRectFilled( grab_bb.Min - ImVec2( 1, 1 ), grab_bb.Max + ImVec2( 1, 1 ), ImColor( 170, 169, 167 ) );
-			window->DrawList->AddRectFilled( grab_bb.Min + ImVec2( 0, 0 ), grab_bb.Max + ImVec2( 1, 1 ), ImColor( 85, 85, 85 ) );
+			window->DrawList->AddRectFilled( grab_bb.Min + ImVec2( 0, 0 ), grab_bb.Max + ImVec2( 1, 1 ), ImColor( 85, 85, 85 ));
 			window->DrawList->AddRectFilled( grab_bb.Min, grab_bb.Max - ImVec2( 1, 1 ), ImColor( 110, 109, 107 ) );
 
 			window->DrawList->AddRect( grab_bb.Min - ImVec2( 2, 2 ), grab_bb.Max + ImVec2( 2, 2 ), ImColor( 0, 0, 0 ) );
 		}
 
-		window->DrawList->AddRect( frame_bb.Min, frame_bb.Max, ImColor( 0, 0, 0 ), 0, 0 );
+		window->DrawList->AddRect( frame_bb.Min, frame_bb.Max, ImColor( 0, 0, 0 ), 4 );
 
 		char value_buf[ 64 ];
 		const char* value_buf_end = value_buf + DataTypeFormatString( value_buf, IM_ARRAYSIZE( value_buf ), data_type, p_data, format );
@@ -388,15 +393,61 @@ namespace elements {
 		bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
 
 		window->DrawList->PushClipRect( bb.Min, bb.Max, false );
-		window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
+		window->DrawList->AddImageRounded( assets::background, bb.Min, bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 6 );
 		window->DrawList->PopClipRect( );
 
-		auto hoveredAnimate = animationsHovered.ValueInSine( label, hovered, 0.f, 1.f, 0.05f );
-		window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ) );
+		auto hoveredAnimate = animationsHovered.ValueInSine( "config_save_button", hovered, 0.f, 1.f, 0.05f );
+
+		window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ), 6 );
+		window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ), 6 );
 
 		RenderTextClipped( bb.Min, bb.Max, label, "", NULL, ImVec2( 0.5f, 0.5f ) );
 
-		window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ) );
+
+		return pressed;
+	}
+
+	inline bool config_save( ) {
+		using namespace ImGui;
+
+		ImGuiWindow* window = GetCurrentWindow( );
+		if ( window->SkipItems )
+			return false;
+
+		ImGuiContext& g = *GImGui;
+		const ImGuiStyle& style = g.Style;
+		const ImGuiID id = window->GetID( "config_save_button" );
+		const ImVec2 label_size = CalcTextSize( "Save", NULL, true );
+
+		ImVec2 pos = window->DC.CursorPos;
+		ImVec2 size = CalcItemSize( { 80, 32 }, 130, 32 );
+
+		const ImRect bb( pos, pos + size );
+		ItemSize( size, style.FramePadding.y );
+		if ( !ItemAdd( bb, id ) )
+			return false;
+
+		bool hovered, held;
+		bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
+
+		window->DrawList->PushClipRect( bb.Min, bb.Max, false );
+		window->DrawList->AddImageRounded( assets::background, bb.Min, bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 6 );
+		window->DrawList->PopClipRect( );
+
+		auto hoveredAnimate = animationsHovered.ValueInSine( "config_save_button", hovered, 0.f, 1.f, 0.05f );
+
+		window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ), 6 );
+		window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ), 6 );
+
+		window->DrawList->AddImage( assets::book, bb.Min + ImVec2(12, 8), bb.Min + ImVec2( 28, 24 ) );
+		window->DrawList->AddText( bb.Min + ImVec2(40, 15 - label_size.y/2 ), ImColor(255, 255, 255), "Save" );
+
+		if ( pressed ) {
+			if ( !cloud->secure_id.empty( ) )
+				cloud->save_config( cloud->secure_id );
+			else
+				notifies::push("Cloud Config", "None of the configs have been loaded." );
+		}
 
 		return pressed;
 	}
@@ -593,6 +644,130 @@ namespace elements {
 			}
 
 			ImGui::EndCombo( );
+		}
+	}
+
+	static float CalcMaxPopupHeightFromItemCount( int items_count )
+	{
+		ImGuiContext& g = *GImGui;
+		if ( items_count <= 0 )
+			return FLT_MAX;
+		return ( g.FontSize + g.Style.ItemSpacing.y ) * items_count - g.Style.ItemSpacing.y + ( g.Style.WindowPadding.y * 2 );
+	}
+
+	bool __begincombo( const char* label, const char* preview_value, ImGuiComboFlags flags )
+	{
+		using namespace ImGui;
+		ImGuiContext& g = *GImGui;
+		bool has_window_size_constraint = ( g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint ) != 0;
+		g.NextWindowData.Flags &= ~ImGuiNextWindowDataFlags_HasSizeConstraint;
+
+		ImGuiWindow* window = GetCurrentWindow( );
+		if ( window->SkipItems )
+			return false;
+
+		IM_ASSERT( ( flags & ( ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview ) ) != ( ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview ) ); // Can't use both flags together
+
+		const ImGuiStyle& style = g.Style;
+		const ImGuiID id = window->GetID( label );
+
+		const float arrow_size = ( flags & ImGuiComboFlags_NoArrowButton ) ? 0.0f : GetFrameHeight( );
+		const ImVec2 label_size = CalcTextSize( label, NULL, true );
+		const float expected_w = CalcItemWidth( );
+		const float w = ( flags & ImGuiComboFlags_NoPreview ) ? arrow_size : expected_w;
+		const ImRect frame_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( 150, 32 ));
+		const ImRect total_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( 150, 32 ));
+		ItemSize( total_bb, style.FramePadding.y );
+		if ( !ItemAdd( total_bb, id, &frame_bb ) )
+			return false;
+
+		bool hovered, held;
+		bool pressed = ButtonBehavior( frame_bb, id, &hovered, &held );
+		bool popup_open = IsPopupOpen( id );
+
+		const ImU32 frame_col = GetColorU32( hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg );
+		const float value_x2 = ImMax( frame_bb.Min.x, frame_bb.Max.x - arrow_size );
+
+		window->DrawList->PushClipRect( frame_bb.Min, frame_bb.Max, false );
+		window->DrawList->AddImageRounded( assets::background, frame_bb.Min, frame_bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 6 );
+		window->DrawList->PopClipRect( );
+
+		auto hoveredAnimate = animationsHovered.ValueInSine( "config_save_button", hovered, 0.f, 1.f, 0.05f );
+
+		window->DrawList->AddRectFilled( frame_bb.Min, frame_bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ), 6 );
+		window->DrawList->AddRect( frame_bb.Min, frame_bb.Max, ImColor( 0, 0, 0 ), 6 );
+
+		window->DrawList->AddText( frame_bb.Min + ImVec2( 12, 15 - label_size.y / 2 ), ImColor( 255, 255, 255 ), preview_value );
+
+		if ( ( pressed || g.NavActivateId == id ) && !popup_open )
+		{
+			if ( window->DC.NavLayerCurrent == 0 )
+				window->NavLastIds[ 0 ] = id;
+			OpenPopupEx( id );
+			popup_open = true;
+		}
+
+		if ( !popup_open )
+			return false;
+
+		if ( has_window_size_constraint )
+		{
+			g.NextWindowData.Flags |= ImGuiNextWindowDataFlags_HasSizeConstraint;
+			g.NextWindowData.SizeConstraintRect.Min.x = ImMax( g.NextWindowData.SizeConstraintRect.Min.x, w );
+		}
+		else
+		{
+			if ( ( flags & ImGuiComboFlags_HeightMask_ ) == 0 )
+				flags |= ImGuiComboFlags_HeightRegular;
+			IM_ASSERT( ImIsPowerOfTwo( flags & ImGuiComboFlags_HeightMask_ ) );    // Only one
+			int popup_max_height_in_items = -1;
+			if ( flags & ImGuiComboFlags_HeightRegular )     popup_max_height_in_items = 8;
+			else if ( flags & ImGuiComboFlags_HeightSmall )  popup_max_height_in_items = 4;
+			else if ( flags & ImGuiComboFlags_HeightLarge )  popup_max_height_in_items = 20;
+			SetNextWindowSizeConstraints( ImVec2( 150, 0.0f ), ImVec2( FLT_MAX, CalcMaxPopupHeightFromItemCount( popup_max_height_in_items ) ) );
+		}
+
+		char name[ 16 ];
+		ImFormatString( name, IM_ARRAYSIZE( name ), "##Combo_%02d", g.BeginPopupStack.Size );
+
+		if ( ImGuiWindow* popup_window = FindWindowByName( name ) )
+			if ( popup_window->WasActive )
+			{
+				ImVec2 size_expected = CalcWindowExpectedSize( popup_window );
+				if ( flags & ImGuiComboFlags_PopupAlignLeft )
+					popup_window->AutoPosLastDirection = ImGuiDir_Left;
+				ImRect r_outer = GetWindowAllowedExtentRect( popup_window );
+				ImVec2 pos = FindBestWindowPosForPopupEx( frame_bb.GetBL( ), size_expected, &popup_window->AutoPosLastDirection, r_outer, frame_bb, ImGuiPopupPositionPolicy_ComboBox );
+				SetNextWindowPos( pos );
+			}
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Popup | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove;
+
+		PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2( style.FramePadding.x, style.WindowPadding.y ) );
+		bool ret = Begin( name, NULL, window_flags );
+		PopStyleVar( );
+		if ( !ret )
+		{
+			EndPopup( );
+			IM_ASSERT( 0 ); 
+			return false;
+		}
+		return true;
+	}
+
+	void __endcombo( )
+	{
+		ImGui::EndPopup( );
+	}
+
+	void subtabs( const char* label, std::vector<std::string> names, int &index ) {
+		if ( __begincombo( label, names[ index ].c_str( ), NULL) ) {
+
+			for ( auto i = 0; i < names.size( ); i++ )
+				if ( ImGui::Selectable( names[ i ].c_str( ), index == i ) )
+					index = i;
+
+			__endcombo( );
 		}
 	}
 }

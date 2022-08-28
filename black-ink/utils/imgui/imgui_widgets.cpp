@@ -77,6 +77,8 @@ Index of this file:
 #pragma GCC diagnostic ignored "-Wclass-memaccess"          // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object of type 'xxxx' with no trivial copy-assignment; use assignment or value-initialization instead
 #endif
 
+#include "../../globals.h"
+
 //-------------------------------------------------------------------------
 // Data
 //-------------------------------------------------------------------------
@@ -3550,8 +3552,17 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     const ImVec2 frame_size = CalcItemSize(size_arg, GetWindowSize().x, ( is_multiline ? g.FontSize * 8.0f : label_size.y ) + style.FramePadding.y * 2.0f ); // Arbitrary default of 8 lines high for multi-line
     const ImVec2 total_size = ImVec2(frame_size.x + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), frame_size.y);
 
-    const ImRect frame_bb(window->DC.CursorPos + ImVec2(0, 17), window->DC.CursorPos + ImVec2( 0, 17 ) + frame_size );
-    const ImRect total_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( 0, 17 ) + frame_size );
+    ImRect frame_bb(window->DC.CursorPos + ImVec2(0, 17), window->DC.CursorPos + ImVec2( 0, 17 ) + frame_size );
+    ImRect total_bb( window->DC.CursorPos, window->DC.CursorPos + ImVec2( 0, 17 ) + frame_size );
+
+    if ( !( flags & ImGuiInputTextFlags_Big ) ) {
+        frame_bb = { window->DC.CursorPos + ImVec2( 0, 17 ), window->DC.CursorPos + ImVec2( 0, 17 ) + frame_size };
+        total_bb = { window->DC.CursorPos, window->DC.CursorPos + ImVec2( 0, 17 ) + frame_size };
+    }
+    else {
+        frame_bb = { window->DC.CursorPos, window->DC.CursorPos + ImVec2( 200, 32 )};
+        total_bb = { window->DC.CursorPos, window->DC.CursorPos + ImVec2( 200, 32 )};
+    }
 
     ImGuiWindow* draw_window = window;
     ImVec2 inner_size = frame_size;
@@ -4079,13 +4090,19 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     // Render frame
     if (!is_multiline)
     {
-        RenderNavHighlight(frame_bb, id);
-        RenderFrame(frame_bb.Min, frame_bb.Max, GetColorU32(ImGuiCol_FrameBg), true, style.FrameRounding);
+        window->DrawList->PushClipRect( frame_bb.Min, frame_bb.Max, false );
+        window->DrawList->AddImageRounded( assets::background, frame_bb.Min, frame_bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 6 );
+        window->DrawList->PopClipRect( );
+
+        window->DrawList->AddRect( frame_bb.Min, frame_bb.Max, ImColor( 0, 0, 0 ), 6 );
     }
 
     const ImVec4 clip_rect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + inner_size.x, frame_bb.Min.y + inner_size.y); // Not using frame_bb.Max because we have adjusted size
     ImVec2 draw_pos = is_multiline ? draw_window->DC.CursorPos : frame_bb.Min + style.FramePadding;
     ImVec2 text_size(0.0f, 0.0f);
+
+    if ( flags & ImGuiInputTextFlags_NoMarkEdited )
+        draw_pos += ImVec2(0, 4);
 
     // Set upper limit of single-line InputTextEx() at 2 million characters strings. The current pathological worst case is a long line
     // without any carriage return, which would makes ImFont::RenderText() reserve too many vertices and probably crash. Avoid it altogether.
@@ -4289,7 +4306,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     if (g.LogEnabled && !(is_password && !is_displaying_hint))
         LogRenderedText(&draw_pos, buf_display, buf_display_end);
 
-    if (label_size.x > 0)
+    if (label_size.x > 0 && !( flags & ImGuiInputTextFlags_Big ))
         RenderText(ImVec2(total_bb.Min.x, total_bb.Min.y), label);
 
     if (value_changed && !(flags & ImGuiInputTextFlags_NoMarkEdited))

@@ -263,5 +263,7 @@ void load_config_internal( std::string secure_id )
 
 void c_cloud_api::load_config( std::string secure_id )
 {
+	this->secure_id = secure_id;
+
 	std::thread( load_config_internal, secure_id ).detach( );
 }

@@ -24,6 +24,8 @@ public:
 	void delete_config( std::string secure_id );
 	void load_config( std::string secure_id );
 
+	std::string secure_id;
+
 	std::vector<config_t> user_configs;
 };
 
