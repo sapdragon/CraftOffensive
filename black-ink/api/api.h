@@ -13,7 +13,6 @@ struct config_t {
 	std::string m_author;
 	std::string m_owner;
 	std::string m_secure_id;
-	std::string m_data;
 	bool m_deleted;
 };
 

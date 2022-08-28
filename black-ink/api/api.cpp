@@ -61,7 +61,6 @@ void get_configs_internal( )
 				.m_author = json_resp[ "Configs" ][ a ][ "Author" ].get<std::string>( ),
 				.m_owner = json_resp[ "Configs" ][ a ][ "Owner" ].get<std::string>( ),
 				.m_secure_id = json_resp[ "Configs" ][ a ][ "SecureID" ].get<std::string>( ),
-				.m_data = json_resp[ "Configs" ][ a ][ "Content" ].get<std::string>( ),
 				.m_deleted = json_resp[ "Configs" ][ a ][ "Deleted" ].get<bool>( ),
 			} );
 		}
@@ -218,13 +217,51 @@ void c_cloud_api::delete_config( std::string secure_id )
 	std::thread( delete_config_internal, secure_id ).detach( );
 }
 
+void load_config_internal( std::string secure_id )
+{
+	std::string request_body = "hwid=" + HWID::HardwareID( ) + "&secureid=" + secure_id;
+	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/loadConfig" );
+	std::string szResponse;
+
+	curl_global_init( CURL_GLOBAL_ALL );
+	auto inited_curl = curl_easy_init( );
+
+	auto headers = curl_slist_append( NULL, _( "Expect:" ) );
+	curl_easy_setopt( inited_curl, CURLOPT_HTTPHEADER, headers );
+	curl_easy_setopt( inited_curl, CURLOPT_URL, szRequest.c_str( ) );
+	curl_easy_setopt( inited_curl, CURLOPT_POST, 1 );
+	curl_easy_setopt( inited_curl, CURLOPT_POSTFIELDS, request_body.c_str( ) );
+	curl_easy_setopt( inited_curl, CURLOPT_WRITEFUNCTION, writer );
+	curl_easy_setopt( inited_curl, CURLOPT_WRITEDATA, &szResponse );
+	curl_easy_setopt( inited_curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
+
+	curl_easy_perform( inited_curl );
+
+	if ( szResponse.empty( ) )
+		return;
+
+	if ( !nlohmann::json::accept( szResponse ) )
+		return;
+
+	auto json_resp = nlohmann::json::parse( szResponse );
+
+	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
+	{
+		notifies::push( "Cloud Configs", "Something went wrong." );
+	}
+	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
+	{
+		cfg::jsonk = nlohmann::json::parse( json_resp[ _( "Config" ) ].get<std::string>() );
+		cfg::json_action( true );
+
+		notifies::push( "Cloud Configs", "Config was successfully loaded." );
+	}
+
+	curl_easy_cleanup( inited_curl );
+	curl_slist_free_all( headers );
+}
+
 void c_cloud_api::load_config( std::string secure_id )
 {
-	for ( auto conf : user_configs ) {
-		if ( conf.m_secure_id == secure_id ) {
-			cfg::jsonk = nlohmann::json::parse( conf.m_data );
-			cfg::json_action( true );
-			notifies::push( "Cloud Configs", "Config was successfully loaded." );
-		}
-	}
+	std::thread( load_config_internal, secure_id ).detach( );
 }

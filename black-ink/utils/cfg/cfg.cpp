@@ -284,7 +284,7 @@ namespace cfg_internal {
 			hash.rcs.yaw = j[ "rcs.yaw" ].get<float>( );
 		}
 	}
-	void jsonify_esp( nlohmann::json& j, bool load, std::vector<std::vector<MovableItems>>& draggable_items )
+	void jsonify_esp( nlohmann::json& j, bool load, c_esp_preview* instance )
 	{
 		if ( j.is_null( ) && load )
 			return;
@@ -293,19 +293,19 @@ namespace cfg_internal {
 		{
 			for ( auto a = 0; a <= IN_MOVE_COND; a++ )
 			{
-				for ( auto b = 0; b < draggable_items[ a ].size( ); b++ )
+				for ( auto b = 0; b < instance->draggable_items[ a ].size( ); b++ )
 				{
 					nlohmann::json tempJ;
 
 					tempJ[ ( "A" ) ] = a;
 					tempJ[ ( "B" ) ] = b;
-					tempJ[ ( "ItemName" ) ] = draggable_items[ a ][ b ].ItemName;
-					tempJ[ ( "VectorCond" ) ] = draggable_items[ a ][ b ].VectorCond;
-					tempJ[ ( "TemporaryPos" ) ][ ( "X" ) ] = draggable_items[ a ][ b ].TemporaryPos.x;
-					tempJ[ ( "TemporaryPos" ) ][ ( "Y" ) ] = draggable_items[ a ][ b ].TemporaryPos.y;
-					tempJ[ ( "BasicPositions" ) ][ ( "X" ) ] = draggable_items[ a ][ b ].BasicPositions.x;
-					tempJ[ ( "BasicPositions" ) ][ ( "Y" ) ] = draggable_items[ a ][ b ].BasicPositions.y;
-					tempJ[ ( "Var" ) ] = draggable_items[ a ][ b ].Draw;
+					tempJ[ ( "ItemName" ) ] = instance->draggable_items[ a ][ b ].ItemName;
+					tempJ[ ( "VectorCond" ) ] = instance->draggable_items[ a ][ b ].VectorCond;
+					tempJ[ ( "TemporaryPos" ) ][ ( "X" ) ] = instance->draggable_items[ a ][ b ].TemporaryPos.x;
+					tempJ[ ( "TemporaryPos" ) ][ ( "Y" ) ] = instance->draggable_items[ a ][ b ].TemporaryPos.y;
+					tempJ[ ( "BasicPositions" ) ][ ( "X" ) ] = instance->draggable_items[ a ][ b ].BasicPositions.x;
+					tempJ[ ( "BasicPositions" ) ][ ( "Y" ) ] = instance->draggable_items[ a ][ b ].BasicPositions.y;
+					tempJ[ ( "Var" ) ] = instance->draggable_items[ a ][ b ].Draw;
 
 					j[ ( "DraggableESP" ) ].push_back( tempJ );
 				}
@@ -313,7 +313,7 @@ namespace cfg_internal {
 		}
 		else
 		{
-			draggable_items.clear( );
+			instance->draggable_items.clear( );
 
 			std::vector<MovableItems> LEFT;
 			std::vector<MovableItems> RIGHT;
@@ -414,13 +414,13 @@ namespace cfg_internal {
 				}
 			}
 
-			draggable_items.push_back( LEFT );
-			draggable_items.push_back( RIGHT );
-			draggable_items.push_back( TOP );
-			draggable_items.push_back( BOT );
-			draggable_items.push_back( CENTER );
-			draggable_items.push_back( POOL );
-			draggable_items.push_back( IN_MOVE );
+			instance->draggable_items.push_back( LEFT );
+			instance->draggable_items.push_back( RIGHT );
+			instance->draggable_items.push_back( TOP );
+			instance->draggable_items.push_back( BOT );
+			instance->draggable_items.push_back( CENTER );
+			instance->draggable_items.push_back( POOL );
+			instance->draggable_items.push_back( IN_MOVE );
 		}
 	}
 }
@@ -508,13 +508,8 @@ namespace cfg {
 			cfg_internal::jsonify_color( jsonk[ "esp.enemies.box.border.inside.color" ], load, FNV1A( "esp.enemies.box.border.inside.color" ) );
 			cfg_internal::jsonify_color( jsonk[ "esp.enemies.box.border.outside.color" ], load, FNV1A( "esp.enemies.box.border.outside.color" ) );
 
-			if ( load ) {
-				player_team_esp_preview->draggable_items.clear( );
-				player_esp_preview->draggable_items.clear( );
-			}
-
-			cfg_internal::jsonify_esp( jsonk[ "team" ], load, player_team_esp_preview->draggable_items);
-			cfg_internal::jsonify_esp( jsonk[ "enemy" ], load, player_esp_preview->draggable_items );
+			cfg_internal::jsonify_esp( jsonk[ "team" ], load, player_team_esp_preview);
+			cfg_internal::jsonify_esp( jsonk[ "enemy" ], load, player_esp_preview );
 
 			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "pistol" ], load, aimbot_pistol );
 			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "smg" ], load, aimbot_smg );
