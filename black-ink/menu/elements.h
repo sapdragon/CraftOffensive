@@ -464,7 +464,7 @@ namespace elements {
 		const ImGuiID id = window->GetID( conf.m_secure_id.c_str( ) );
 
 		ImVec2 pos = window->DC.CursorPos;
-		ImVec2 size = CalcItemSize( { 405, 50 }, 100, 50 );
+		ImVec2 size = CalcItemSize( { 630 - 190, 50 }, 100, 50 );
 
 		const ImRect bb( pos, pos + size );
 		ItemSize( size, style.FramePadding.y );

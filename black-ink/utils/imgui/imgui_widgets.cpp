@@ -4101,8 +4101,8 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     ImVec2 draw_pos = is_multiline ? draw_window->DC.CursorPos : frame_bb.Min + style.FramePadding;
     ImVec2 text_size(0.0f, 0.0f);
 
-    if ( flags & ImGuiInputTextFlags_NoMarkEdited )
-        draw_pos += ImVec2(0, 4);
+    if ( flags & ImGuiInputTextFlags_Big )
+        draw_pos += is_multiline ? draw_window->DC.CursorPos : ImVec2(0, 4);
 
     // Set upper limit of single-line InputTextEx() at 2 million characters strings. The current pathological worst case is a long line
     // without any carriage return, which would makes ImFont::RenderText() reserve too many vertices and probably crash. Avoid it altogether.

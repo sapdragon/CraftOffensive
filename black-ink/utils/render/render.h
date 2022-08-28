@@ -47,7 +47,7 @@ namespace assets {
 	inline IDirect3DTexture9* creeper;
 	inline IDirect3DTexture9* book;
 	
-	inline IDirect3DTexture9* icons[7];
+	inline IDirect3DTexture9* icons[8];
 }
 
 namespace fonts {

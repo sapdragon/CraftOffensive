@@ -25,57 +25,6 @@ std::vector<std::string> hitboxes = {
 		"Right Forearm", "Left Upper Arm", "Left Forearm"
 };
 
-void chams_page( std::vector < chams_material_settings_t>& chams_source ) {
-	static char label[ 12 ];
-
-	elements::child( _( "Added Materials" ), { 215, 420 }, [ & ] ( ) {
-		ImGui::BeginChild( "Layers", ImVec2( 195, 330 ), false, ImGuiWindowFlags_NoBackground );
-		{
-			for ( auto mats = 0; mats < chams_source.size( ); mats++ ) {
-				if ( elements::chams_item( mats, chams_source ) ) {
-					menu->selected_material = mats;
-					memset( label, 0, sizeof label );
-				}
-			}
-		}
-		ImGui::EndChild( );
-
-		ImGui::SetCursorPos( { 0, 340 } );
-		if ( elements::button( _( "New Material" ), ImVec2( 195, 32 ) ) ) {
-			chams_source.push_back( chams_material_settings_t{} );
-		}
-	} );
-
-	if ( !chams_source.empty( ) ) {
-		ImGui::SameLine( 225 );
-
-		elements::child( _( "Edit Material" ), { 215, 200 }, [ & ] ( ) {
-
-			if ( ImGui::InputText( "Material Label", label, 12 ) ) {
-				chams_source[ menu->selected_material ].label = std::string( label );
-			}
-
-			if ( ImGui::BeginCombo( "Material", chams->materials[ chams_source[ menu->selected_material ].m_material ].label.c_str( ) ) )
-			{
-				for ( auto a = 0; a < chams->materials.size( ); a++ ) {
-					if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ), chams_source[ menu->selected_material ].m_material == a ) )
-						chams_source[ menu->selected_material ].m_material = a;
-				}
-
-				ImGui::EndCombo( );
-			}
-
-			elements::color_edit4( "Color", &chams_source[ menu->selected_material ].m_color, NULL );
-
-			ImGui::SetCursorPos( { 0, 120 } );
-			if ( elements::button( _( "Delete current material" ), ImVec2( 195, 30 ) ) ) {
-				chams_source.erase( chams_source.begin( ) + menu->selected_material );
-				menu->selected_material = 0;
-			}
-		} );
-	}
-}
-
 void legit_page( aimbot_group_settings& settings )
 {
 	ImGui::BeginGroup( );
@@ -176,39 +125,40 @@ void c_menu::on_paint( ) {
 			ImGui::NewLine( );
 
 			draw->AddText( pos + ImVec2( 16, 122 ), ImColor( 255, 255, 255, 255 ), _( "Visuals" ) );
-			elements::tab( _( "ESP" ), assets::icons[ 1 ], m_selected_tab, 1 );
-			elements::tab( _( "Chams" ), assets::icons[ 2 ], m_selected_tab, 2 );
+			elements::tab( _( "Players" ), assets::icons[ 1 ], m_selected_tab, 1 );
+			elements::tab( _( "Weapons" ), assets::icons[ 2 ], m_selected_tab, 2 );
+			elements::tab( _( "World" ), assets::icons[ 3 ], m_selected_tab, 3 );
 
 			ImGui::NewLine( );
 			ImGui::NewLine( );
 			ImGui::NewLine( );
 
-			draw->AddText( pos + ImVec2( 16, 122 + 102 ), ImColor( 255, 255, 255, 255 ), _( "Miscellaneous" ) );
-			elements::tab( _( "Movement" ), assets::icons[ 3 ], m_selected_tab, 3 );
-			elements::tab( _( "Visuals" ), assets::icons[ 4 ], m_selected_tab, 4 );
+			draw->AddText( pos + ImVec2( 16, 122 + 132 ), ImColor( 255, 255, 255, 255 ), _( "Miscellaneous" ) );
+			elements::tab( _( "Movement" ), assets::icons[ 4 ], m_selected_tab, 4 );
+			elements::tab( _( "Visuals" ), assets::icons[ 5 ], m_selected_tab, 5 );
 
 			ImGui::NewLine( );
 			ImGui::NewLine( );
 			ImGui::NewLine( );
 
-			draw->AddText( pos + ImVec2( 16, 122 + 205 ), ImColor( 255, 255, 255, 255 ), _( "Files" ) );
-			elements::tab( _( "Configurations" ), assets::icons[ 5 ], m_selected_tab, 5 );
-			elements::tab( _( "Chams Materials" ), assets::icons[ 6 ], m_selected_tab, 6 );
+			draw->AddText( pos + ImVec2( 16, 122 + 235 ), ImColor( 255, 255, 255, 255 ), _( "Files" ) );
+			elements::tab( _( "Configurations" ), assets::icons[ 6 ], m_selected_tab, 6 );
+			elements::tab( _( "Chams Materials" ), assets::icons[ 7 ], m_selected_tab, 7 );
 		}
 		ImGui::EndGroup( );
 
-		if ( m_selected_tab != 5 ) {
+		if ( m_selected_tab != 6 ) {
 			ImGui::SetCursorPos( {170, 10} );
 			elements::config_save( );
 		}
 
-		if ( m_selected_tab == 5 ) {
+		if ( m_selected_tab == 6 ) {
 			static char config_name[ 24 ];
 
 			ImGui::SetCursorPos( { 170, 10 } );
 			ImGui::InputText( _( "Configuration name" ), config_name, 24, ImGuiInputTextFlags_Big );
 
-			ImGui::SetCursorPos( { 350, 10 } );
+			ImGui::SetCursorPos( { 380, 10 } );
 			if ( elements::button( _( "Create" ), ImVec2( 112, 32 ) ) )
 				if ( !std::string( config_name ).empty( ) )
 					cloud->create_config( config_name );
@@ -246,20 +196,12 @@ void c_menu::on_paint( ) {
 				if ( m_selected_subtab[ 0 ] == 4 ) legit_page( cfg::aimbot_shotgun );
 				if ( m_selected_subtab[ 0 ] == 5 ) legit_page( cfg::aimbot_heavy );
 			}
-			if ( m_selected_tab == 2 ) {
-				if ( m_selected_subtab[ 2 ] == 0 ) chams_page( cfg::local_player_visible );
-				if ( m_selected_subtab[ 2 ] == 1 ) chams_page( cfg::local_player_invisible );
-				if ( m_selected_subtab[ 2 ] == 2 ) chams_page( cfg::enemy_visible );
-				if ( m_selected_subtab[ 2 ] == 3 ) chams_page( cfg::enemy_invisible );
-				if ( m_selected_subtab[ 2 ] == 4 ) chams_page( cfg::teammates_visible );
-				if ( m_selected_subtab[ 2 ] == 5 ) chams_page( cfg::teammates_invisible );
-			}
-			if ( m_selected_tab == 5 ) {
+			if ( m_selected_tab == 6 ) {
 				for ( auto conf : cloud->user_configs ) {
 					elements::config( conf );
 				}
 			}
-			if ( m_selected_tab == 6 ) {
+			if ( m_selected_tab == 7 ) {
 				static chams_layer data;
 				static char label[ 12 ];
 				const char* shader_list[] = { "VertexLitGeneric", "UnlitGeneric" };

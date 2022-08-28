@@ -31,11 +31,12 @@ namespace render {
 
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Aimbot, sizeof( Aimbot ), &assets::icons[ 0 ] );
 		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &ESP, sizeof( ESP ), &assets::icons[ 1 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Chams, sizeof( Chams ), &assets::icons[ 2 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Movement, sizeof( Movement ), &assets::icons[ 3 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 4 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Configuration, sizeof( Configuration ), &assets::icons[ 5 ] );
-		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &ChamsMat, sizeof( ChamsMat ), &assets::icons[ 6 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Chams, sizeof( Chams ), &assets::icons[ 3 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Weapons, sizeof( Weapons ), &assets::icons[ 2 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Movement, sizeof( Movement ), &assets::icons[ 4 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Visuals, sizeof( Visuals ), &assets::icons[ 5 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &Configuration, sizeof( Configuration ), &assets::icons[ 6 ] );
+		D3DXCreateTextureFromFileInMemory( interfaces::m_d3d_device, &ChamsMat, sizeof( ChamsMat ), &assets::icons[ 7 ] );
 
 		ImFontConfig minecraft12;
 		minecraft12.RasterizerFlags = ImGuiFreeType::ForceAutoHint;
