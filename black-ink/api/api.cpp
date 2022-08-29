@@ -13,7 +13,7 @@ static int writer( char* data, size_t size, size_t nmemb, std::string* buffer )
 void get_configs_internal( )
 {
 	std::string szRequest = _( "https://craftoffensive.pw/v1/cloud/getConfigs" );
-	std::string request_body = "hwid=" + HWID::HardwareID();
+	std::string request_body = "hwid=" + HWID::HardwareID( );
 	std::string szResponse;
 
 	curl_global_init( CURL_GLOBAL_ALL );
@@ -38,14 +38,14 @@ void get_configs_internal( )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( "Cloud Configs" ,  "Something went wrong."  );
+		notifies::push( "Cloud Configs", "Something went wrong." );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Empty" ) )
 	{
-		if(!cloud->user_configs.empty() )
+		if ( !cloud->user_configs.empty( ) )
 			cloud->user_configs.clear( );
 
-		notifies::push( "Cloud Configs" ,  "No cloud configs founded."  );
+		notifies::push( "Cloud Configs", "No cloud configs founded." );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
@@ -65,7 +65,7 @@ void get_configs_internal( )
 			} );
 		}
 
-		notifies::push(  "Cloud Configs" ,  "Configs was successfully fetched." );
+		notifies::push( "Cloud Configs", "Configs was successfully fetched." );
 	}
 
 	curl_easy_cleanup( inited_curl );
@@ -101,11 +101,11 @@ void save_config_internal( std::string secure_id )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( "Cloud Configs" ,  "Something went wrong."  );
+		notifies::push( "Cloud Configs", "Something went wrong." );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( "Cloud Configs" , "Config was successfully saved."  );
+		notifies::push( "Cloud Configs", "Config was successfully saved." );
 	}
 
 	curl_easy_cleanup( inited_curl );
@@ -142,11 +142,11 @@ void create_config_internal( std::string name )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push( "Cloud Configs" , "Something went wrong."  );
+		notifies::push( "Cloud Configs", "Something went wrong." );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( "Cloud Configs" , "Config was successfully created."  );
+		notifies::push( "Cloud Configs", "Config was successfully created." );
 	}
 
 	curl_easy_cleanup( inited_curl );
@@ -184,11 +184,11 @@ void delete_config_internal( std::string secure_id )
 
 	if ( json_resp[ _( "Status" ) ] == _( "Failure" ) )
 	{
-		notifies::push(  "Cloud Configs" , "Something went wrong."  );
+		notifies::push( "Cloud Configs", "Something went wrong." );
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		notifies::push( "Cloud Configs" ,  "Config was successfully deleted." );
+		notifies::push( "Cloud Configs", "Config was successfully deleted." );
 	}
 
 	curl_easy_cleanup( inited_curl );
@@ -251,7 +251,7 @@ void load_config_internal( std::string secure_id )
 	}
 	else if ( json_resp[ _( "Status" ) ] == _( "Success" ) )
 	{
-		cfg::jsonk = nlohmann::json::parse( json_resp[ _( "Config" ) ].get<std::string>() );
+		cfg::jsonk = nlohmann::json::parse( json_resp[ _( "Config" ) ].get<std::string>( ) );
 		cfg::json_action( true );
 
 		notifies::push( "Cloud Configs", "Config was successfully loaded." );
@@ -263,5 +263,7 @@ void load_config_internal( std::string secure_id )
 
 void c_cloud_api::load_config( std::string secure_id )
 {
+	this->secure_id = secure_id;
+
 	std::thread( load_config_internal, secure_id ).detach( );
 }
