@@ -83,18 +83,6 @@ void c_menu::on_paint( ) {
 	if ( !( input::m_blocked = input::get_key<TOGGLE>( VK_INSERT ) ) )
 		return;
 
-	ImGui::Begin( _( "Back" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus );
-	{
-		ImGui::SetWindowSize( ImGui::GetIO( ).DisplaySize );
-		ImGui::SetWindowPos( {} );
-
-		ImGui::GetWindowDrawList( )->AddRectFilled( { 0, 0 }, ImGui::GetIO( ).DisplaySize, ImColor( 24, 24, 24, 25 ) );
-		ImGui::GetWindowDrawList( )->AddImage( assets::logotype,
-			ImGui::GetIO( ).DisplaySize / 2 - ImVec2( 367, 51 ),
-			ImGui::GetIO( ).DisplaySize / 2 + ImVec2( 367, 51 )
-		);
-	}
-	ImGui::End( );
 
 	ImGui::Begin( _( "CraftOffensive" ), 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration );
 	{
@@ -178,11 +166,11 @@ void c_menu::on_paint( ) {
 			elements::subtabs( "tabs", tabs, m_selected_subtab[0] );
 		}
 
-		if ( m_selected_tab == 2 ) {
-			static std::vector<std::string> tabs = { "Local Visible", "Local Invisible", "Enemy Visible", "Enemy Invisible", "Team Visible", "Team Invisible" };
+		if ( m_selected_tab == 1 ) {
+			static std::vector<std::string> tabs = { "Enemy", "Team",  "Local"};
 
 			ImGui::SetCursorPos( { 260, 10 } );
-			elements::subtabs( "tabs", tabs, m_selected_subtab[ 2 ] );
+			elements::subtabs( "tabs", tabs, m_selected_subtab[ 1 ] );
 		}
 
 		ImGui::SetCursorPos( { 170, 60 } );
@@ -196,7 +184,57 @@ void c_menu::on_paint( ) {
 				if ( m_selected_subtab[ 0 ] == 4 ) legit_page( cfg::aimbot_shotgun );
 				if ( m_selected_subtab[ 0 ] == 5 ) legit_page( cfg::aimbot_heavy );
 			}
-			if ( m_selected_tab == 6 ) {
+			if ( m_selected_tab == 4 ) {
+				ImGui::BeginGroup( );
+				{
+					elements::child_internal( _( "Jumps" ), { 215, 100 } );
+					{
+						elements::checkbox( _( "Bunnyhop" ), FNV1A( "auto_jump" ) );
+						elements::checkbox( _( "Auto-Strafer" ), FNV1A( "autotrafe" ) );
+					}
+					elements::child_end_internal( );
+				}
+				ImGui::EndGroup( );
+
+				ImGui::SameLine( 225 );
+
+				ImGui::BeginGroup( );
+				{
+					elements::child_internal( _( "Fake Lags" ), { 215, 103 } );
+					{
+						elements::checkbox( _( "Enable" ), FNV1A( "fakelags.enable" ) );
+						elements::slider_int( _( "Amount" ), FNV1A( "fakelags.amount" ), 0, 14, "Fake Lag Amount: %i" );
+					}
+					elements::child_end_internal( );
+				}
+				ImGui::EndGroup( );
+			}
+			if ( m_selected_tab == 5 ) {
+				ImGui::BeginGroup( );
+				{
+					elements::child_internal( _( "View Model" ), { 200, 223 } );
+					{
+						elements::checkbox( _( "Enable" ), FNV1A( "misc.view_model.enable" ) );
+						elements::checkbox( _( "Override in scope" ), FNV1A( "misc.view_model.override_while_scoped" ) );
+						elements::slider_int( _( "FOV" ), FNV1A( "misc.view_model.fov" ), 60, 130, "FOV: %i" );
+
+						elements::slider_float( _( "X" ), FNV1A( "misc.view_model.x" ), -3, 3, "X: %0.1f" );
+						elements::slider_float( _( "Y" ), FNV1A( "misc.view_model.y" ), -3, 3, "Y: %0.1f" );
+						elements::slider_float( _( "Z" ), FNV1A( "misc.view_model.z" ), -3, 3, "Z: %0.1f" );
+					}
+					elements::child_end_internal( );
+				}
+				ImGui::EndGroup( );
+
+				ImGui::SameLine( 225 );
+
+				ImGui::BeginGroup( );
+				{
+
+				}
+				ImGui::EndGroup( );
+			}
+ 			if ( m_selected_tab == 6 ) {
 				for ( auto conf : cloud->user_configs ) {
 					elements::config( conf );
 				}
@@ -242,39 +280,95 @@ void c_menu::on_paint( ) {
 
 		draw->AddRect( pos, pos + ImVec2( 630, 500 ), ImColor( 0, 0, 0, 255 ), 8 );
 		draw->AddLine( pos + ImVec2(160, 0), pos + ImVec2( 160, 500 ), ImColor( 0, 0, 0, 255 ) );
+		draw->AddLine( pos + ImVec2( 160, 50 ), pos + ImVec2( 630, 50 ), ImColor( 0, 0, 0, 255 ) );
 	}
 	ImGui::End( );
 
-	if ( m_selected_subtab[ 1 ] == 0 && m_selected_tab == 1 )
+	if ( m_selected_tab == 1 && (m_selected_subtab[ 1 ] == 0 || m_selected_subtab[ 1 ]  == 1))
 	{
-		ImGui::Begin( "preview", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration );
+		ImGui::Begin( "preview", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBringToFrontOnFocus );
 		{
-			ImGui::SetWindowSize( { 330, 475 } );
-			ImGui::SetWindowPos( pos + ImVec2{ 675, 0 } );
+			ImGui::SetWindowSize( { 330, 440 } );
+			ImGui::SetWindowPos( pos + ImVec2{ 640, 30 } );
 
 			auto draw_model = ImGui::GetWindowDrawList( );
 			auto pos_model = ImGui::GetWindowPos( );
+			
+			static bool open_edit_menu = false;
 
-			draw_model->PushClipRect( pos_model, pos_model + ImVec2( 330, 35 ), true );
-			draw_model->AddImage( assets::dirt, pos_model, pos_model + ImVec2( 600, 50 ) );
-			draw_model->PopClipRect( );
-
-			draw_model->AddImage( assets::background, pos_model + ImVec2( 0, 35 ), pos_model + ImVec2( 600, 475 ) );
+			draw_model->AddImageRounded( assets::background, pos_model, pos_model + ImVec2( 330, 440 ), {}, {1, 1}, ImColor(255, 255, 255), 8 );
+			draw_model->AddRect( pos_model, pos_model + ImVec2( 330, 440 ), ImColor( 0, 0, 0, 255 ), 8 );
 
 			if ( g_Model.get_preview_texture( ) != nullptr )
 			{
 				draw_model->AddImage(
 					g_Model.get_preview_texture( )->m_handles[ 0 ]->m_texture,
-					ImGui::GetWindowPos( ),
-					ImGui::GetWindowPos( ) + ImVec2( g_Model.get_preview_texture( )->get_actual_width( ), g_Model.get_preview_texture( )->get_actual_height( ) ),
+					ImGui::GetWindowPos( ) - ImVec2(0, 30),
+					ImGui::GetWindowPos( ) + ImVec2( g_Model.get_preview_texture( )->get_actual_width( ), g_Model.get_preview_texture( )->get_actual_height( ) - 30 ),
 					ImVec2( 0, 0 ), ImVec2( 1, 1 ),
 					ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 			}
 
-			if ( m_selected_subtab[ 1 ] == 0 && selected_esp_tab == 0 )
+			draw_model->AddText( pos_model + ImVec2( 165 - ImGui::CalcTextSize( "Open widgets menu" ).x/2, 415 ), ImColor( 255, 255, 255 ), "Open widgets menu" );
+
+			ImGui::SetCursorPos( { 0, 410 } );
+			if ( ImGui::InvisibleButton( "Swap", { 330, 30 } ) )
+				open_edit_menu = true;
+
+			float size = m_animator.ValueInSine( "widgets menu", open_edit_menu, 0.f, 1.f, 0.02f );
+
+			if ( size >= 0.12f ) {
+	
+				ImGui::Begin( "items", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar );
+				{
+					ImGui::SetWindowSize( { 330, float(int(100 * size)) } );
+					ImGui::SetWindowPos( pos + ImVec2{ 640, 470 - 100 * size } );
+
+					auto drawitems = ImGui::GetWindowDrawList( );
+					auto positems = ImGui::GetWindowPos( );
+
+					drawitems->AddRectFilled( positems, positems + ImVec2( 330, ImGui::GetWindowSize().y ), ImColor( 25, 25, 25, 255 ), 8 );
+					drawitems->AddRect( positems, positems + ImVec2( 330, ImGui::GetWindowSize( ).y ), ImColor( 0, 0, 0, 255 ), 8 );
+					drawitems->AddText( positems + ImVec2(12, 10), ImColor(255, 255, 255), "ESP Items" );
+
+					ImGui::SetCursorPos( { 12, 35 } );
+					ImGui::BeginGroup( );
+					{
+						if ( elements::draggable_tab( "Health", { 55, 25 }, player_esp_preview->get_value( "Health" ) ) )
+							player_esp_preview->swap_enable_item( "Health" );
+
+						ImGui::SameLine( 60 );
+
+						if ( elements::draggable_tab( "Armor", { 55, 25 }, player_esp_preview->get_value( "Armor" ) ) )
+							player_esp_preview->swap_enable_item( "Armor" );
+
+						ImGui::SameLine( 120 );
+
+						if ( elements::draggable_tab( "Box", { 55, 25 }, player_esp_preview->get_value( "Box" ) ) )
+							player_esp_preview->swap_enable_item( "Box" );
+
+						ImGui::SameLine( 180 );
+
+						if ( elements::draggable_tab( "Weapon", { 55, 25 }, player_esp_preview->get_value( "Weapon" ) ) )
+							player_esp_preview->swap_enable_item( "Weapon" );
+
+						ImGui::SameLine( 240);
+
+						if ( elements::draggable_tab( "Username", { 65, 25 }, player_esp_preview->get_value( "Username" )))
+							player_esp_preview->swap_enable_item( "Username" );
+					}
+					ImGui::EndGroup( );
+
+					if ( !ImGui::IsWindowHovered( ) && !ImGui::IsAnyItemHovered() && ImGui::IsMouseClicked( 0 ) )
+						open_edit_menu = false;
+				}
+				ImGui::End( );
+			}
+
+			if ( m_selected_subtab[ 1 ] == 0  )
 				player_esp_preview->instance( );
-			else if ( m_selected_subtab[ 1 ] == 0 && selected_esp_tab == 1 )
+			else if ( m_selected_subtab[ 1 ] == 1 )
 				player_team_esp_preview->instance( );
 		}
 		ImGui::End( );

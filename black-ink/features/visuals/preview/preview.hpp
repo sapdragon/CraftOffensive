@@ -8,99 +8,78 @@
 #include "../../../utils/imgui/imgui.h"
 #include "../../../utils/imgui/imgui_internal.h"
 
-enum DraggableItemCondiction : int {
+enum draggable_item_condiction : int {
 	LEFT_COND = 0,
 	RIGHT_COND = 1,
 	TOP_COND = 2,
 	BOT_COND = 3,
 	CENTER_COND = 4,
-	POOL_COND = 5,
-	IN_MOVE_COND = 6,
 };
 
-struct MovableItems {
-	std::string	ItemName;
-	ImVec2 TemporaryPos = ImVec2( );
-	ImVec2 BasicPositions = ImVec2( );
-	ImVec2 WidgetSize = ImVec2( );
+struct movable_item {
+	bool m_enabled = false;
 
-	int Draw;
-	int VectorCond = 4;
+	const char* m_name = "";
+	ImVec2 m_size = {60, 20};
+	ImVec2 m_draw_position = {};
 
-	int Type = 0; // 0 - text, 1 - bar, 2 - box
+	int m_draw = 0;
+	int m_condition = LEFT_COND;
+	int m_type = 0;
+	int m_index = 0;
 
-	MovableItems(
-		int drw,
-		std::string name = "Default",
-		int cond = 4,
-		ImVec2 temp1 = ImVec2{ },
-		ImVec2 temp2 = ImVec2{ }, int type = 0 )
-	{
-		Draw = drw;
-		ItemName = name;
-		VectorCond = cond;
-		TemporaryPos = temp1;
-		BasicPositions = temp2;
-		Type = type;
-	}
+	movable_item(int drw, const char* name = "Default", int cond = 4, int type = 0 ) :
+		m_draw(drw), m_name(name ), m_condition(cond ), m_type(type )
+	{}
 };
 
 class c_esp_preview
 {
 public:
-	c_esp_preview( int type, std::vector<MovableItems> items ) : draw_type(type) {
-		draggable_items[ 5 ].insert( draggable_items[5].end( ), items.begin( ), items.end( ) );
+	c_esp_preview( int type, std::vector<movable_item> vec ) : m_draw_type( type )
+	{
+		for ( int i = 0; i < vec.size( ); i++ )
+			items[ vec[ i ].m_condition ].push_back( vec[i] );
 	};
 
 public:
 	void instance( );
+	void swap_enable_item( const char* name );
+	bool get_value( const char* name );
 
-	std::vector<std::vector<MovableItems>> draggable_items = {
-		std::vector<MovableItems>{}, // Left 0 
-		std::vector<MovableItems>{}, // Right 1
-		std::vector<MovableItems>{}, // Top 2
-		std::vector<MovableItems>{}, // Bot 3
-		std::vector<MovableItems>{}, // Center 4
-		std::vector<MovableItems>{}, // Pool 5
-		std::vector<MovableItems>{}, // InMove 6
-	};
+	std::map<int, std::vector<movable_item>> items;
+
+	int calc_items( int cond );
 
 private:
-	bool item_in_move( MovableItems Item );
-	void vector_to_vector( MovableItems Item, int Destination );
-	void vector_to_vector_indexed( MovableItems Item, int Destination, int Index );
+	bool handle( movable_item& Item );
+	void recalculate( float animation );
+	void move( int pos, int index, int destination );
+	void move_first( int pos, int index, int destination );
 	bool mouse_intersect_rect( ImVec2 pos1, ImVec2 pos2 );
 
-	void recalculate_pool( float animation );
-	void recalculate_sides( float animation );
-	void recalculate_top_bot( float animation );
-
-	std::tuple<int, int> get_movable_item_position( MovableItems Item );
-	std::tuple<int, int> get_movable_item_position( std::string name );
-
-	bool handle( MovableItems& Item );
-
-	int draw_type;
-
-	bool isMouseInAction = false;
-	float RecalculateAnimation = 0.f;
-	bool RecalculateAnimationFlag = false;
+	int m_draw_type;
+	bool m_is_dragging;
+	bool m_anim_flag;
+	float m_animation;
 };
 
-inline c_esp_preview* player_esp_preview = new c_esp_preview( 0, std::vector<MovableItems>{
-		MovableItems( 0, "Weapon", POOL_COND, { 10, 440}, { 10, 440 }, 0 ),
-		MovableItems( 1, "Username" , POOL_COND, { 70, 440 }, { 70, 440 }, 0 ),
-		MovableItems( 2, "Health" , POOL_COND, { 150, 440 }, { 150, 440 }, 1 ),
-		MovableItems( 3, "Armor" , POOL_COND, { 210, 440 }, { 210, 440 }, 1 ),
-		MovableItems( 4, "Box" , POOL_COND, { 260, 440 }, { 260, 440 }, 2 ),
+inline c_esp_preview* player_esp_preview = new c_esp_preview( 0,
+	std::vector<movable_item>{
+		movable_item( 0, "Weapon", BOT_COND, 0 ),
+		movable_item( 1, "Username", TOP_COND, 0 ),
+		movable_item( 2, "Health", LEFT_COND, 1 ),
+		movable_item( 3, "Armor", LEFT_COND, 1 ),
+		movable_item( 4, "Box", CENTER_COND, 2 ),
 	}
 );
 
-inline c_esp_preview* player_team_esp_preview = new c_esp_preview( 1, std::vector<MovableItems>{
-		MovableItems( 0, "Weapon", POOL_COND, { 10, 440 }, { 10, 440 }, 0 ),
-		MovableItems( 1, "Username", POOL_COND, { 70, 440 }, { 70, 440 }, 0 ),
-		MovableItems( 2, "Health", POOL_COND, { 150, 440 }, { 150, 440 }, 1 ),
-		MovableItems( 3, "Armor", POOL_COND, { 210, 440 }, { 210, 440 }, 1 ),
-		MovableItems( 4, "Box", POOL_COND, { 260, 440 }, { 260, 440 }, 2 ),
+inline c_esp_preview* player_team_esp_preview = new c_esp_preview( 1,
+	std::vector<movable_item>{
+		movable_item( 0, "Weapon", BOT_COND, 0 ),
+		movable_item( 1, "Username", TOP_COND, 0 ),
+		movable_item( 2, "Health", LEFT_COND, 1 ),
+		movable_item( 3, "Armor", LEFT_COND, 1 ),
+		movable_item( 4, "Box", CENTER_COND, 2 ),
 	}
 );

@@ -51,12 +51,14 @@ namespace render {
 		fonts::m_minecraft16 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 16, &minecraft16 );
 		fonts::m_minecraft12 = io.Fonts->AddFontFromMemoryCompressedTTF( minecraft_compressed_data, minecraft_compressed_size, 12, &minecraft12 );
 
+		style.WindowMinSize = {0, 0};
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};
 		style.WindowRounding = 8;
 		style.ItemSpacing = {};
 		style.ScrollbarSize = 2.f;
 
+		style.Colors[ ImGuiCol_Text ] = ImColor( 255, 255, 255 );
 		style.Colors[ ImGuiCol_Header ] = ImColor( 40, 40, 40);
 		style.Colors[ ImGuiCol_HeaderActive ] = ImColor( 55, 55, 55 );
 		style.Colors[ ImGuiCol_HeaderHovered ] = ImColor( 50, 50, 50 );

@@ -57,11 +57,11 @@ namespace elements {
 		if ( pressed ) selected = index;
 
 		auto hoveredAnimate = animationsHovered.ValueInOutElastic( label, hovered, 0.f, 1.f, 0.05f );
-		auto selectedAnimate = animationsPressed.ValueOutQuart( label, selected == index, 0.f, 1.f, 0.05f );
+		auto selectedAnimate = animationsPressed.ValueInOutCirc( label, selected == index, 0.f, 1.f, 0.05f );
 
 		ImColor selectedRect = ImAnimations::LerpColor( ImColor( 51, 51, 51, 0 ), ImColor( 51, 51, 51 ), selectedAnimate );
 
-		window->DrawList->AddRectFilled( bb.Min, bb.Max, selectedRect);
+		window->DrawList->AddRectFilled( bb.Min, bb.Min + ImVec2(160 * selectedAnimate, 30), selectedRect );
 		window->DrawList->AddImage( texture, bb.Min + ImVec2( 16, 7 ), bb.Min + ImVec2( 32, 23 ) );
 		window->DrawList->AddText( bb.Min + ImVec2( 42, 14 - label_size.y/2 ), ImColor( 220, 220, 220 ), label.c_str( ) );
 	}
@@ -392,17 +392,53 @@ namespace elements {
 		bool hovered, held;
 		bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
 
-		window->DrawList->PushClipRect( bb.Min, bb.Max, false );
+		window->DrawList->PushClipRect( bb.Min, bb.Max, true );
 		window->DrawList->AddImageRounded( assets::background, bb.Min, bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 6 );
 		window->DrawList->PopClipRect( );
 
-		auto hoveredAnimate = animationsHovered.ValueInSine( "config_save_button", hovered, 0.f, 1.f, 0.05f );
+		auto hoveredAnimate = animationsHovered.ValueInSine( label, hovered, 0.f, 1.f, 0.05f );
 
 		window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int( 50 * hoveredAnimate ) ), 6 );
 		window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ), 6 );
 
-		RenderTextClipped( bb.Min, bb.Max, label, "", NULL, ImVec2( 0.5f, 0.5f ) );
+		window->DrawList->AddText( bb.Min + size_arg /2 - label_size / 2, ImColor( 255, 255, 255 ), label );
 
+		return pressed;
+	}
+
+	inline bool draggable_tab( const char* label, ImVec2 size_arg, bool enabled ) {
+		using namespace ImGui;
+
+		ImGuiWindow* window = GetCurrentWindow( );
+		if ( window->SkipItems )
+			return false;
+
+		ImGuiContext& g = *GImGui;
+		const ImGuiStyle& style = g.Style;
+		const ImGuiID id = window->GetID( label );
+		const ImVec2 label_size = CalcTextSize( label, NULL, true );
+
+		ImVec2 pos = window->DC.CursorPos;
+		ImVec2 size = CalcItemSize( size_arg, 100, 50 );
+
+		const ImRect bb( pos, pos + size );
+		ItemSize( size, style.FramePadding.y );
+		if ( !ItemAdd( bb, id ) )
+			return false;
+
+		bool hovered, held;
+		bool pressed = ButtonBehavior( bb, id, &hovered, &held, NULL );
+
+		window->DrawList->PushClipRect( bb.Min, bb.Max, true );
+		window->DrawList->AddImageRounded( assets::background, bb.Min, bb.Max, {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ), 6 );
+		window->DrawList->PopClipRect( );
+
+		auto hoveredAnimate = animationsHovered.ValueInSine( label, enabled, 0.f, 1.f, 0.05f );
+
+		window->DrawList->AddRectFilled( bb.Min, bb.Max, ImColor( 120, 120, 120, int( 100 * hoveredAnimate ) ), 6 );
+		window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ), 6 );
+
+		window->DrawList->AddText( bb.Min + size_arg / 2 - label_size / 2, ImColor( 255, 255, 255 ), label );
 
 		return pressed;
 	}

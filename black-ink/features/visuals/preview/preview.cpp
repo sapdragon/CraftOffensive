@@ -1,355 +1,18 @@
 #include "preview.hpp"
+#include "preview_draggables.hpp"
 
-bool c_esp_preview::item_in_move( MovableItems Item ) {
-	for ( auto a = 0; a < draggable_items[ IN_MOVE_COND ].size( ); a++ ) {
-		if ( draggable_items[ IN_MOVE_COND ][ a ].ItemName == Item.ItemName )
-			return true;
-	}
-	return false;
-}
-
-std::tuple<int, int> c_esp_preview::get_movable_item_position( MovableItems Item )
-{
-	for ( auto a = 0; a < 7; a++ ) {
-		for ( auto b = 0; b < draggable_items[ a ].size( ); b++ ) {
-			if ( draggable_items[ a ][ b ].ItemName == Item.ItemName )
-				return std::make_tuple( a, b );
-		}
-	}
-}
-
-std::tuple<int, int> c_esp_preview::get_movable_item_position( std::string name )
-{
-	for ( auto a = 0; a < 7; a++ ) {
-		for ( auto b = 0; b < draggable_items[ a ].size( ); b++ ) {
-			if ( draggable_items[ a ][ b ].ItemName == name )
-				return std::make_tuple( a, b );
-		}
-	}
-}
-
-void c_esp_preview::vector_to_vector( MovableItems Item, int Destination )
-{
-	auto Position = get_movable_item_position( Item );
-
-	draggable_items[ std::get<0>( Position ) ].erase( draggable_items[ std::get<0>( Position ) ].begin( ) + std::get<1>( Position ) ); // Erase From Position
-	draggable_items[ Destination ].emplace_back( MovableItems( Item.Draw, Item.ItemName, Destination, Item.TemporaryPos, Item.BasicPositions, Item.Type ) ); // Append to Destination
-}
-
-void c_esp_preview::vector_to_vector_indexed( MovableItems Item, int Destination, int Index )
-{
-	auto Position = get_movable_item_position( Item );
-
-	draggable_items[ std::get<0>( Position ) ].erase( draggable_items[ std::get<0>( Position ) ].begin( ) + std::get<1>( Position ) ); // Erase From Position
-	draggable_items[ Destination ].emplace( draggable_items[ Destination ].cbegin( ) + Index, MovableItems( Item.Draw, Item.ItemName, Destination, Item.TemporaryPos, Item.BasicPositions, Item.Type ) ); // Append to Destination
-}
-
-__forceinline ImColor toColor( col_t color )
-{
-	return ImColor( color.r( ), color.g( ), color.b( ), color.a( ) );
-}
-
-inline void Username( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	ImVec2 ImTextSize = ImGui::CalcTextSize( "Nickname" );
-
-	if ( cond == LEFT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, 14 + 6 );
-		draw->AddText( pos + ImVec2( 1, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.nickname.color" ) ) ), "Nickname" );
-	}
-
-	if ( cond == RIGHT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, 14 + 6 );
-		draw->AddText( pos + ImVec2( 9, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.nickname.color" ) ) ), "Nickname" );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, 14 + 6 );
-		draw->AddText( pos + ImVec2( 55 - ImTextSize.x / 2, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.nickname.color" ) ) ), "Nickname" );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 70, 20 );
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), "Nickname" );
-	}
-}
-
-inline void Weapon( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	ImVec2 ImTextSize = ImGui::CalcTextSize( "Dual Elites" );
-
-	if ( cond == LEFT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, ImTextSize.y + 6 );
-		draw->AddText( pos + ImVec2( 1, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.weapon.color" ) ) ), "Dual Elites" );
-	}
-
-	if ( cond == RIGHT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, ImTextSize.y + 6 );
-		draw->AddText( pos + ImVec2( 9, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.weapon.color" ) ) ), "Dual Elites" );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, ImTextSize.y + 6 );
-		draw->AddText( pos + ImVec2( 55 - ImGui::CalcTextSize( "Dual Elites" ).x / 2, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.weapon.color" ) ) ), "Dual Elites" );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 55, 20 );
-
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Weapon" ) );
-	}
-}
-
-inline void HealthBar( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	if ( cond == LEFT_COND || cond == RIGHT_COND ) {
-		size = ImVec2( 6, 230 );
-		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.color" ) ) ) );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, 10 );
-		draw->AddRectFilled( pos + ImVec2( 4, 2 ), pos + size - ImVec2( 4, 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 5, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 56, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.color" ) ) ) );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 55, 20 );
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Health" ) );
-	}
-}
-
-inline void ArmorBar( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	if ( cond == LEFT_COND || cond == RIGHT_COND ) {
-		size = ImVec2( 6, 230 );
-		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A("esp.enemies.armor.color" ) ) ));
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, 10 );
-		draw->AddRectFilled( pos + ImVec2( 4, 2 ), pos + size - ImVec2( 4, 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 5, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 56, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.color" ) ) ) );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 45, 20 );
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Armor" ) );
-	}
-}
-
-inline void Box( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	if ( cond == CENTER_COND ) {
-		size = ImVec2( 110, 230 );
-
-		draw->AddRect( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.color" ) ) ) );
-		draw->AddRect( pos + ImVec2( 3, -1 ), pos + size - ImVec2( 3, -1 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.border.outside.color" ) ) ) );
-		draw->AddRect( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.border.inside.color" ) ) ) );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 35, 20 );
-
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Box" ) );
-	}
-}
-
-inline void GetDrawableEnemies( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond, int var ) {
-	switch ( var ) {
-	case 0: return Weapon( pressed, draw, pos, size, cond ); break;
-	case 1: return Username( pressed, draw, pos, size, cond ); break;
-	case 2: return HealthBar( pressed, draw, pos, size, cond ); break;
-	case 3: return ArmorBar( pressed, draw, pos, size, cond ); break;
-	case 4: return Box( pressed, draw, pos, size, cond ); break;
-	}
-}
-
-inline void UsernameTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	ImVec2 ImTextSize = ImGui::CalcTextSize( "Nickname" );
-
-	if ( cond == LEFT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, 14 + 6 );
-		draw->AddText( pos + ImVec2( 1, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) ), "Nickname" );
-	}
-
-	if ( cond == RIGHT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, 14 + 6 );
-		draw->AddText( pos + ImVec2( 9, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) ), "Nickname" );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, 14 + 6 );
-		draw->AddText( pos + ImVec2( 55 - ImTextSize.x / 2, size.y / 2 - ImTextSize.y / 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) ), "Nickname" );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 70, 20 );
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), "Nickname" );
-	}
-}
-
-inline void WeaponTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	ImVec2 ImTextSize = ImGui::CalcTextSize( "Dual Elites" );
-
-	if ( cond == LEFT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, ImTextSize.y + 6 );
-		draw->AddText( pos + ImVec2( 1, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) ), "Dual Elites" );
-	}
-
-	if ( cond == RIGHT_COND ) {
-		size = ImVec2( ImTextSize.x + 10, ImTextSize.y + 6 );
-		draw->AddText( pos + ImVec2( 9, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) ), "Dual Elites" );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, ImTextSize.y + 6 );
-		draw->AddText( pos + ImVec2( 55 - ImGui::CalcTextSize( "Dual Elites" ).x / 2, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) ), "Dual Elites" );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 55, 20 );
-
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Weapon" ) );
-	}
-}
-
-inline void HealthBarTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	if ( cond == LEFT_COND || cond == RIGHT_COND ) {
-		size = ImVec2( 6, 230 );
-		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.color" ) ) ) );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, 10 );
-		draw->AddRectFilled( pos + ImVec2( 4, 2 ), pos + size - ImVec2( 4, 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 5, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 56, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.health.color" ) ) ) );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 55, 20 );
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Health" ) );
-	}
-}
-
-inline void ArmorBarTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	if ( cond == LEFT_COND || cond == RIGHT_COND ) {
-		size = ImVec2( 6, 230 );
-		draw->AddRectFilled( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 98 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) ) );
-	}
-
-	if ( cond == TOP_COND || cond == BOT_COND ) {
-		size = ImVec2( 110, 10 );
-		draw->AddRectFilled( pos + ImVec2( 4, 2 ), pos + size - ImVec2( 4, 2 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) ) );
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 5, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) ) );
-
-		draw->AddRectFilled( pos + ImVec2( 5, 3 ), pos + size - ImVec2( 56, 3 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) ) );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 45, 20 );
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Armor" ) );
-	}
-}
-
-inline void BoxTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond )
-{
-	if ( cond == CENTER_COND ) {
-		size = ImVec2( 110, 230 );
-
-		draw->AddRect( pos + ImVec2( 4, 0 ), pos + size - ImVec2( 4, 0 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.box.color" ) ) ) );
-		draw->AddRect( pos + ImVec2( 3, -1 ), pos + size - ImVec2( 3, -1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.outside.color" ) ) ) );
-		draw->AddRect( pos + ImVec2( 5, 1 ), pos + size - ImVec2( 5, 1 ), toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.inside.color" ) ) ) );
-	}
-
-	if ( cond == IN_MOVE_COND || cond == POOL_COND ) {
-		size = ImVec2( 35, 20 );
-
-
-		draw->AddRectFilled( pos, pos + size, ImColor( 50, 50, 50, 50 ) );
-		draw->AddRect( pos, pos + size, ImColor( 0, 0, 0 ) );
-
-		draw->AddText( pos + ImVec2( 5, 3 ), ImColor( 255, 255, 255 ), ( "Box" ) );
-	}
-}
-
-inline void GetDrawableTeammates( bool pressed, ImDrawList* draw, ImVec2 pos, ImVec2& size, int cond, int var ) {
-	switch ( var ) {
-	case 0: return WeaponTeammates( pressed, draw, pos, size, cond ); break;
-	case 1: return UsernameTeammates( pressed, draw, pos, size, cond ); break;
-	case 2: return HealthBarTeammates( pressed, draw, pos, size, cond ); break;
-	case 3: return ArmorBarTeammates( pressed, draw, pos, size, cond ); break;
-	case 4: return BoxTeammates( pressed, draw, pos, size, cond ); break;
-	}
-}
-
-bool c_esp_preview::handle( MovableItems& Item )
-{
+bool c_esp_preview::handle( movable_item& Item ) {
 	ImGuiWindow* window = ImGui::GetCurrentWindow( );
-	ImGuiID id = window->GetID( Item.ItemName.c_str( ) ); // use the pointer address as identifier
+	ImGuiID id = window->GetID( Item.m_name ); // use the pointer address as identifier
 	ImGuiButtonFlags flags = 0;
 
 	ImGuiContext& g = *GImGui;
 	ImGuiStyle& style = g.Style;
 
-	ImRect rect = ImRect( ImGui::GetWindowPos( ).x + Item.TemporaryPos.x,
-		ImGui::GetWindowPos( ).y + Item.TemporaryPos.y,
-		ImGui::GetWindowPos( ).x + Item.TemporaryPos.x + Item.WidgetSize.x,
-		ImGui::GetWindowPos( ).y + Item.TemporaryPos.y + Item.WidgetSize.y );
+	ImRect rect = ImRect( ImGui::GetWindowPos( ).x + Item.m_draw_position.x,
+		ImGui::GetWindowPos( ).y + Item.m_draw_position.y,
+		ImGui::GetWindowPos( ).x + Item.m_draw_position.x + Item.m_size.x,
+		ImGui::GetWindowPos( ).y + Item.m_draw_position.y + Item.m_size.y );
 
 	ImGui::ItemSize( rect, style.FramePadding.y );
 	if ( !ImGui::ItemAdd( rect, id ) )
@@ -361,22 +24,19 @@ bool c_esp_preview::handle( MovableItems& Item )
 
 	ImGuiCol handle_color = ImColor( ImGui::GetStyle( ).Colors[ ImGuiCol_ButtonHovered ] );
 	ImDrawList* draw_list = ImGui::GetWindowDrawList( );
-	
-	if ( this->draw_type == 0)
-		GetDrawableEnemies( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.TemporaryPos, Item.WidgetSize, Item.VectorCond, Item.Draw );
-	if ( this->draw_type == 1 )
-		GetDrawableTeammates( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.TemporaryPos, Item.WidgetSize, Item.VectorCond, Item.Draw );
 
+	if ( this->m_draw_type == 0 )
+		EnemyPreview::GetDrawableEnemies( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.m_draw_position, Item.m_size, Item.m_condition, Item.m_draw );
+	
 	if ( is_active && ImGui::IsMouseDragging( 0 ) ) {
-		Item.TemporaryPos[ 0 ] += ImGui::GetIO( ).MouseDelta.x;
-		Item.TemporaryPos[ 1 ] += ImGui::GetIO( ).MouseDelta.y;
+		Item.m_draw_position[ 0 ] += ImGui::GetIO( ).MouseDelta.x;
+		Item.m_draw_position[ 1 ] += ImGui::GetIO( ).MouseDelta.y;
 	}
 
 	return held;
 }
 
-bool c_esp_preview::mouse_intersect_rect( ImVec2 pos1, ImVec2 pos2 )
-{
+bool c_esp_preview::mouse_intersect_rect( ImVec2 pos1, ImVec2 pos2 ) {
 	if ( ImGui::GetIO( ).MousePos.x >= ImGui::GetWindowPos( ).x + pos1.x &&
 		ImGui::GetIO( ).MousePos.y >= ImGui::GetWindowPos( ).y + pos1.y &&
 		ImGui::GetIO( ).MousePos.x <= ImGui::GetWindowPos( ).x + pos2.x &&
@@ -386,177 +46,201 @@ bool c_esp_preview::mouse_intersect_rect( ImVec2 pos1, ImVec2 pos2 )
 	return false;
 }
 
-void c_esp_preview::recalculate_pool( float animation )
-{
-	for ( auto a = 0; a <= IN_MOVE_COND; a++ )
-	{
-		for ( auto b = 0; b < draggable_items[ a ].size( ); b++ )
+void c_esp_preview::swap_enable_item( const char* name ) {
+	for ( auto a = 0; a < 5; a++ ) {
+		for ( size_t i = 0; i < items[ a ].size( ); i++ )
 		{
-			if ( a == IN_MOVE_COND || a == POOL_COND ) {
-				draggable_items[ a ][ b ].TemporaryPos = ImLerp( draggable_items[ a ][ b ].TemporaryPos, draggable_items[ a ][ b ].BasicPositions, animation );
-
-				if ( a == IN_MOVE_COND )
-					vector_to_vector( draggable_items[ a ][ b ], POOL_COND );
+			if ( items[ a ][ i ].m_name == name ) {
+				items[ a ][ i ].m_enabled = !items[ a ][ i ].m_enabled;
 			}
 		}
 	}
 }
 
-void c_esp_preview::recalculate_sides( float animation )
-{
-	float PositionLeft = 0;
-	float xModifier = 0;
-	for ( auto b = 0; b < draggable_items[ LEFT_COND ].size( ); b++ )
-	{
-		draggable_items[ LEFT_COND ][ b ].TemporaryPos = ImLerp( draggable_items[ LEFT_COND ][ b ].TemporaryPos, ImVec2( 110 - draggable_items[ LEFT_COND ][ b ].WidgetSize.x - xModifier
-			, 120 + PositionLeft ), animation );
-
-		if ( b < 1 )
+bool c_esp_preview::get_value( const char* name ) {
+	for ( auto a = 0; a < 5; a++ ) {
+		for ( size_t i = 0; i < items[ a ].size( ); i++ )
 		{
-			if ( draggable_items[ LEFT_COND ][ 0 ].ItemName == ( "Health" ) || draggable_items[ LEFT_COND ][ 0 ].ItemName == ( "Armor" ) ||
-				draggable_items[ LEFT_COND ][ 1 ].ItemName == ( "Health" ) || draggable_items[ LEFT_COND ][ 1 ].ItemName == ( "Armor" ) )
-				xModifier += 10;
+			if ( items[ a ][ i ].m_name == name ) {
+				return items[ a ][ i ].m_enabled;
+			}
 		}
-
-		if ( draggable_items[ LEFT_COND ][ b ].ItemName != ( "Health" ) && draggable_items[ LEFT_COND ][ b ].ItemName != ( "Armor" ) )
-			PositionLeft += draggable_items[ LEFT_COND ][ b ].WidgetSize.y;
-	}
-
-
-	float PositionRight = 0;
-	float yModifier = 0;
-	for ( auto b = 0; b < draggable_items[ RIGHT_COND ].size( ); b++ )
-	{
-		draggable_items[ RIGHT_COND ][ b ].TemporaryPos = ImLerp( draggable_items[ RIGHT_COND ][ b ].TemporaryPos, ImVec2( 220 + yModifier
-			, 120 + PositionRight ), animation );
-
-		if ( b < 1 )
-		{
-			if ( draggable_items[ RIGHT_COND ][ 0 ].ItemName == ( "Health" ) || draggable_items[ RIGHT_COND ][ 0 ].ItemName == ( "Armor" ) ||
-				draggable_items[ RIGHT_COND ][ 1 ].ItemName == ( "Health" ) || draggable_items[ RIGHT_COND ][ 1 ].ItemName == ( "Armor" ) )
-				yModifier += 10;
-		}
-
-		if ( draggable_items[ RIGHT_COND ][ b ].ItemName != ( "Health" ) && draggable_items[ RIGHT_COND ][ b ].ItemName != ( "Armor" ) )
-			PositionRight += draggable_items[ RIGHT_COND ][ b ].WidgetSize.y;
 	}
 }
 
-void c_esp_preview::recalculate_top_bot( float animation )
-{
-	float PositionTop = 0;
-	for ( auto b = 0; b < draggable_items[ TOP_COND ].size( ); b++ )
-	{
-		PositionTop += draggable_items[ TOP_COND ][ b ].WidgetSize.y;
-		draggable_items[ TOP_COND ][ b ].TemporaryPos = ImLerp( draggable_items[ TOP_COND ][ b ].TemporaryPos, ImVec2( 110, 35 + 85 - PositionTop ), animation );
-	}
+void c_esp_preview::recalculate( float animation ) {
+	ImVec2 position_left = { 110, 70 }, position_right = { 215, 70 };
+	ImVec2 position_top = { 110, 88 }, position_bot = { 110, 310 };
 
-	float PositionBot = 0;
-	for ( auto b = 0; b < draggable_items[ BOT_COND ].size( ); b++ )
+	for ( auto a = 0; a < 5; a++ ) 
 	{
-		draggable_items[ BOT_COND ][ b ].TemporaryPos = ImLerp( draggable_items[ BOT_COND ][ b ].TemporaryPos, ImVec2( 110, 430 - 80 + PositionBot ), animation );
-		PositionBot += draggable_items[ BOT_COND ][ b ].WidgetSize.y;
-	}
-
-	for ( auto b = 0; b < draggable_items[ CENTER_COND ].size( ); b++ )
-	{
-		draggable_items[ CENTER_COND ][ b ].TemporaryPos = ImLerp( draggable_items[ CENTER_COND ][ b ].TemporaryPos, ImVec2( 110, 120 ), animation );
-	}
-}
-
-void c_esp_preview::instance( )
-{
-	for ( auto a = 0; a < 7; a++ )
-	{
-		for ( auto b = 0; b < draggable_items[ a ].size( ); b++ )
+		for ( size_t i = 0; i < items[ a ].size( ); i++ )
 		{
-			if ( handle( draggable_items[ a ][ b ] ) )
-			{
-				isMouseInAction = true;
-				RecalculateAnimationFlag = true;
+			if ( !items[ a ][ i ].m_enabled ) {
+				continue;
+			}
 
-				if ( mouse_intersect_rect( ImVec2( 0, 440 ), ImVec2( 330, 475 ) ) ) {
-					if ( a == IN_MOVE_COND ) {
-						draggable_items[ a ][ b ].VectorCond = POOL_COND;
-						vector_to_vector( draggable_items[ a ][ b ], POOL_COND );
-					}
-				}
-				else if ( mouse_intersect_rect( ImVec2( 0, 120 ), ImVec2( 110, 430 - 80 ) ) && draggable_items[ a ][ b ].ItemName != ( "Box" ) ) {
-					if ( a == IN_MOVE_COND ) {
-						if ( draggable_items[ a ][ b ].ItemName != ( "Health" ) && draggable_items[ a ][ b ].ItemName != ( "Armor" ) ) {
-							draggable_items[ a ][ b ].VectorCond = LEFT_COND;
-							vector_to_vector( draggable_items[ a ][ b ], LEFT_COND );
-						}
-						else if ( draggable_items[ a ][ b ].ItemName == ( "Health" ) ) {
-							draggable_items[ a ][ b ].VectorCond = LEFT_COND;
-							vector_to_vector_indexed( draggable_items[ a ][ b ], LEFT_COND, 0 );
-						}
-						else if ( draggable_items[ a ][ b ].ItemName == ( "Armor" ) ) {
-							draggable_items[ a ][ b ].VectorCond = LEFT_COND;
-							vector_to_vector_indexed( draggable_items[ a ][ b ], LEFT_COND, 0 );
-						}
-					}
-				}
-				else if ( mouse_intersect_rect( ImVec2( 220, 120 ), ImVec2( 330, 430 - 80 ) ) && draggable_items[ a ][ b ].ItemName != ( "Box" ) ) {
-					if ( a == IN_MOVE_COND ) {
-						if ( draggable_items[ a ][ b ].ItemName != ( "Health" ) && draggable_items[ a ][ b ].ItemName != ( "Armor" ) ) {
-							draggable_items[ a ][ b ].VectorCond = RIGHT_COND;
-							vector_to_vector( draggable_items[ a ][ b ], RIGHT_COND );
-						}
-						else if ( draggable_items[ a ][ b ].ItemName == ( "Health" ) ) {
-							draggable_items[ a ][ b ].VectorCond = RIGHT_COND;
-							vector_to_vector_indexed( draggable_items[ a ][ b ], RIGHT_COND, 0 );
-						}
-						else if ( draggable_items[ a ][ b ].ItemName == ( "Armor" ) ) {
-							draggable_items[ a ][ b ].VectorCond = RIGHT_COND;
-							vector_to_vector_indexed( draggable_items[ a ][ b ], RIGHT_COND, 0 );
-						}
-					}
-				}
-				else if ( mouse_intersect_rect( ImVec2( 110, 35 ), ImVec2( 220, 35 + 85 ) ) && draggable_items[ a ][ b ].ItemName != ( "Box" ) ) {
-					if ( a == IN_MOVE_COND ) {
-						draggable_items[ a ][ b ].VectorCond = TOP_COND;
-						vector_to_vector( draggable_items[ a ][ b ], TOP_COND );
-					}
-				}
-				else if ( mouse_intersect_rect( ImVec2( 110, 430 - 80 ), ImVec2( 220, 430 ) ) && draggable_items[ a ][ b ].ItemName != ( "Box" ) ) {
-					if ( a == IN_MOVE_COND ) {
-						draggable_items[ a ][ b ].VectorCond = BOT_COND;
-						vector_to_vector( draggable_items[ a ][ b ], BOT_COND );
-					}
-				}
-				else if ( mouse_intersect_rect( ImVec2( 110, 120 ), ImVec2( 220, 430 - 80 ) ) && draggable_items[ a ][ b ].ItemName == ( "Box" ) ) {
-					if ( a == IN_MOVE_COND ) {
-						draggable_items[ a ][ b ].VectorCond = CENTER_COND;
-						vector_to_vector( draggable_items[ a ][ b ], CENTER_COND );
-					}
+			if ( items[ a ][ i ].m_condition == CENTER_COND ) {
+				items[ a ][ i ].m_draw_position = ImLerp(
+					items[ a ][ i ].m_draw_position,
+					ImVec2( 110, 90 ),
+					animation
+				);
+			}
+			if ( items[ a ][ i ].m_condition == LEFT_COND ) {
+				if ( items[ a ][ i ].m_name == "Health" || items[ a ][ i ].m_name == "Armor" ) {
+					items[ a ][ i ].m_draw_position = ImLerp(
+						items[ a ][ i ].m_draw_position,
+						position_left + ImVec2( -6, 20 ),
+						animation
+					);
 				}
 				else {
-					if ( ImGui::GetIO( ).MouseDownDuration[ 0 ] > 0.0f ) {
-						vector_to_vector( draggable_items[ a ][ b ], IN_MOVE_COND );
+					items[ a ][ i ].m_draw_position = ImLerp(
+						items[ a ][ i ].m_draw_position,
+						position_left + ImVec2( -items[ a ][ i ].m_size.x, items[ a ][ i ].m_size.y ),
+						animation
+					);
+				}
+
+				if ( items[ a ][ i ].m_name == "Health" || items[ a ][ i ].m_name == "Armor" ) {
+					position_left += ImVec2( -6, 0 );
+				}
+				else {
+					position_left += ImVec2( 0, items[ a ][ i ].m_size.y );
+				}
+			}
+			if ( items[ a ][ i ].m_condition == RIGHT_COND ) {
+				if ( items[ a ][ i ].m_name == "Health" || items[ a ][ i ].m_name == "Armor" ) {
+					items[ a ][ i ].m_draw_position = ImLerp(
+						items[ a ][ i ].m_draw_position,
+						position_right + ImVec2( 6, 20 ),
+						animation
+					);
+				}
+				else {
+					items[ a ][ i ].m_draw_position = ImLerp(
+						items[ a ][ i ].m_draw_position,
+						position_right + ImVec2( 0, items[ a ][ i ].m_size.y ),
+						animation
+					);
+				}
+
+				if ( items[ a ][ i ].m_name == "Health" || items[ a ][ i ].m_name == "Armor" ) {
+					position_right += ImVec2( 6, 0 );
+				}
+				else {
+					position_right += ImVec2( 0, items[ a ][ i ].m_size.y );
+				}
+			}
+			if ( items[ a ][ i ].m_condition == TOP_COND ) {
+				items[ a ][ i ].m_draw_position = ImLerp(
+					items[ a ][ i ].m_draw_position,
+					position_top + ImVec2( 0, -items[ a ][ i ].m_size.y ),
+					animation
+				);
+
+				position_top += ImVec2( 0, -items[ a ][ i ].m_size.y );
+			}
+			if ( items[ a ][ i ].m_condition == BOT_COND ) {
+				items[ a ][ i ].m_draw_position = ImLerp(
+					items[ a ][ i ].m_draw_position,
+					position_bot + ImVec2( 0, +items[ a ][ i ].m_size.y ),
+					animation
+				);
+
+				position_bot += ImVec2( 0, items[ a ][ i ].m_size.y );
+			}
+		}
+	}
+}
+
+int c_esp_preview::calc_items( int cond ) {
+	return items[ cond ].size( );
+}
+
+void c_esp_preview::move( int pos, int index, int destination ) {
+	movable_item temporaty = items[ pos ][ index ];
+	items[ pos ].erase( items[ pos ].begin( ) + index );
+	items[ destination ].emplace_back( temporaty );
+}
+
+void c_esp_preview::move_first( int pos, int index, int destination ) {
+	movable_item temporaty = items[ pos ][ index ];
+	items[ pos ].erase( items[ pos ].begin( ) + index );
+	items[ destination ].insert( items[ destination ].begin(), temporaty );
+}
+
+void c_esp_preview::instance( ) {
+	for ( size_t i = 0; i < 5; i++ )
+	{
+		for ( auto a = 0; a < items[ i ].size( ); a++ )
+		{
+			if ( !items[ i ][ a ].m_enabled ) {
+				continue;
+			}
+
+			
+			if ( handle( items[ i ][ a ] ) ) {
+				m_is_dragging = true;
+				m_anim_flag = true;
+
+				if ( mouse_intersect_rect( ImVec2( 0, 90 ), ImVec2( 110, 490 - 80 ) ) ) {
+					if ( items[ i ][ a ].m_name != "Box" && calc_items( LEFT_COND ) < 6 ) {
+						items[ i ][ a ].m_condition = LEFT_COND;
+
+						if ( items[ i ][ a ].m_name == "Health" || items[ i ][ a ].m_name == "Armor" )
+							move_first( i, a, LEFT_COND );
+						else
+							move( i, a, LEFT_COND );
+					}
+				}
+				else if ( mouse_intersect_rect( ImVec2( 220, 90 ), ImVec2( 330, 490 - 80 ) ) ) {
+					if ( items[ i ][ a ].m_name != "Box" && calc_items( RIGHT_COND ) < 6 ) {
+						items[ i ][ a ].m_condition = RIGHT_COND;
+
+						if ( items[ i ][ a ].m_name == "Health" || items[ i ][ a ].m_name == "Armor" )
+							move_first( i, a, RIGHT_COND );
+						else 
+							move( i, a, RIGHT_COND );
+					}
+				}
+				else if ( mouse_intersect_rect( ImVec2( 110, 5 ), ImVec2( 220, 5 + 85 ) ) ) {
+					if ( items[ i ][ a ].m_name != "Box" && calc_items( TOP_COND ) < 3 ) {
+						items[ i ][ a ].m_condition = TOP_COND;
+						move( i, a, TOP_COND );
+					}
+				}
+				else if ( mouse_intersect_rect( ImVec2( 110, 400 - 80 ), ImVec2( 220, 400 ) ) ) {
+					if ( items[ i ][ a ].m_name != "Box" && calc_items( BOT_COND ) < 3 ) {
+						items[ i ][ a ].m_condition = BOT_COND;
+						move( i, a, BOT_COND );
+					}
+				}
+				else if ( mouse_intersect_rect( ImVec2( 110, 120 ), ImVec2( 220, 430 - 80 ) ) ) {
+					if ( items[ i ][ a ].m_name == "Box" ) {
+						items[ i ][ a ].m_condition = CENTER_COND;
+						move( i, a, CENTER_COND );
 					}
 				}
 			}
-
-			if ( !ImGui::GetIO( ).MouseDown[ 0 ] )
-				isMouseInAction = false;
 		}
 	}
 
-	if ( isMouseInAction == false )
-	{
-		if ( RecalculateAnimationFlag == true ) {
-			RecalculateAnimation = 0.f;
-			RecalculateAnimationFlag = false;
+	if ( !ImGui::GetIO( ).MouseDown[ 0 ] )
+		m_is_dragging = false;
+
+	if ( !m_is_dragging ) {
+		if ( m_anim_flag == true ) {
+			m_animation = 0.f;
+			m_anim_flag = false;
 		}
 
-		if ( RecalculateAnimation < 1.f )
-			RecalculateAnimation += 0.005f * ( 60 / ImGui::GetIO( ).Framerate );
+		if ( m_animation < 1.f )
+			m_animation += 0.005f * ( 1.f - ImGui::GetIO( ).DeltaTime );
 
-		RecalculateAnimation = std::clamp( RecalculateAnimation, 0.f, 1.f );
+		m_animation = std::clamp( m_animation, 0.f, 1.f );
 
-		recalculate_pool( RecalculateAnimation );
-		recalculate_sides( RecalculateAnimation );
-		recalculate_top_bot( RecalculateAnimation );
+		recalculate( m_animation );
 	}
 }

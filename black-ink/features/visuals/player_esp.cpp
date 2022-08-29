@@ -194,7 +194,7 @@ void c_player_esp::on_paint() {
 	}
 }
 
-ImVec2 c_player_esp::get_position( DraggableItemCondiction pos, ESPPlayerData_t* m_Data ) {
+ImVec2 c_player_esp::get_position( draggable_item_condiction pos, ESPPlayerData_t* m_Data ) {
 	if ( pos == RIGHT_COND )
 		return ImVec2( m_Data->m_aBBox.right + 2 + m_Data->m_iRightOffset, m_Data->m_aBBox.top + m_Data->m_iRightDownOffset );
 	if ( pos == LEFT_COND )
@@ -205,7 +205,7 @@ ImVec2 c_player_esp::get_position( DraggableItemCondiction pos, ESPPlayerData_t*
 		return ImVec2( m_Data->m_aBBox.left + ( ( m_Data->m_aBBox.right - m_Data->m_aBBox.left ) * 0.5f ), m_Data->m_aBBox.top - m_Data->m_iUpOffset );
 }
 
-ImVec2 c_player_esp::get_position_offsetless( DraggableItemCondiction pos, ESPPlayerData_t* m_Data ) {
+ImVec2 c_player_esp::get_position_offsetless( draggable_item_condiction pos, ESPPlayerData_t* m_Data ) {
 	if ( pos == RIGHT_COND )
 		return ImVec2( m_Data->m_aBBox.right + 3 + m_Data->m_iRightOffset, m_Data->m_aBBox.top );
 	if ( pos == LEFT_COND )
@@ -221,7 +221,7 @@ __forceinline ImColor toColor( col_t color )
 	return ImColor( color.r( ), color.g( ), color.b( ), color.a( ) );
 }
 
-void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImColor color, ESPPlayerData_t* m_Data ) {
+void c_player_esp::add_text( std::string text, draggable_item_condiction pos, ImColor color, ESPPlayerData_t* m_Data ) {
 	ImVec2 ImTextSize = ImGui::CalcTextSize( text.c_str( ) );
 	ImVec2 Position = get_position( pos, m_Data );
 
@@ -246,7 +246,7 @@ void c_player_esp::add_text( std::string text, DraggableItemCondiction pos, ImCo
 		m_Data->m_iUpOffset = m_Data->m_iUpOffset + ImTextSize.y;
 }
 
-void c_player_esp::add_bar( DraggableItemCondiction pos, float& percentage, float max, ImColor color, ImColor color1, ImColor color2, ESPPlayerData_t* m_Data ) {
+void c_player_esp::add_bar( draggable_item_condiction pos, float& percentage, float max, ImColor color, ImColor color1, ImColor color2, ESPPlayerData_t* m_Data ) {
 
 	ImVec2 Position = get_position_offsetless( pos, m_Data );
 	int XOffset, X2Offset;
@@ -357,186 +357,10 @@ void c_player_esp::add_box( ESPPlayerData_t* m_Data, ImColor outer, ImColor inne
 
 void c_player_esp::render_enemy_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data )
 {
-	for ( auto a = 0; a < POOL_COND; a++ )
-	{
-		m_Data->m_iDownOffset = 0;
-		m_Data->m_iUpOffset = 0;
 
-		m_Data->m_iLeftDownOffset = 0;
-		m_Data->m_iLeftOffset = 0;
-
-		m_Data->m_iRightDownOffset = 0;
-		m_Data->m_iRightOffset = 0;
-
-		for ( auto b = 0; b < preview->draggable_items[ a ].size( ); b++ )
-		{
-			if ( preview->draggable_items[ a ][ b ].Type == 0 ) {
-				std::string Text;
-				ImColor Color;
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Username" ) {
-					player_info_t info;
-					interfaces::m_engine->get_player_info( player->get_index( ), &info );
-
-					Text = info.m_name;
-					if ( Text.length( ) > 32 )
-					{
-						Text.erase( 32, Text.length( ) - 32 );
-						Text.append( "..." );
-					}
-		
-					Color = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.nickname.color" ) ) );
-				}
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Weapon" ) {
-					c_base_combat_weapon* pWeapon = player->get_active_weapon( );
-					if ( !pWeapon )
-						continue;
-
-					std::string weaponName = pWeapon->get_cs_weapon_data( )->m_hud_name;
-					Text = std::string(weaponName.begin() + 13, weaponName.end());
-					if ( Text.length( ) <= 0 )
-						continue;
-
-					Color = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.weapon.color" ) ) );
-				}
-
-				add_text( Text, ( DraggableItemCondiction ) a, Color, m_Data );
-			}
-			if ( preview->draggable_items[ a ][ b ].Type == 1 ) {
-				ImColor Main;
-				ImColor Inner;
-				ImColor Outer;
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Health" ) {
-					auto iHealthValue = std::clamp( player->get_health( ), 0, 100 );
-					auto percentage = iHealthValue / 100.f;
-					if ( m_Data->m_flPrevHealth > iHealthValue )
-						m_Data->m_flPrevHealth -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
-					else
-						m_Data->m_flPrevHealth = iHealthValue;
-
-					Main = toColor(cfg::get<col_t>( FNV1A( "esp.enemies.health.color" )));
-					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.outside.color" ) ) );
-					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.health.border.inside.color" ) ) );
-
-					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevHealth, 100, Main, Inner, Outer, m_Data );
-				}
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Armor" ) {
-					auto iArmorValue = std::clamp( player->get_armor_value( ), 0, 100 );
-					if ( m_Data->m_flPrevArmor > iArmorValue )
-						m_Data->m_flPrevArmor -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
-					else
-						m_Data->m_flPrevArmor = iArmorValue;
-
-					Main = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.color" ) ) );
-					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.border.outside.color" ) ) );
-					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.enemies.armor.border.inside.color" ) ) );
-
-					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevArmor, 100, Main, Inner, Outer, m_Data );
-				}
-			}
-			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
-					add_box( m_Data, 
-						toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.border.outside.color" ) ) ),
-						toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.color" ) ) ),
-						toColor( cfg::get<col_t>( FNV1A( "esp.enemies.box.border.inside.color" ) ) )
-					);
-			}
-		}
-	}
 }
 
 void c_player_esp::render_team_draggable( c_esp_preview* preview, c_cs_player* player, ESPPlayerData_t* m_Data )
 {
-	for ( auto a = 0; a < POOL_COND; a++ )
-	{
-		m_Data->m_iDownOffset = 0;
-		m_Data->m_iUpOffset = 0;
 
-		m_Data->m_iLeftDownOffset = 0;
-		m_Data->m_iLeftOffset = 0;
-
-		m_Data->m_iRightDownOffset = 0;
-		m_Data->m_iRightOffset = 0;
-
-		for ( auto b = 0; b < preview->draggable_items[ a ].size( ); b++ )
-		{
-			if ( preview->draggable_items[ a ][ b ].Type == 0 ) {
-				std::string Text;
-				ImColor Color;
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Username" ) {
-					player_info_t info;
-					interfaces::m_engine->get_player_info( player->get_index( ), &info );
-
-					Text = info.m_name;
-					if ( Text.length( ) > 32 )
-					{
-						Text.erase( 32, Text.length( ) - 32 );
-						Text.append( "..." );
-					}
-
-					Color = toColor( cfg::get<col_t>( FNV1A( "esp.team.nickname.color" ) ) );
-				}
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Weapon" ) {
-					c_base_combat_weapon* pWeapon = player->get_active_weapon( );
-					if ( !pWeapon )
-						continue;
-
-					std::string weaponName = pWeapon->get_cs_weapon_data( )->m_hud_name;
-					Text = std::string( weaponName.begin( ) + 13, weaponName.end( ) );
-					if ( Text.length( ) <= 0 )
-						continue;
-
-					Color = toColor( cfg::get<col_t>( FNV1A( "esp.team.weapon.color" ) ) );
-				}
-
-				add_text( Text, ( DraggableItemCondiction ) a, Color, m_Data );
-			}
-			if ( preview->draggable_items[ a ][ b ].Type == 1 ) {
-				ImColor Main;
-				ImColor Inner;
-				ImColor Outer;
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Health" ) {
-					auto iHealthValue = std::clamp( player->get_health( ), 0, 100 );
-					auto percentage = iHealthValue / 100.f;
-					if ( m_Data->m_flPrevHealth > iHealthValue )
-						m_Data->m_flPrevHealth -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
-					else
-						m_Data->m_flPrevHealth = iHealthValue;
-
-					Main = toColor( cfg::get<col_t>( FNV1A( "esp.team.health.color" ) ) );
-					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.outside.color" ) ) );
-					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.team.health.border.inside.color" ) ) );
-
-					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevHealth, 100, Main, Inner, Outer, m_Data );
-				}
-
-				if ( preview->draggable_items[ a ][ b ].ItemName == "Armor" ) {
-					auto iArmorValue = std::clamp( player->get_armor_value( ), 0, 100 );
-					if ( m_Data->m_flPrevArmor > iArmorValue )
-						m_Data->m_flPrevArmor -= SPEED_FREQ * interfaces::m_global_vars->m_frame_time;
-					else
-						m_Data->m_flPrevArmor = iArmorValue;
-
-					Main = toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.color" ) ) );
-					Outer = toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.outside.color" ) ) );
-					Inner = toColor( cfg::get<col_t>( FNV1A( "esp.team.armor.border.inside.color" ) ) );
-
-					add_bar( ( DraggableItemCondiction ) a, m_Data->m_flPrevArmor, 100, Main, Inner, Outer, m_Data );
-				}
-			}
-			if ( preview->draggable_items[ a ][ b ].Type == 2 ) {
-				add_box( m_Data,
-					toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.outside.color" ) ) ),
-					toColor( cfg::get<col_t>( FNV1A( "esp.team.box.color" ) ) ),
-					toColor( cfg::get<col_t>( FNV1A( "esp.team.box.border.inside.color" ) ) )
-				);
-			}
-		}
-	}
 }
