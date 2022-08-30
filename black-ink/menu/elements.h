@@ -6,6 +6,8 @@
 #include "../utils/imgui/imgui.h"
 #include "../utils/imgui/imgui_internal.h"
 
+#include "notifies.h"
+
 #include "../utils/imgui/imgui_tweaker.hpp"
 
 #include <functional>
@@ -107,7 +109,7 @@ namespace elements {
 
 			ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ), 6 );
 
-			ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), false );
+			ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), true );
 			ImGui::GetWindowDrawList( )->AddImageRounded( assets::dirt, pos, pos + ImVec2{ size_arg.x, 30 }, {}, {1, 1}, ImColor(255, 255, 255), 6, ImDrawCornerFlags_Top );
 			ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + ImVec2( size_arg.x, 30 ), ImColor( 33, 33, 33, 50 ), 6, ImDrawCornerFlags_Top );
 			ImGui::GetWindowDrawList( )->PopClipRect( );
@@ -135,7 +137,7 @@ namespace elements {
 
 		ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + size_arg, ImColor( 35, 35, 35, 220 ), 6 );
 
-		ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), false );
+		ImGui::GetWindowDrawList( )->PushClipRect( pos, pos + ImVec2( size_arg.x, 30 ), true );
 		ImGui::GetWindowDrawList( )->AddImageRounded( assets::dirt, pos, pos + ImVec2{ size_arg.x, 30 }, {}, { 1, 1 }, ImColor( 255, 255, 255 ), 6, ImDrawCornerFlags_Top );
 		ImGui::GetWindowDrawList( )->AddRectFilled( pos, pos + ImVec2( size_arg.x, 30 ), ImColor( 33, 33, 33, 50 ), 6, ImDrawCornerFlags_Top );
 		ImGui::GetWindowDrawList( )->PopClipRect( );
@@ -691,7 +693,7 @@ namespace elements {
 		return ( g.FontSize + g.Style.ItemSpacing.y ) * items_count - g.Style.ItemSpacing.y + ( g.Style.WindowPadding.y * 2 );
 	}
 
-	bool __begincombo( const char* label, const char* preview_value, ImGuiComboFlags flags )
+	inline bool __begincombo( const char* label, const char* preview_value, ImGuiComboFlags flags )
 	{
 		using namespace ImGui;
 		ImGuiContext& g = *GImGui;
@@ -791,12 +793,12 @@ namespace elements {
 		return true;
 	}
 
-	void __endcombo( )
+	inline void __endcombo( )
 	{
 		ImGui::EndPopup( );
 	}
 
-	void subtabs( const char* label, std::vector<std::string> names, int &index ) {
+	inline void subtabs( const char* label, std::vector<std::string> names, int &index ) {
 		if ( __begincombo( label, names[ index ].c_str( ), NULL) ) {
 
 			for ( auto i = 0; i < names.size( ); i++ )

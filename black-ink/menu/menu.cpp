@@ -167,7 +167,7 @@ void c_menu::on_paint( ) {
 		}
 
 		if ( m_selected_tab == 1 ) {
-			static std::vector<std::string> tabs = { "Enemy", "Team",  "Local"};
+			static std::vector<std::string> tabs = { "Enemy", "Team" };
 
 			ImGui::SetCursorPos( { 260, 10 } );
 			elements::subtabs( "tabs", tabs, m_selected_subtab[ 1 ] );
@@ -183,6 +183,34 @@ void c_menu::on_paint( ) {
 				if ( m_selected_subtab[ 0 ] == 3 ) legit_page( cfg::aimbot_sniper );
 				if ( m_selected_subtab[ 0 ] == 4 ) legit_page( cfg::aimbot_shotgun );
 				if ( m_selected_subtab[ 0 ] == 5 ) legit_page( cfg::aimbot_heavy );
+			}
+			if ( m_selected_tab == 1 ) {
+				ImGui::BeginGroup( );
+				{
+					elements::child_internal( _( "ESP" ), { 215, 70 } );
+					{
+						elements::checkbox( _( "Shared ESP" ), FNV1A( "shared.esp" ) );
+					}
+					elements::child_end_internal( );
+				}
+				ImGui::EndGroup( );
+
+
+				if ( m_selected_subtab[ 1 ] == 0 ) {
+					ImGui::SameLine( 225 );
+
+					ImGui::BeginGroup( );
+					{
+						elements::child_internal( _( "Chams" ), { 215, 150 } );
+						{
+							
+						}
+						elements::child_end_internal( );
+					}
+					ImGui::EndGroup( );
+				}
+				if ( m_selected_subtab[ 1 ] == 1 ) {
+				}
 			}
 			if ( m_selected_tab == 4 ) {
 				ImGui::BeginGroup( );
@@ -316,7 +344,7 @@ void c_menu::on_paint( ) {
 			if ( ImGui::InvisibleButton( "Swap", { 330, 30 } ) )
 				open_edit_menu = true;
 
-			float size = m_animator.ValueInSine( "widgets menu", open_edit_menu, 0.f, 1.f, 0.02f );
+			float size = m_animator.ValueInSine( "widgets menu", open_edit_menu, 0.f, 1.f, 0.05f );
 
 			if ( size >= 0.12f ) {
 	
@@ -335,28 +363,54 @@ void c_menu::on_paint( ) {
 					ImGui::SetCursorPos( { 12, 35 } );
 					ImGui::BeginGroup( );
 					{
-						if ( elements::draggable_tab( "Health", { 55, 25 }, player_esp_preview->get_value( "Health" ) ) )
-							player_esp_preview->swap_enable_item( "Health" );
+						if ( m_selected_subtab[ 1 ] == 0 ) {
+							if ( elements::draggable_tab( "Health", { 55, 25 }, player_esp_preview->get_value( "Health" ) ) )
+								player_esp_preview->swap_enable_item( "Health" );
 
-						ImGui::SameLine( 60 );
+							ImGui::SameLine( 60 );
 
-						if ( elements::draggable_tab( "Armor", { 55, 25 }, player_esp_preview->get_value( "Armor" ) ) )
-							player_esp_preview->swap_enable_item( "Armor" );
+							if ( elements::draggable_tab( "Armor", { 55, 25 }, player_esp_preview->get_value( "Armor" ) ) )
+								player_esp_preview->swap_enable_item( "Armor" );
 
-						ImGui::SameLine( 120 );
+							ImGui::SameLine( 120 );
 
-						if ( elements::draggable_tab( "Box", { 55, 25 }, player_esp_preview->get_value( "Box" ) ) )
-							player_esp_preview->swap_enable_item( "Box" );
+							if ( elements::draggable_tab( "Box", { 55, 25 }, player_esp_preview->get_value( "Box" ) ) )
+								player_esp_preview->swap_enable_item( "Box" );
 
-						ImGui::SameLine( 180 );
+							ImGui::SameLine( 180 );
 
-						if ( elements::draggable_tab( "Weapon", { 55, 25 }, player_esp_preview->get_value( "Weapon" ) ) )
-							player_esp_preview->swap_enable_item( "Weapon" );
+							if ( elements::draggable_tab( "Weapon", { 55, 25 }, player_esp_preview->get_value( "Weapon" ) ) )
+								player_esp_preview->swap_enable_item( "Weapon" );
 
-						ImGui::SameLine( 240);
+							ImGui::SameLine( 240 );
 
-						if ( elements::draggable_tab( "Username", { 65, 25 }, player_esp_preview->get_value( "Username" )))
-							player_esp_preview->swap_enable_item( "Username" );
+							if ( elements::draggable_tab( "Username", { 65, 25 }, player_esp_preview->get_value( "Username" ) ) )
+								player_esp_preview->swap_enable_item( "Username" );
+						}
+						else {
+							if ( elements::draggable_tab( "Health", { 55, 25 }, player_team_esp_preview->get_value( "Health" ) ) )
+								player_team_esp_preview->swap_enable_item( "Health" );
+
+							ImGui::SameLine( 60 );
+
+							if ( elements::draggable_tab( "Armor", { 55, 25 }, player_team_esp_preview->get_value( "Armor" ) ) )
+								player_team_esp_preview->swap_enable_item( "Armor" );
+
+							ImGui::SameLine( 120 );
+
+							if ( elements::draggable_tab( "Box", { 55, 25 }, player_team_esp_preview->get_value( "Box" ) ) )
+								player_team_esp_preview->swap_enable_item( "Box" );
+
+							ImGui::SameLine( 180 );
+
+							if ( elements::draggable_tab( "Weapon", { 55, 25 }, player_team_esp_preview->get_value( "Weapon" ) ) )
+								player_team_esp_preview->swap_enable_item( "Weapon" );
+
+							ImGui::SameLine( 240 );
+
+							if ( elements::draggable_tab( "Username", { 65, 25 }, player_team_esp_preview->get_value( "Username" ) ) )
+								player_team_esp_preview->swap_enable_item( "Username" );
+						}
 					}
 					ImGui::EndGroup( );
 

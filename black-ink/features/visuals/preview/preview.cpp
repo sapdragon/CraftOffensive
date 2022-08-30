@@ -27,6 +27,8 @@ bool c_esp_preview::handle( movable_item& Item ) {
 
 	if ( this->m_draw_type == 0 )
 		EnemyPreview::GetDrawableEnemies( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.m_draw_position, Item.m_size, Item.m_condition, Item.m_draw );
+		if ( this->m_draw_type == 1 )
+		TeamPreview::GetDrawableTeammates( ImGui::IsMouseClicked( ImGuiMouseButton_Right ) && ImGui::IsMouseHoveringRect( rect.Min, rect.Max ), draw_list, ImGui::GetWindowPos( ) + Item.m_draw_position, Item.m_size, Item.m_condition, Item.m_draw );
 	
 	if ( is_active && ImGui::IsMouseDragging( 0 ) ) {
 		Item.m_draw_position[ 0 ] += ImGui::GetIO( ).MouseDelta.x;

@@ -55,9 +55,12 @@ namespace render {
 		style.WindowPadding = {};
 		style.WindowBorderSize = {};
 		style.WindowRounding = 8;
+		style.PopupRounding = 8;
+		style.PopupBorderSize = 1;
 		style.ItemSpacing = {};
 		style.ScrollbarSize = 2.f;
 
+		style.Colors[ ImGuiCol_Border ] = ImColor( 0, 0, 0 );
 		style.Colors[ ImGuiCol_Text ] = ImColor( 255, 255, 255 );
 		style.Colors[ ImGuiCol_Header ] = ImColor( 40, 40, 40);
 		style.Colors[ ImGuiCol_HeaderActive ] = ImColor( 55, 55, 55 );

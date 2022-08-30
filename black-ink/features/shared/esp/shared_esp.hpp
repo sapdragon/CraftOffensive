@@ -4,6 +4,9 @@ namespace shared_esp
 {
 	bool __stdcall handler( size_t message_size, const char* message )
 	{
+		if ( !cfg::get<bool>( FNV1A( "shared.esp" ) ) )
+			return true;
+
 		SharedESP esp_message;
 
 		/* parse message*/
@@ -36,6 +39,9 @@ namespace shared_esp
 
 	void send_data( )
 	{
+		if ( !cfg::get<bool>( FNV1A( "shared.esp" ) ) )
+			return;
+
 		if ( !globals::m_local || !interfaces::m_engine->is_in_game( ) )
 			return;
 

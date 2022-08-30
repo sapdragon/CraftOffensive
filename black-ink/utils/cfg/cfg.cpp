@@ -288,6 +288,8 @@ namespace cfg_internal {
 
 namespace cfg {
 	void init( ) {
+		set<bool>( FNV1A( "shared.esp" ), false );
+
 		set<bool>( FNV1A( "fakelags.enable" ), false );
 		set<int>( FNV1A( "fakelags.amount" ), 1 );
 
@@ -331,6 +333,8 @@ namespace cfg {
 	std::string json_action( bool load )
 	{
 		try {
+			cfg_internal::jsonify<bool>( jsonk[ "shared.esp" ], load, FNV1A( "shared.esp" ) );
+
 			cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.enable" ], load, FNV1A( "misc.view_model.enable" ) );
 			cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
 			cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
