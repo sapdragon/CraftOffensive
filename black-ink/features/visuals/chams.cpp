@@ -48,29 +48,16 @@ void c_chams::override_material(int type, const col_t& clr, bool ignorez ) {
 	interfaces::m_model_render->forced_material_override(material);
 }
 
-void c_chams::draw_material_on_entity( chams_array visible, chams_array invisible, i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones )
+void c_chams::draw_material_on_entity( chams_material_settings_t visible, chams_material_settings_t invisible, i_model_render* ecx, void* context, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4_t* bones )
 {
-	if ( !invisible.empty( ) ) {
-		for ( auto& material_options : invisible )
-		{
-			if ( !material_options.m_enable )
-				continue;
-
-			override_material( material_options.m_material, material_options.m_color, true );
-			hooks::draw_model_execute_original( ecx, context, state, info, bones );
-		}
+	if ( invisible.m_enable ) {
+		override_material( invisible.m_material, invisible.m_color, true );
+		hooks::draw_model_execute_original( ecx, context, state, info, bones );
 	}
 
-
-	if ( !visible.empty( ) ) {
-		for ( auto& material_options : visible )
-		{
-			if ( !material_options.m_enable )
-				continue;
-
-			override_material( material_options.m_material, material_options.m_color, false );
-			hooks::draw_model_execute_original( ecx, context, state, info, bones );
-		}
+	if ( visible.m_enable ) {
+		override_material( visible.m_material, visible.m_color, false );
+		hooks::draw_model_execute_original( ecx, context, state, info, bones );
 	}
 }
 
@@ -85,15 +72,11 @@ bool c_chams::on_draw_model( i_model_render* ecx, void* context, const draw_mode
 		if ( !player ||!player->is_alive( ) || !entity->is_player( ) )
 				return true;
 		
-		//else if ( m_shared_players.contains( player->get_index( ) ) )
-		//	draw_material_on_entity( get_shared_player( player->get_index( ) ), ecx, context, state, info, bones );
-
-		if ( player == (c_cs_player*) globals::m_local )
-			draw_material_on_entity( cfg::local_player_visible, cfg::local_player_invisible, ecx, context, state, info, bones );
-		else if ( player->is_enemy(globals::m_local) )
+		if ( player->is_enemy(globals::m_local) && player != ( c_cs_player* ) globals::m_local )
 			draw_material_on_entity( cfg::enemy_visible, cfg::enemy_invisible, ecx, context, state, info, bones );
-		else
+		else if ( !player->is_enemy( globals::m_local ) && player != ( c_cs_player* ) globals::m_local )
 			draw_material_on_entity( cfg::teammates_visible, cfg::teammates_invisible, ecx, context, state, info, bones );
 	}
+
 	return true;
 }

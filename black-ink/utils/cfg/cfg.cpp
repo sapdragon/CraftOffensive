@@ -92,7 +92,7 @@ namespace cfg_internal {
 			j[ 3 ] = cfg::get<col_t>( key ).a( );
 		}
 		else {
-			cfg::set<col_t>( key, col_t( j[ 0 ].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ) ));
+			cfg::set<col_t>( key, col_t( j[ 0 ].get<int>( ), j[ 1 ].get<int>( ), j[ 2 ].get<int>( ), j[ 3 ].get<int>( ) ) );
 		}
 	}
 
@@ -151,44 +151,34 @@ namespace cfg_internal {
 			key = j.get<std::string>( );
 	}
 
-	void jsonify_chams( nlohmann::json& j, bool load, std::vector < chams_material_settings_t>& hash, std::string prefix )
+	void jsonify_chams( nlohmann::json& j, bool load, chams_material_settings_t& hash, std::string prefix )
 	{
 		if ( !load ) {
-			for ( auto a = 0; a < hash.size( ); a++ ) {
-				j[ "chams" ][ prefix ][ a ][ "m_enable" ] = hash[ a ].m_enable;
+			j[ "chams_system" ][ prefix ][ "m_enable" ] = hash.m_enable;
 
-				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 0 ] = hash[ a ].m_color.r( );
-				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 1 ] = hash[ a ].m_color.g( );
-				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 2 ] = hash[ a ].m_color.b( );
-				j[ "chams" ][ prefix ][ a ][ "m_color" ][ 3 ] = hash[ a ].m_color.a( );
+			j[ "chams_system" ][ prefix ][ "m_color" ][ 0 ] = hash.m_color.r( );
+			j[ "chams_system" ][ prefix ][ "m_color" ][ 1 ] = hash.m_color.g( );
+			j[ "chams_system" ][ prefix ][ "m_color" ][ 2 ] = hash.m_color.b( );
+			j[ "chams_system" ][ prefix ][ "m_color" ][ 3 ] = hash.m_color.a( );
 
-				j[ "chams" ][ prefix ][ a ][ "label" ] = hash[ a ].label;
-				j[ "chams" ][ prefix ][ a ][ "m_material" ] = hash[ a ].m_material;
-			}
+			j[ "chams_system" ][ prefix ][ "label" ] = hash.label;
+			j[ "chams_system" ][ prefix ][ "m_material" ] = hash.m_material;
 		}
 		else {
 			if ( j[ "chams" ][ prefix ].is_null( ) )
 				return;
 
-			hash.clear( );
-
-			auto size = j[ "chams" ][ prefix ].size( );
-
-			for ( auto a = 0; a < size; a++ ) {
-				auto data = chams_material_settings_t{
-					j[ "chams" ][ prefix ][ a ][ "m_enable" ].get<bool>( ),
-					j[ "chams" ][ prefix ][ a ][ "m_material" ].get<int>( ),
-					j[ "chams" ][ prefix ][ a ][ "label" ].get<std::string>( ),
-					col_t(
-						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 0 ].get<int>( ),
-						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 1 ].get<int>( ),
-						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 2 ].get<int>( ),
-						j[ "chams" ][ prefix ][ a ][ "m_color" ][ 3 ].get<int>( )
-					)
-				};
-
-				hash.push_back( data );
-			}
+			auto data = chams_material_settings_t{
+				j[ "chams_system" ][ prefix ][ "m_enable" ].get<bool>( ),
+				j[ "chams_system" ][ prefix ][ "m_material" ].get<int>( ),
+				j[ "chams_system" ][ prefix ][ "label" ].get<std::string>( ),
+				col_t(
+					j[ "chams_system" ][ prefix ][ "m_color" ][ 0 ].get<int>( ),
+					j[ "chams_system" ][ prefix ][ "m_color" ][ 1 ].get<int>( ),
+					j[ "chams_system" ][ prefix ][ "m_color" ][ 2 ].get<int>( ),
+					j[ "chams_system" ][ prefix ][ "m_color" ][ 3 ].get<int>( )
+				)
+			};
 		}
 	}
 	void jsonify_materials( nlohmann::json& j, bool load, std::vector < chams_layer >& hash )
@@ -339,7 +329,7 @@ namespace cfg {
 			cfg_internal::jsonify<bool>( jsonk[ "misc.view_model.override_while_scoped" ], load, FNV1A( "misc.view_model.override_while_scoped" ) );
 			cfg_internal::jsonify<bool>( jsonk[ "auto_jump" ], load, FNV1A( "auto_jump" ) );
 			cfg_internal::jsonify<bool>( jsonk[ "autostrafe" ], load, FNV1A( "autotrafe" ) );
-			cfg_internal::jsonify<bool>( jsonk[ "aimbot.show_fov"  ], load, FNV1A( "aimbot.show_fov"  ) );
+			cfg_internal::jsonify<bool>( jsonk[ "aimbot.show_fov" ], load, FNV1A( "aimbot.show_fov" ) );
 
 			cfg_internal::jsonify<int>( jsonk[ "misc.view_model.fov" ], load, FNV1A( "misc.view_model.fov" ) );
 			cfg_internal::jsonify<float>( jsonk[ "misc.view_model.x" ], load, FNV1A( "misc.view_model.x" ) );
@@ -349,7 +339,7 @@ namespace cfg {
 			cfg_internal::jsonify<bool>( jsonk[ "fakelags.enable" ], load, FNV1A( "fakelags.enable" ) );
 			cfg_internal::jsonify<int>( jsonk[ "fakelags.amount" ], load, FNV1A( "fakelags.amount" ) );
 
-			cfg_internal::jsonify_color( jsonk[ "esp.team.health.color" ], load, FNV1A( "esp.team.health.color" ));
+			cfg_internal::jsonify_color( jsonk[ "esp.team.health.color" ], load, FNV1A( "esp.team.health.color" ) );
 			cfg_internal::jsonify_color( jsonk[ "esp.team.health.border.inside.color" ], load, FNV1A( "esp.team.health.border.inside.color" ) );
 			cfg_internal::jsonify_color( jsonk[ "esp.team.health.border.outside.color" ], load, FNV1A( "esp.team.health.border.outside.color" ) );
 			cfg_internal::jsonify_color( jsonk[ "esp.team.armor.color" ], load, FNV1A( "esp.team.armor.color" ) );
@@ -380,10 +370,8 @@ namespace cfg {
 			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "heavy" ], load, aimbot_heavy );
 			cfg_internal::jsonify_legitbot( jsonk[ "aimbot" ][ "sniper" ], load, aimbot_sniper );
 
-			cfg_internal::jsonify_chams( jsonk, load, local_player_visible, "local_player_visible" );
 			cfg_internal::jsonify_chams( jsonk, load, enemy_visible, "enemy_visible" );
 			cfg_internal::jsonify_chams( jsonk, load, teammates_visible, "teammates_visible" );
-			cfg_internal::jsonify_chams( jsonk, load, local_player_invisible, "local_player_invisible" );
 			cfg_internal::jsonify_chams( jsonk, load, enemy_invisible, "enemy_invisible" );
 			cfg_internal::jsonify_chams( jsonk, load, teammates_invisible, "teammates_invisible" );
 
@@ -393,6 +381,6 @@ namespace cfg {
 			MessageBoxA( nullptr, error.what( ), "craftoffensive | fatal error!", MB_OK | MB_ICONERROR );
 		}
 
-		return jsonk.dump();
+		return jsonk.dump( );
 	}
 }

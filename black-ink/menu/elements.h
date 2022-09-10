@@ -527,33 +527,33 @@ namespace elements {
 
 		window->DrawList->AddRect( bb.Min, bb.Max, ImColor( 0, 0, 0 ) );
 
-		window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 10 - 50, 10 }, bb.Min + ImVec2{ 405 - 10, 40 }, true );
+		window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 10 - 50 + 30, 10 }, bb.Min + ImVec2{ 405 - 10 + 30, 40 }, true );
 		window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
-		window->DrawList->AddText( bb.Min + ImVec2{ 405 - 10 - 25, 24 } - ImGui::CalcTextSize( "Load" ) / 2, ImColor( 255, 255, 255 ), "Load" );
-		window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 10 - 50, 10 }, bb.Min + ImVec2{ 405 - 10, 40 }, ImColor( 0, 0, 0 ) );
+		window->DrawList->AddText( bb.Min + ImVec2{ 405 - 10 - 25 + 30, 24 } - ImGui::CalcTextSize( "Load" ) / 2, ImColor( 255, 255, 255 ), "Load" );
+		window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 10 - 50 + 30, 10 }, bb.Min + ImVec2{ 405 - 10 + 30, 40 }, ImColor( 0, 0, 0 ) );
 		window->DrawList->PopClipRect( );
 
-		if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 10 - 50, 10 }, bb.Min + ImVec2{ 405 - 10, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
+		if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 10 - 50 + 30, 10 }, bb.Min + ImVec2{ 405 - 10 + 30, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
 			cloud->load_config( conf.m_secure_id );
 		}
 
-		window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 20 - 100, 10 }, bb.Min + ImVec2{ 405 - 20 - 50, 40 }, true );
+		window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 20 - 100 + 30, 10 }, bb.Min + ImVec2{ 405 - 20 - 50 + 30, 40 }, true );
 		window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
-		window->DrawList->AddText( bb.Min + ImVec2{ 405 - 20 - 75, 24 } - ImGui::CalcTextSize( "Save" ) / 2, ImColor( 255, 255, 255 ), "Save" );
-		window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 20 - 100, 10 }, bb.Min + ImVec2{ 405 - 20 - 50, 40 }, ImColor( 0, 0, 0 ) );
+		window->DrawList->AddText( bb.Min + ImVec2{ 405 - 20 - 75 + 30, 24 } - ImGui::CalcTextSize( "Save" ) / 2, ImColor( 255, 255, 255 ), "Save" );
+		window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 20 - 100 + 30, 10 }, bb.Min + ImVec2{ 405 - 20 - 50 + 30, 40 }, ImColor( 0, 0, 0 ) );
 		window->DrawList->PopClipRect( );
 
-		if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 20 - 100, 10 }, bb.Min + ImVec2{ 405 - 20 - 50, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
+		if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 20 - 100 + 30, 10 }, bb.Min + ImVec2{ 405 - 20 - 50 + 30, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
 			cloud->save_config( conf.m_secure_id );
 		}
 
-		window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 30 - 150, 10 }, bb.Min + ImVec2{ 405 - 30 - 100, 40 }, true );
+		window->DrawList->PushClipRect( bb.Min + ImVec2{ 405 - 30 - 150 + 30, 10 }, bb.Min + ImVec2{ 405 - 30 - 100 + 30, 40 }, true );
 		window->DrawList->AddImage( assets::background, bb.Min, bb.Min + ImVec2( 600, 445 ), {}, { 1, 1 }, ImColor( 255, 255, 255, int( 150 ) ) );
-		window->DrawList->AddText( bb.Min + ImVec2{ 405 - 30 - 125, 24 } - ImGui::CalcTextSize( "Delete" ) / 2, ImColor( 255, 255, 255 ), "Delete" );
-		window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 30 - 150, 10 }, bb.Min + ImVec2{ 405 - 30 - 100, 40 }, ImColor( 0, 0, 0 ) );
+		window->DrawList->AddText( bb.Min + ImVec2{ 405 - 30 - 125 + 30, 24 } - ImGui::CalcTextSize( "Delete" ) / 2, ImColor( 255, 255, 255 ), "Delete" );
+		window->DrawList->AddRect( bb.Min + ImVec2{ 405 - 30 - 150 + 30, 10 }, bb.Min + ImVec2{ 405 - 30 - 100 + 30, 40 }, ImColor( 0, 0, 0 ) );
 		window->DrawList->PopClipRect( );
 
-		if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 30 - 150, 10 }, bb.Min + ImVec2{ 405 - 30 - 100, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
+		if ( ImGui::IsMouseHoveringRect( bb.Min + ImVec2{ 405 - 30 - 150 + 30, 10 }, bb.Min + ImVec2{ 405 - 30 - 100 + 30, 40 } ) && ImGui::IsMouseClicked( 0 ) ) {
 			cloud->delete_config( conf.m_secure_id );
 		}
 

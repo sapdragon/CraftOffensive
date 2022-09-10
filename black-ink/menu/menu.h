@@ -17,11 +17,11 @@ public:
 	ImDrawList* draw;
 	ImVec2 pos;
 
+	int m_selected_tab = 0;
+	int m_selected_subtab[ 6 ] = {};
+
 	ImAnimations::Animator<const char*, float> m_animator;
 private:
-
-	int m_selected_tab = 0;
-	int m_selected_subtab[6] = {};
 
 	TextEditor editor;
 };

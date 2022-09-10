@@ -72,7 +72,7 @@ bool c_esp_preview::get_value( const char* name ) {
 
 void c_esp_preview::recalculate( float animation ) {
 	ImVec2 position_left = { 110, 70 }, position_right = { 215, 70 };
-	ImVec2 position_top = { 110, 88 }, position_bot = { 110, 310 };
+	ImVec2 position_top = { 110, 88 }, position_bot = { 110, 320 };
 
 	for ( auto a = 0; a < 5; a++ ) 
 	{
@@ -147,7 +147,7 @@ void c_esp_preview::recalculate( float animation ) {
 			if ( items[ a ][ i ].m_condition == BOT_COND ) {
 				items[ a ][ i ].m_draw_position = ImLerp(
 					items[ a ][ i ].m_draw_position,
-					position_bot + ImVec2( 0, +items[ a ][ i ].m_size.y ),
+					position_bot,
 					animation
 				);
 

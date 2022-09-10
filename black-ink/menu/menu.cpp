@@ -201,15 +201,94 @@ void c_menu::on_paint( ) {
 
 					ImGui::BeginGroup( );
 					{
-						elements::child_internal( _( "Chams" ), { 215, 150 } );
+						elements::child_internal( _( "Chams Visible" ), { 215, 150 } );
 						{
-							
+							elements::checkbox_bool( _( "Enemy Visible" ), cfg::enemy_visible.m_enable );
+
+							if ( ImGui::BeginCombo( "Material", chams->materials[ cfg::enemy_visible.m_material ].label.c_str( ) ) )
+							{
+								for ( auto a = 0; a < chams->materials.size( ); a++ ) {
+									if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ) ) )
+										cfg::enemy_visible.m_material = a;
+								}
+
+								ImGui::EndCombo( );
+							}
+
+							elements::color_edit4( "Color", &cfg::enemy_visible.m_color, NULL );
+						}
+						elements::child_end_internal( );
+
+						ImGui::NewLine( );
+
+						elements::child_internal( _( "Chams Invisible" ), { 215, 150 } );
+						{
+							static int material = 0;
+
+							elements::checkbox_bool( _( "Enemy Invisible" ), cfg::enemy_invisible.m_enable );
+
+							if ( ImGui::BeginCombo( "Material", chams->materials[ cfg::enemy_invisible.m_material ].label.c_str( ) ) )
+							{
+								for ( auto a = 0; a < chams->materials.size( ); a++ ) {
+									if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ) ) )
+										cfg::enemy_invisible.m_material = a;
+								}
+
+								ImGui::EndCombo( );
+							}
+
+							elements::color_edit4( "Color", &cfg::enemy_invisible.m_color, NULL );
 						}
 						elements::child_end_internal( );
 					}
 					ImGui::EndGroup( );
 				}
 				if ( m_selected_subtab[ 1 ] == 1 ) {
+					ImGui::SameLine( 225 );
+
+					ImGui::BeginGroup( );
+					{
+						elements::child_internal( _( "Chams Visible" ), { 215, 150 } );
+						{
+							elements::checkbox_bool( _( "Team Visible" ), cfg::teammates_visible.m_enable );
+
+							if ( ImGui::BeginCombo( "Material", chams->materials[ cfg::teammates_visible.m_material ].label.c_str( ) ) )
+							{
+								for ( auto a = 0; a < chams->materials.size( ); a++ ) {
+									if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ) ) )
+										cfg::teammates_visible.m_material = a;
+								}
+
+								ImGui::EndCombo( );
+							}
+
+							elements::color_edit4( "Color", &cfg::teammates_visible.m_color, NULL );
+						}
+						elements::child_end_internal( );
+
+						ImGui::NewLine( );
+
+						elements::child_internal( _( "Chams Invisible" ), { 215, 150 } );
+						{
+							static int material = 0;
+
+							elements::checkbox_bool( _( "Team Invisible" ), cfg::teammates_invisible.m_enable );
+
+							if ( ImGui::BeginCombo( "Material", chams->materials[ cfg::teammates_invisible.m_material ].label.c_str( ) ) )
+							{
+								for ( auto a = 0; a < chams->materials.size( ); a++ ) {
+									if ( ImGui::Selectable( chams->materials[ a ].label.c_str( ) ) )
+										cfg::teammates_invisible.m_material = a;
+								}
+
+								ImGui::EndCombo( );
+							}
+
+							elements::color_edit4( "Color", &cfg::teammates_invisible.m_color, NULL );
+						}
+						elements::child_end_internal( );
+					}
+					ImGui::EndGroup( );
 				}
 			}
 			if ( m_selected_tab == 4 ) {
@@ -265,6 +344,7 @@ void c_menu::on_paint( ) {
  			if ( m_selected_tab == 6 ) {
 				for ( auto conf : cloud->user_configs ) {
 					elements::config( conf );
+					ImGui::NewLine( );
 				}
 			}
 			if ( m_selected_tab == 7 ) {
@@ -327,15 +407,29 @@ void c_menu::on_paint( ) {
 			draw_model->AddImageRounded( assets::background, pos_model, pos_model + ImVec2( 330, 440 ), {}, {1, 1}, ImColor(255, 255, 255), 8 );
 			draw_model->AddRect( pos_model, pos_model + ImVec2( 330, 440 ), ImColor( 0, 0, 0, 255 ), 8 );
 
-			if ( g_Model.get_preview_texture( ) != nullptr )
+			if ( g_Model.get_preview_texture() != nullptr )
 			{
+				draw_model->PushClipRect( ImGui::GetWindowPos( ) + ImVec2( 0, 0 ), ImGui::GetWindowPos( ) + ImVec2( 165, 440 ), true );
 				draw_model->AddImage(
 					g_Model.get_preview_texture( )->m_handles[ 0 ]->m_texture,
 					ImGui::GetWindowPos( ) - ImVec2(0, 30),
 					ImGui::GetWindowPos( ) + ImVec2( g_Model.get_preview_texture( )->get_actual_width( ), g_Model.get_preview_texture( )->get_actual_height( ) - 30 ),
 					ImVec2( 0, 0 ), ImVec2( 1, 1 ),
 					ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
+				draw_model->PopClipRect( );
 
+			}
+
+			if ( g_Model.get_text_preview_texture( ) != nullptr )
+			{
+				draw_model->PushClipRect( ImGui::GetWindowPos( ) + ImVec2( 165, 0 ), ImGui::GetWindowPos( ) + ImVec2( 330, 440 ), true );
+				draw_model->AddImage(
+					g_Model.get_text_preview_texture( )->m_handles[ 0 ]->m_texture,
+					ImGui::GetWindowPos( ) - ImVec2( 0, 30 ),
+					ImGui::GetWindowPos( ) + ImVec2( g_Model.get_text_preview_texture( )->get_actual_width( ), g_Model.get_text_preview_texture( )->get_actual_height( ) - 30 ),
+					ImVec2( 0, 0 ), ImVec2( 1, 1 ),
+					ImColor( 1.0f, 1.0f, 1.0f, 1.0f ) );
+				draw_model->PopClipRect( );
 			}
 
 			draw_model->AddText( pos_model + ImVec2( 165 - ImGui::CalcTextSize( "Open widgets menu" ).x/2, 415 ), ImColor( 255, 255, 255 ), "Open widgets menu" );

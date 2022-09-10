@@ -52,12 +52,10 @@ namespace cfg {
 	inline nlohmann::json jsonk;
 	inline std::unordered_map<uint32_t, std::any> m_items;
 
-	inline std::vector < chams_material_settings_t> local_player_visible;
-	inline std::vector < chams_material_settings_t> enemy_visible;
-	inline std::vector < chams_material_settings_t> teammates_visible;
-	inline std::vector < chams_material_settings_t> local_player_invisible;
-	inline std::vector < chams_material_settings_t> enemy_invisible;
-	inline std::vector < chams_material_settings_t> teammates_invisible;
+	inline chams_material_settings_t enemy_visible;
+	inline chams_material_settings_t teammates_visible;
+	inline chams_material_settings_t enemy_invisible;
+	inline chams_material_settings_t teammates_invisible;
 
 	template<class T = bool>
 	T get( uint32_t hash ) {

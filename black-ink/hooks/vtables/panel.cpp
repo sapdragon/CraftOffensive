@@ -20,5 +20,6 @@ void __fastcall hooks::panel::paint_traverse::hook(void* ecx, void* edx, uint32_
 
 	render::begin();
 
-	g_Model.on_render( );
+	g_Model.on_render( menu->m_selected_subtab[ 1 ] == 0 ? cfg::enemy_visible : cfg::teammates_visible );
+	g_Model.on_text_render( menu->m_selected_subtab[ 1 ] == 0 ? cfg::enemy_invisible : cfg::teammates_invisible );
 }
