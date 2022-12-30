@@ -13,6 +13,7 @@ A Project demonstrating free cheats in a new way.  This cheat includes unique te
 - Cloud system
 - Drag & Drop ESP system
 - World Visuals
+- etc
 
 # VAC
 The cheat does not bypass the trustfactor system, you need to analyze the modules manually.
